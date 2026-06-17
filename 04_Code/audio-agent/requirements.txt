@@ -1,0 +1,8 @@
+# Placeholder for Python Voice Agent dependencies
+# livekit-agents
+# livekit-plugins-google
+# livekit-plugins-silero
+# faster-whisper
+# kokoro
+# soundfile
+# python-dotenv
