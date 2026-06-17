@@ -181,3 +181,19 @@ env/
 # gsheet / gdoc
 *.gsheet
 *.gdoc
+
+# Model weights and large datasets
+*.pth
+*.pt
+*.bin
+*.onnx
+*.ckpt
+*.gguf
+*.h5
+*.model
+*.pb
+*.weights
+*.tfrecord
+*.parquet
+*.nc
+
