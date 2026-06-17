@@ -1,0 +1,71 @@
+# =====================================================================
+# CẤU HÌNH RÀNG BUỘC THIẾT BỊ & HỆ THỐNG (DEVICE & SYSTEM CONSTRAINTS)
+# =====================================================================
+# Thông tin cấu hình thực tế của hệ thống người dùng để tối ưu hóa hiệu năng.
+
+# 1. Hệ điều hành & Môi trường chạy Agent (Host OS & Environment)
+environment:
+  os: "linux"               # OS chạy chính (Core Host OS): Raspberry Pi OS (Linux)
+  distro: "Raspberry Pi OS (Debian Bookworm)"
+  python_version: "3.11"    
+  node_version: "22"        
+
+# 2. Cấu hình phần cứng (Hardware Configuration)
+# Chứa cấu hình máy phát triển PC và thiết bị chạy chính Raspberry Pi 4
+hardware:
+  development_pc:
+    cpu: "Intel Core i5-1135G7"
+    ram_gb: 16
+    gpu:
+      has_nvidia_gpu: false   # Không có GPU NVIDIA (Sử dụng Intel Iris Xe hoặc CPU)
+      gpu_model: "Intel Iris Xe Graphics"
+      vram_gb: 0
+  target_edge:
+    device_name: "Raspberry Pi 4 Model B"
+    ram_gb: 4                 # RAM giới hạn 4GB (Cần tối ưu hóa mô hình AI siêu nhẹ)
+    cpu: "Broadcom BCM2711, Quad-core Cortex-A72"
+    gpu: "Broadcom VideoCore VI (None-CUDA)"
+
+# 3. Trí tuệ Nhân tạo (Artificial Intelligence Engine)
+# Các mô hình STT, TTS và Agent core sẽ chạy trực tiếp trên Raspberry Pi 4.
+# Máy Fedora 44 chỉ đóng vai trò làm bộ kết nối, SSH terminal và phát triển.
+ai_engine:
+  llm_brand: "Google Gemini"
+  llm_model: "gemini-1.5-flash"  # Sử dụng Cloud API từ Raspberry Pi 4
+  stt_model: "vosk"             # Chạy offline siêu nhẹ trên CPU Raspberry Pi 4 (hoặc Deepgram API)
+  tts_model: "piper-tts"        # Chạy offline siêu nhanh tối ưu cho Raspberry Pi 4 (ONNX)
+
+# 4. Thiết bị đo tín hiệu sinh học (Medical/Biological Sensors)
+# Cấu hình thiết bị đo EEG/PPG kết hợp Hợp nhất cảm biến (Sensor Fusion)
+devices:
+  eeg:
+    brand: "Muse 2"           # Thiết bị đo chính
+    connection_type: "bluetooth" # Kết nối Bluetooth BLE (thông qua thư viện BrainFlow)
+    channels_count: 4         # Muse 2 có 4 kênh điện cực chính: TP9, AF7, AF8, TP10
+    sample_rate_hz: 256       # Tần số lấy mẫu mặc định của Muse 2 là 256 Hz
+  vitals:
+    blood_pressure: "Simulator" 
+    heart_rate:
+      realtime_source: "Muse 2 PPG (Vùng chẩm/trán chẩm)" # Nguồn đo mạch thời gian thực khi đang trong phiên đo
+      background_source: "Galaxy Fit 3"         # Nguồn đo nhịp tim nền 24/7 đồng bộ qua điện thoại
+      sync_protocol: "Google Health Connect"   # Giao thức đồng bộ chỉ số từ Samsung Health vào App
+
+# 5. Cấu hình tần số nhiễu điện lưới (Power Grid Noise Frequency)
+power_grid:
+  mains_frequency_hz: 50    # Tần số 50 Hz (phổ biến tại Việt Nam và Châu Âu)
+
+# 6. Dữ liệu Người dùng (User Metadata)
+# Dùng để tự động tính BMI, BMR, ngưỡng nhịp tim tối đa và hiệu chỉnh baseline sóng não EEG thích ứng
+user_metadata:
+  age: 25                   # Tuổi người dùng (dùng để tính nhịp tim tối đa an toàn: 220 - tuổi)
+  gender: "male"            # Giới tính (male / female - dùng để hiệu chỉnh baseline huyết áp/HRV và BMR)
+  height_cm: 175            # Chiều cao tính bằng cm (dùng để tính BMI)
+  weight_kg: 70             # Cân nặng tính bằng kg (dùng để tính BMI & BMR)
+  calibration_sessions: 3   # Số phiên đo đầu tiên để ghi nhận Baseline sóng não cá nhân hóa
+
+# 7. Cấu hình dịch vụ Cloud & Phân quyền (Cloud Settings)
+cloud:
+  aws_profile: "default"    
+  aws_region: "ap-southeast-1" 
+
+
