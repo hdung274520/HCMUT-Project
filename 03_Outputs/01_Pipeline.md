@@ -115,29 +115,29 @@ graph LR
 ## Cấu trúc Thư mục Đề xuất (Proposed Folder Structure)
 
 ```text
-d:\Project\
-├── 01_Documents\                     <-- Sách tham khảo EEG, tài liệu nghiên cứu, ghi chú ý tưởng
-│   ├── 02_cambridge-core...\         <-- Sách hướng dẫn đọc sóng não EEG
-│   ├── 03_Kotai-VoiceAgent\          <-- Mã nguồn mẫu trợ lý giọng nói chạy local tham khảo
-│   │   └── Kotai-VoiceAgent\
-│   │       ├── backend\
-│   │       │   └── Kokoro-TTS-Local\
-│   │       └── frontend\
-│   └── yy_Brainstorms\               <-- Các ghi chép ý tưởng ban đầu của nhóm phát triển
-├── 03_Outputs\                       <-- Báo cáo kết quả dự án, thiết kế luồng xử lý (pipeline)
-├── 04_Code\                          <-- Toàn bộ mã nguồn triển khai của hệ thống
-│   ├── audio-agent\                  <-- Core Voice Agent & Edge Client chạy trên Raspberry Pi 4
-│   │   └── tools\                    <-- Chứa các API Tools định nghĩa cho Gemini LLM
-│   ├── aws-services\                 <-- Xử lý tiền lọc tín hiệu y tế và mô hình GRU RNN trên AWS
-│   ├── mobile-app\                   <-- Ứng dụng di động Android (React Native / Expo)
-│   └── web-app\                      <-- Ứng dụng Web Dashboard quản lý (Next.js)
-│       └── app\                      <-- Thư mục chứa các page của Next.js App Router
-├── 05_Data\                          <-- Nơi lưu trữ tập dữ liệu (Dataset) phục vụ nghiên cứu & AI
-│   ├── metadata\                     <-- Cấu hình sơ đồ kênh đo, thông tin đối tượng tham gia
-│   ├── processed\                    <-- Dữ liệu EEG/PPG đã qua lọc nhiễu và chia cửa sổ
-│   └── raw\                          <-- Tín hiệu sóng y tế thô thu từ Muse 2
-├── 06_Models\                        <-- Lưu trữ các trọng số và checkpoints của mô hình GRU RNN
-└── 07_Experiments\                   <-- Nhật ký chạy thử nghiệm và đánh giá chất lượng mô hình
+[project_root]/
+├── 01_Documents/                     <-- Sách tham khảo EEG, tài liệu nghiên cứu, ghi chú ý tưởng
+│   ├── 02_cambridge-core.../         <-- Sách hướng dẫn đọc sóng não EEG
+│   ├── 03_Kotai-VoiceAgent/          <-- Mã nguồn mẫu trợ lý giọng nói chạy local tham khảo
+│   │   └── Kotai-VoiceAgent/
+│   │       ├── backend/
+│   │       │   └── Kokoro-TTS-Local/
+│   │       └── frontend/
+│   └── yy_Brainstorms/               <-- Các ghi chép ý tưởng ban đầu của nhóm phát triển
+├── 03_Outputs/                       <-- Báo cáo kết quả dự án, thiết kế luồng xử lý (pipeline)
+├── 04_Code/                          <-- Toàn bộ mã nguồn triển khai của hệ thống
+│   ├── audio-agent/                  <-- Core Voice Agent & Edge Client chạy trên Raspberry Pi 4
+│   │   └── tools/                    <-- Chứa các API Tools định nghĩa cho Gemini LLM
+│   ├── aws-services/                 <-- Xử lý tiền lọc tín hiệu y tế và mô hình GRU RNN trên AWS
+│   ├── mobile-app/                   <-- Ứng dụng di động Android (React Native / Expo)
+│   └── web-app/                      <-- Ứng dụng Web Dashboard quản lý (Next.js)
+│       └── app/                      <-- Thư mục chứa các page của Next.js App Router
+├── 05_Data/                          <-- Nơi lưu trữ tập dữ liệu (Dataset) phục vụ nghiên cứu & AI
+│   ├── metadata/                     <-- Cấu hình sơ đồ kênh đo, thông tin đối tượng tham gia
+│   ├── processed/                    <-- Dữ liệu EEG/PPG đã qua lọc nhiễu và chia cửa sổ
+│   └── raw/                          <-- Tín hiệu sóng y tế thô thu từ Muse 2
+├── 06_Models/                        <-- Lưu trữ các trọng số và checkpoints của mô hình GRU RNN
+└── 07_Experiments/                   <-- Nhật ký chạy thử nghiệm và đánh giá chất lượng mô hình
 ```
 
 ---

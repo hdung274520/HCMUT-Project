@@ -1,0 +1,17 @@
+# Tự động chuẩn hóa tất cả các tệp văn bản về LF khi đẩy lên GitHub
+* text=auto eol=lf
+
+# Ép buộc các file mã nguồn luôn dùng LF
+*.py text eol=lf
+*.js text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.json text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.md text eol=lf
+
+# Giữ nguyên tệp nhị phân
+*.png binary
+*.jpg binary
+*.pdf binary

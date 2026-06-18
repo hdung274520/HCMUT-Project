@@ -1,0 +1,93 @@
+HƯỚNG DẪN THIẾT LẬP VÀ ĐỒNG BỘ DỰ ÁN GIỮA FEDORA LINUX VÀ WINDOWS 11
+==================================================================
+
+Dự án này sử dụng mô hình 2 nhánh song song để phù hợp với từng môi trường:
+* Nhánh **`window`**: Nhánh dành riêng để phát triển trên máy Windows 11.
+* Nhánh **`fedora`**: Nhánh dành riêng để phát triển trên máy Fedora Linux.
+
+BƯỚC 1: Thiết lập trên máy Fedora Linux
+---------------------------------------
+Trên máy Fedora, bạn sử dụng thư mục `/home/hdung274520/Project`:
+* Hãy đảm bảo bạn đang ở nhánh `fedora` (`git checkout fedora`).
+* Tạo môi trường ảo Python và cài đặt thư viện (nếu cần):
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   pip install -r 04_Code/audio-agent/requirements.txt
+   ```
+* Tạo file `.env.local` (nếu cần) chứa các biến môi trường đặc thù của Linux.
+
+
+BƯỚC 2: Thiết lập trên máy Windows 11
+-------------------------------------
+Trên máy Windows 11 (thư mục `D:\Project`), folder này hiện đã được kết nối với nhánh `window`:
+
+1. Cấu hình Git cho dự án (đã thực hiện tự động):
+   ```bash
+   git config core.autocrlf true
+   git config core.fileMode false
+   ```
+
+2. Làm việc trên nhánh `window` (đã thực hiện tự động):
+   ```bash
+   git checkout window
+   git pull origin window
+   ```
+   *(Nhờ cấu hình `autocrlf true`, Git trên Windows sẽ tự động hiển thị dòng dạng CRLF cục bộ để tránh lỗi công cụ trên Windows).*
+
+3. Cài đặt thư viện trên Windows:
+   * Python (Tạo môi trường ảo và kích hoạt):
+     ```bash
+     python -m venv venv
+     .\venv\Scripts\activate
+     pip install -r 04_Code/audio-agent/requirements.txt
+     ```
+   * Node.js (Next.js/React Native - nếu có dependencies trong tương lai):
+     Vào thư mục `web-app` hoặc `mobile-app` và chạy:
+     ```bash
+     npm install
+     ```
+     (Thư mục `node_modules` cài trên Windows sẽ chỉ nằm trên Windows, không bị đồng bộ sang Linux nhờ có `.gitignore`).
+
+4. Tạo file `.env.local` trên Windows:
+   * Thiết lập các đường dẫn cục bộ kiểu Windows (ví dụ: `D:\\Project\\...`) tại đây.
+
+
+BƯỚC 3: Quy trình làm việc và đồng bộ hàng ngày
+----------------------------------------------
+
+### 1. Khi bạn đang làm việc trên máy Windows:
+- Luôn cập nhật code mới nhất trước khi làm việc:
+  ```bash
+  git checkout window
+  git pull origin window
+  ```
+- Nếu muốn gộp các thay đổi mới nhất từ máy Fedora sang Windows:
+  ```bash
+  git fetch origin
+  git merge origin/fedora
+  ```
+- Sau khi code xong và muốn lưu lại / đẩy lên GitHub:
+  ```bash
+  git add .
+  git commit -m "Nội dung thay đổi trên Windows"
+  git push origin window
+  ```
+
+### 2. Khi bạn chuyển sang làm việc trên máy Fedora Linux:
+- Luôn cập nhật code mới nhất của Fedora trước khi làm việc:
+  ```bash
+  git checkout fedora
+  git pull origin fedora
+  ```
+- Nếu muốn gộp các thay đổi mới nhất từ máy Windows sang Fedora:
+  ```bash
+  git fetch origin
+  git merge origin/window
+  ```
+- Sau khi code xong và muốn lưu lại / đẩy lên GitHub:
+  ```bash
+  git add .
+  git commit -m "Nội dung thay đổi trên Fedora"
+  git push origin fedora
+  ```

@@ -28,7 +28,7 @@ This research and development project aims to bridge the gap between physiologic
 ## Directory Structure
 
 ```text
-d:\Project/
+[project_root]/
 ├── README.md                      <-- This document (Project introduction & guide)
 ├── 00_References.gsheet           <-- Shared Google Sheet for references and literature search
 ├── 01_Documents/                  <-- Research documents, books, and reference guides
