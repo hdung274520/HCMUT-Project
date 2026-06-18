@@ -2,25 +2,25 @@ HƯỚNG DẪN THIẾT LẬP VÀ ĐỒNG BỘ DỰ ÁN GIỮA FEDORA LINUX VÀ W
 ==================================================================
 
 Dự án này sử dụng mô hình 2 nhánh song song để phù hợp với từng môi trường:
-* Nhánh **`window`**: Nhánh dành riêng để phát triển trên máy Windows 11.
-* Nhánh **`fedora`**: Nhánh dành riêng để phát triển trên máy Fedora Linux.
+* Nhánh **`fedora`** [CHÍNH]: Nhánh phát triển chính trên máy Fedora Linux.
+* Nhánh **`window`** [PHỤ]: Nhánh trạm phụ trên máy Windows 11 dùng để chạy thử hoặc bổ trợ.
 
-BƯỚC 1: Thiết lập trên máy Fedora Linux
----------------------------------------
+BƯỚC 1: Thiết lập trên máy Fedora Linux (Môi trường chính)
+-----------------------------------------------------------
 Trên máy Fedora, bạn sử dụng thư mục `/home/hdung274520/Project`:
-* Hãy đảm bảo bạn đang ở nhánh `fedora` (`git checkout fedora`).
+* Luôn làm việc trên nhánh `fedora` (`git checkout fedora`).
 * Tạo môi trường ảo Python và cài đặt thư viện (nếu cần):
    ```bash
    python3 -m venv venv
    source venv/bin/activate
    pip install -r 04_Code/audio-agent/requirements.txt
    ```
-* Tạo file `.env.local` (nếu cần) chứa các biến môi trường đặc thù của Linux.
+* Tạo file `.env.local` chứa các biến môi trường đặc thù của Linux.
 
 
-BƯỚC 2: Thiết lập trên máy Windows 11
--------------------------------------
-Trên máy Windows 11 (thư mục `D:\Project`), folder này hiện đã được kết nối với nhánh `window`:
+BƯỚC 2: Thiết lập trên máy Windows 11 (Môi trường phụ)
+------------------------------------------------------
+Trên máy Windows 11 (thư mục `D:\Project`), folder này đã được kết nối với nhánh `window`:
 
 1. Cấu hình Git cho dự án (đã thực hiện tự động):
    ```bash
@@ -31,7 +31,6 @@ Trên máy Windows 11 (thư mục `D:\Project`), folder này hiện đã đượ
 2. Làm việc trên nhánh `window` (đã thực hiện tự động):
    ```bash
    git checkout window
-   git pull origin window
    ```
    *(Nhờ cấu hình `autocrlf true`, Git trên Windows sẽ tự động hiển thị dòng dạng CRLF cục bộ để tránh lỗi công cụ trên Windows).*
 
@@ -56,38 +55,35 @@ Trên máy Windows 11 (thư mục `D:\Project`), folder này hiện đã đượ
 BƯỚC 3: Quy trình làm việc và đồng bộ hàng ngày
 ----------------------------------------------
 
-### 1. Khi bạn đang làm việc trên máy Windows:
-- Luôn cập nhật code mới nhất trước khi làm việc:
-  ```bash
-  git checkout window
-  git pull origin window
-  ```
-- Nếu muốn gộp các thay đổi mới nhất từ máy Fedora sang Windows:
-  ```bash
-  git fetch origin
-  git merge origin/fedora
-  ```
-- Sau khi code xong và muốn lưu lại / đẩy lên GitHub:
-  ```bash
-  git add .
-  git commit -m "Nội dung thay đổi trên Windows"
-  git push origin window
-  ```
-
-### 2. Khi bạn chuyển sang làm việc trên máy Fedora Linux:
-- Luôn cập nhật code mới nhất của Fedora trước khi làm việc:
-  ```bash
-  git checkout fedora
-  git pull origin fedora
-  ```
-- Nếu muốn gộp các thay đổi mới nhất từ máy Windows sang Fedora:
-  ```bash
-  git fetch origin
-  git merge origin/window
-  ```
-- Sau khi code xong và muốn lưu lại / đẩy lên GitHub:
+### 1. Khi bạn đang phát triển chính trên Fedora (Nhánh `fedora`):
+- Viết code và commit bình thường trên nhánh `fedora`.
+- Sau khi xong, đẩy code lên GitHub:
   ```bash
   git add .
   git commit -m "Nội dung thay đổi trên Fedora"
+  git push origin fedora
+  ```
+
+### 2. Khi bạn muốn chạy thử hoặc làm việc phụ trên Windows (Nhánh `window`):
+- Trước khi bắt đầu, hãy lấy code mới nhất từ nhánh chính (`fedora`) gộp vào nhánh phụ (`window`):
+  ```bash
+  git checkout window
+  git pull origin window
+  git fetch origin
+  git merge origin/fedora
+  ```
+  *(Lúc này, toàn bộ code mới nhất của bạn từ Fedora sẽ được gộp sang môi trường Windows).*
+- Nếu bạn có chỉnh sửa gì thêm trên Windows và muốn lưu lại:
+  ```bash
+  git add .
+  git commit -m "Chỉnh sửa bổ sung từ Windows"
+  git push origin window
+  ```
+- Sau đó, khi quay lại máy Fedora, hãy gộp các chỉnh sửa từ Windows đó vào nhánh chính:
+  ```bash
+  git checkout fedora
+  git pull origin fedora
+  git fetch origin
+  git merge origin/window
   git push origin fedora
   ```
