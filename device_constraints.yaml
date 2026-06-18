@@ -11,9 +11,11 @@ environment:
   node_version: "22"        
 
 # 2. Cấu hình phần cứng (Hardware Configuration)
-# Chứa cấu hình máy phát triển PC và thiết bị chạy chính Raspberry Pi 4
+# Chứa cấu hình máy phát triển PC (Fedora Linux) và thiết bị chạy chính Raspberry Pi 4
 hardware:
   development_pc:
+    os: "linux"
+    distro: "Fedora Workstation 44"
     cpu: "Intel Core i5-1135G7"
     ram_gb: 16
     gpu:

@@ -54,11 +54,68 @@ This research and development project aims to bridge the gap between physiologic
 
 ---
 
-## Getting Started
+## Getting Started (Fedora Linux Development Environment)
 
-### Prerequisites
-* **Python 3.10+** (for Audio Agent & AWS Lambda local tests)
-* **Node.js 18+** & **npm/pnpm/yarn** (for Mobile App development)
-* **AWS CLI** (configured with appropriate IAM permissions)
+This project is fully designed and configured to run on **Fedora Linux** (as the development/bridge machine) and **Raspberry Pi OS / Linux** (on the Raspberry Pi 4 edge device). Windows compatibility is not supported.
 
-*(Instructions for setting up the environment, deploying the AWS stack, and launching the mobile dashboard will be updated here as development progresses.)*
+### 1. Prerequisites Installation on Fedora
+
+To configure your Fedora Workstation development machine, install the required packages:
+
+```bash
+# Update system packages
+sudo dnf update -y
+
+# Install Python 3.11+, Development Tools and Bluetooth libraries
+sudo dnf install -y python3 python3-pip python3-devel gcc gcc-c++ git bluez bluez-libs-devel
+
+# Install Node.js 22
+sudo dnf install -y nodejs
+
+# Verify installations
+python3 --version
+node --version
+npm --version
+```
+
+### 2. Setting Up the Virtual Environment (Audio Agent)
+
+On Fedora, navigate to the `audio-agent` directory, create a virtual environment, and install dependencies:
+
+```bash
+cd 04_Code/audio-agent
+python3 -m venv venv
+source venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+### 3. AWS CLI Setup on Fedora
+
+Install and configure the AWS CLI to interact with the backend services:
+
+```bash
+# Install AWS CLI
+sudo dnf install -y awscli
+
+# Configure default profile
+aws configure --profile default
+# (Enter your AWS Access Key, Secret Key, and region "ap-southeast-1")
+```
+
+### 4. Raspberry Pi 4 Connection & Deployment
+
+Since the Audio Agent (with local STT/TTS and Muse 2 BLE) runs directly on the Raspberry Pi 4, use SSH to sync code and control the edge gateway from Fedora:
+
+```bash
+# Connect to Raspberry Pi via SSH from Fedora terminal
+ssh pi@<raspberry-pi-ip-address>
+
+# Pair and trust the Muse 2 device via bluetoothctl on Raspberry Pi 4 / Fedora:
+bluetoothctl
+[bluetooth]# power on
+[bluetooth]# scan on
+[bluetooth]# pair <MUSE_MAC_ADDRESS>
+[bluetooth]# trust <MUSE_MAC_ADDRESS>
+[bluetooth]# connect <MUSE_MAC_ADDRESS>
+```
