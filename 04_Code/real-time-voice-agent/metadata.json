@@ -1,0 +1,6 @@
+{
+  "name": "Real-time Voice Agent",
+  "description": "A low-latency, real-time voice assistant built with the Gemini Live API, using Web Audio API for mic capture and high-quality speaker playback.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
