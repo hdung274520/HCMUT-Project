@@ -1,0 +1,75 @@
+HƯỚNG DẪN THIẾT LẬP VÀ ĐỒNG BỘ DỰ ÁN GIỮA FEDORA LINUX VÀ WINDOWS 11
+==================================================================
+
+BƯỚC 1: Thiết lập trên máy Fedora Linux
+---------------------------------------
+Trên máy Fedora, bạn sử dụng thư mục `/home/hdung274520/Project`:
+* Sử dụng nhánh `main` để làm việc song song với máy Windows.
+* Để cập nhật cấu hình mới nhất, hãy kéo code từ GitHub: `git checkout main && git pull`.
+
+Việc bạn cần làm trên Fedora lúc này (nếu cần):
+1. Tạo môi trường ảo Python và cài đặt thư viện:
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   pip install -r 04_Code/audio-agent/requirements.txt
+   ```
+2. Cài đặt các thư viện Node.js cho Frontend/Mobile (nếu cần):
+   * Đi vào thư mục: `cd 04_Code/web-app` (hoặc `mobile-app`)
+   * Chạy lệnh cài đặt cục bộ cho Linux: `npm install`
+3. Tạo file `.env.local` (nếu cần) chứa các biến môi trường đặc thù của Linux.
+
+
+BƯỚC 2: Thiết lập trên máy Windows 11 (Máy trạm phụ)
+---------------------------------------------------
+Trên máy Windows, thư mục dự án của bạn nằm ở `D:\Project`:
+
+1. Cấu hình Git cho dự án (đã thực hiện tự động):
+   ```bash
+   git config core.autocrlf true
+   git config core.fileMode false
+   ```
+
+2. Làm việc trực tiếp trên nhánh `main`:
+   ```bash
+   git checkout main
+   git pull origin main
+   ```
+   *(Nhờ cấu hình `autocrlf true`, Git trên Windows sẽ tự động chuyển đổi định dạng dòng LF từ repository thành CRLF cục bộ để tránh lỗi định dạng file trên các IDE/Text Editor của Windows).*
+
+3. Cài đặt thư viện trên Windows:
+   * Python (Tạo môi trường ảo và kích hoạt):
+     ```bash
+     python -m venv venv
+     .\venv\Scripts\activate
+     pip install -r 04_Code/audio-agent/requirements.txt
+     ```
+   * Node.js (Next.js/React Native - nếu có dependencies trong tương lai):
+     Vào thư mục `web-app` hoặc `mobile-app` và chạy:
+     ```bash
+     npm install
+     ```
+     (Thư mục `node_modules` cài trên Windows sẽ chỉ nằm trên Windows, không bị đồng bộ sang Linux nhờ có `.gitignore`).
+
+4. Tạo file `.env.local` trên Windows:
+   * Thiết lập các đường dẫn cục bộ kiểu Windows (ví dụ: `D:\\Project\\...`) tại đây.
+
+
+BƯỚC 3: Quy trình làm việc hàng ngày (Cách đồng bộ qua Git)
+---------------------------------------------------------
+Khi bạn muốn chuyển đổi qua lại giữa 2 máy:
+
+* Trước khi bắt đầu viết code (ở bất kỳ máy nào):
+  Luôn lấy code mới nhất từ GitHub về máy:
+  ```bash
+  git checkout main
+  git pull
+  ```
+
+* Sau khi viết code xong và muốn lưu lại:
+  Đẩy code lên GitHub:
+  ```bash
+  git add .
+  git commit -m "Nội dung thay đổi của bạn"
+  git push origin main
+  ```
