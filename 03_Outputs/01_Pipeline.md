@@ -112,32 +112,30 @@ graph LR
 
 ---
 
-## Cấu trúc Thư mục Đề xuất (Proposed Folder Structure)
+## Cấu trúc Thư mục Hệ thống (System Folder Structure)
 
 ```text
 /home/hdung274520/Project/
-├── 01_Documents/                     <-- Sách tham khảo EEG, tài liệu nghiên cứu, ghi chú ý tưởng
-│   ├── 02_cambridge-core.../         <-- Sách hướng dẫn đọc sóng não EEG
-│   ├── 03_Kotai-VoiceAgent/          <-- Mã nguồn mẫu trợ lý giọng nói chạy local tham khảo
-│   │   └── Kotai-VoiceAgent/
-│   │       ├── backend/
-│   │       │   └── Kokoro-TTS-Local/
-│   │       └── frontend/
-│   └── yy_Brainstorms/               <-- Các ghi chép ý tưởng ban đầu của nhóm phát triển
-├── 03_Outputs/                       <-- Báo cáo kết quả dự án, thiết kế luồng xử lý (pipeline)
+├── 01_Documents/                     <-- Tài liệu nghiên cứu, sách tham khảo, biên bản brainstorm
+│   ├── 02_cambridge-core_how-to-read-an-eeg_31Aug2025/  <-- Sách hướng dẫn đọc sóng não EEG (các file PDF)
+│   ├── 23_AETA2025_ID63.pdf          <-- Tài liệu nghiên cứu liên quan
+│   ├── yy_Brainstorms/               <-- Các ghi chép ý tưởng, slide brainstorm của nhóm phát triển
+│   │   └── 01_Brainstorm 11 06 2026.pdf
+│   └── zz_Mininotes.gdoc             <-- Ghi chú nhanh dự án
+├── 03_Outputs/                       <-- Báo cáo kết quả dự án, tài liệu thiết kế luồng xử lý
+│   ├── 01_Pipeline.md                <-- Tài liệu thiết kế luồng hoạt động hệ thống (file này)
+│   ├── 02_Conda.md                   <-- Hướng dẫn thiết lập môi trường Conda
+│   └── 03_CLI.md                     <-- Hướng dẫn giao diện dòng lệnh (Command Line Interface)
 ├── 04_Code/                          <-- Toàn bộ mã nguồn triển khai của hệ thống
-│   ├── audio-agent/                  <-- Core Voice Agent & Edge Client chạy trên Raspberry Pi 4
-│   │   └── tools/                    <-- Chứa các API Tools định nghĩa cho Gemini LLM
-│   ├── aws-services/                 <-- Xử lý tiền lọc tín hiệu y tế và mô hình GRU RNN trên AWS
-│   ├── mobile-app/                   <-- Ứng dụng di động Android (React Native / Expo)
-│   └── web-app/                      <-- Ứng dụng Web Dashboard quản lý (Next.js)
-│       └── app/                      <-- Thư mục chứa các page của Next.js App Router
-├── 05_Data/                          <-- Nơi lưu trữ tập dữ liệu (Dataset) phục vụ nghiên cứu & AI
-│   ├── metadata/                     <-- Cấu hình sơ đồ kênh đo, thông tin đối tượng tham gia
-│   ├── processed/                    <-- Dữ liệu EEG/PPG đã qua lọc nhiễu và chia cửa sổ
-│   └── raw/                          <-- Tín hiệu sóng y tế thô thu từ Muse 2
-├── 06_Models/                        <-- Lưu trữ các trọng số và checkpoints của mô hình GRU RNN
-└── 07_Experiments/                   <-- Nhật ký chạy thử nghiệm và đánh giá chất lượng mô hình
+│   ├── 01_audio-agent/               <-- Core Voice Agent & Edge Client chạy trên Raspberry Pi 4 (Hiện tại trống)
+│   ├── 02_aws-services/              <-- Xử lý tiền lọc tín hiệu y tế và mô hình GRU RNN trên AWS (Hiện tại trống)
+│   ├── 03_mobile-app/                <-- Ứng dụng di động Android (React Native / Expo) (Hiện tại trống)
+│   └── 04_web-app/                   <-- Giao diện Web Dashboard quản lý sinh hiệu & EEG (Hiện tại trống)
+├── 05_Data/                          <-- Nơi lưu trữ tập dữ liệu (Dataset) phục vụ nghiên cứu & AI (Hiện tại trống, thiết kế gồm các thư mục con: raw, processed, metadata)
+├── 06_Models/                        <-- Lưu trữ các trọng số và checkpoints của mô hình GRU RNN (Hiện tại trống)
+├── 07_Experiments/                   <-- Nhật ký chạy thử nghiệm và đánh giá chất lượng mô hình (Hiện tại trống)
+├── device_constraints.yaml            <-- Ràng buộc về tài nguyên thiết bị phần cứng
+└── README.md                         <-- Hướng dẫn giới thiệu dự án chung
 ```
 
 ---

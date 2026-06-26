@@ -29,27 +29,26 @@ This research and development project aims to bridge the gap between physiologic
 
 ```text
 /home/hdung274520/Project/
-├── README.md                      <-- This document (Project introduction & guide)
-├── 00_References.gsheet           <-- Shared Google Sheet for references and literature search
-├── 01_Documents/                  <-- Research documents, books, and reference guides
-│   ├── 02_cambridge-core.../      <-- Reference book: How to Read an EEG
-│   ├── 03_Kotai-VoiceAgent/       <-- Sample code template (Local voice assistant reference)
-│   ├── 23_AETA2025_ID63.pdf       <-- Literature reference paper
-│   ├── yy_Brainstorms/            <-- Initial brainstorming notes
-│   └── zz_Mininotes.gdoc          <-- Project scratchpad and notes
-├── 02_Tasks.gsheet                <-- Project timeline, task allocation, and milestones
-├── 03_Outputs/                    <-- Reports, pipelines, and publications outputs
-│   └── 01_Pipeline.gdoc           <-- System pipeline flow design link
-├── 04_Code/                       <-- Source code of the actual implementation
-│   ├── audio-agent/               <-- Voice agent backend scripts and configurations
-│   ├── aws-services/              <-- Cloud Infrastructure as Code, Lambda functions, APIs
-│   └── mobile-app/                <-- Frontend code for the iOS/Android mobile dashboard
-├── 05_Data/                       <-- Dataset storage
-│   ├── raw/                       <-- Unprocessed medical signals (e.g., EDF, CSV)
-│   ├── processed/                 <-- Cleaned, filtered, and epoched sleep/vital sign data
-│   └── metadata/                  <-- Subject metadata, channel mappings, and labels
-├── 06_Models/                     <-- Trained AI models and neural net checkpoints
-└── 07_Experiments/                <-- Performance metrics, logs, and evaluation reports
+├── README.md                         <-- This document (Project introduction & guide)
+├── device_constraints.yaml            <-- Hardware resource constraints configuration
+├── 01_Documents/                     <-- Research documents, books, and reference guides
+│   ├── 02_cambridge-core_how-to-read-an-eeg_31Aug2025/  <-- Reference book: How to Read an EEG (PDFs)
+│   ├── 23_AETA2025_ID63.pdf          <-- Literature reference paper
+│   ├── yy_Brainstorms/               <-- Brainstorming slides and notes
+│   │   └── 01_Brainstorm 11 06 2026.pdf
+│   └── zz_Mininotes.gdoc             <-- Project scratchpad and notes
+├── 03_Outputs/                       <-- Reports, pipelines, and publications outputs
+│   ├── 01_Pipeline.md                <-- System pipeline architecture design (Markdown)
+│   ├── 02_Conda.md                   <-- Conda environment setup instructions
+│   └── 03_CLI.md                     <-- Command Line Interface documentation
+├── 04_Code/                          <-- Source code of the actual implementation
+│   ├── 01_audio-agent/               <-- Core Voice Agent & Edge Client running on Raspberry Pi 4 (Currently empty)
+│   ├── 02_aws-services/              <-- Cloud Infrastructure, Lambda functions, and APIs on AWS (Currently empty)
+│   ├── 03_mobile-app/                <-- iOS/Android mobile dashboard (React Native / Expo) (Currently empty)
+│   └── 04_web-app/                   <-- Web Dashboard for monitoring sleep, eeg & vitals (Currently empty)
+├── 05_Data/                          <-- Dataset storage (Currently empty, planned subfolders: raw, processed, metadata)
+├── 06_Models/                        <-- Trained AI models and neural net checkpoints (Currently empty)
+└── 07_Experiments/                   <-- Performance metrics, logs, and evaluation reports (Currently empty)
 ```
 
 ---
