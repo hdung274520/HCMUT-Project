@@ -1,0 +1,109 @@
+{
+  "$schema": "../../../05_Data/schemas/active_session_schema.json",
+  "metadata": {
+    "session_id": "ses-20260630-sleep-001",
+    "session_type": "sleep",
+    "timestamp_start": "2026-06-29T23:00:00+07:00",
+    "timestamp_end": "2026-06-30T06:30:00+07:00",
+    "duration_seconds": 27000,
+    "user_context": {
+      "age": 24,
+      "gender": "male",
+      "activity_state": "Resting"
+    }
+  },
+  "summary_insights": {
+    "overall_score": 82,
+    "average_vitals": {
+      "heart_rate_bpm": 58,
+      "hrv_ms": 42.5,
+      "systolic_bp": 112,
+      "diastolic_bp": 72
+    },
+    "average_eeg": {
+      "alpha": 0.12,
+      "beta": 0.08,
+      "theta": 0.38,
+      "delta": 0.42
+    },
+    "ai_summary_bullets": [
+      "Tổng thời gian ngủ 7.5 giờ — mức tốt cho sức khỏe.",
+      "Giai đoạn ngủ sâu (Deep Sleep) chiếm 22% — hơi thấp, nên tăng cường.",
+      "HRV trung bình 42.5ms — trong ngưỡng bình thường.",
+      "Nhịp tim khi ngủ ổn định, trung bình 58 bpm.",
+      "Sóng Delta chiếm ưu thế — chất lượng phục hồi tốt."
+    ],
+    "alerts": [
+      {
+        "type": "sleep_quality",
+        "severity": "info",
+        "message": "Deep Sleep chỉ chiếm 22% — nên hạn chế caffeine sau 14h."
+      },
+      {
+        "type": "heart_rate",
+        "severity": "info",
+        "message": "Nhịp tim ổn định trong suốt giấc ngủ."
+      }
+    ]
+  },
+  "cognitive_states": {
+    "state_distribution": {
+      "Awake": 0.08,
+      "Light": 0.45,
+      "Deep": 0.22,
+      "REM": 0.25
+    },
+    "state_blocks": [
+      { "state": "Awake", "start_time": "2026-06-29T23:00:00+07:00", "end_time": "2026-06-29T23:15:00+07:00", "duration_seconds": 900 },
+      { "state": "Light", "start_time": "2026-06-29T23:15:00+07:00", "end_time": "2026-06-30T00:00:00+07:00", "duration_seconds": 2700 },
+      { "state": "Deep", "start_time": "2026-06-30T00:00:00+07:00", "end_time": "2026-06-30T01:00:00+07:00", "duration_seconds": 3600 },
+      { "state": "REM", "start_time": "2026-06-30T01:00:00+07:00", "end_time": "2026-06-30T01:30:00+07:00", "duration_seconds": 1800 },
+      { "state": "Light", "start_time": "2026-06-30T01:30:00+07:00", "end_time": "2026-06-30T02:30:00+07:00", "duration_seconds": 3600 },
+      { "state": "Deep", "start_time": "2026-06-30T02:30:00+07:00", "end_time": "2026-06-30T03:15:00+07:00", "duration_seconds": 2700 },
+      { "state": "REM", "start_time": "2026-06-30T03:15:00+07:00", "end_time": "2026-06-30T04:00:00+07:00", "duration_seconds": 2700 },
+      { "state": "Light", "start_time": "2026-06-30T04:00:00+07:00", "end_time": "2026-06-30T05:00:00+07:00", "duration_seconds": 3600 },
+      { "state": "Deep", "start_time": "2026-06-30T05:00:00+07:00", "end_time": "2026-06-30T05:20:00+07:00", "duration_seconds": 1200 },
+      { "state": "REM", "start_time": "2026-06-30T05:20:00+07:00", "end_time": "2026-06-30T06:00:00+07:00", "duration_seconds": 2400 },
+      { "state": "Light", "start_time": "2026-06-30T06:00:00+07:00", "end_time": "2026-06-30T06:15:00+07:00", "duration_seconds": 900 },
+      { "state": "Awake", "start_time": "2026-06-30T06:15:00+07:00", "end_time": "2026-06-30T06:30:00+07:00", "duration_seconds": 900 }
+    ]
+  },
+  "eeg_series": [
+    { "timestamp": "23:00", "alpha": 0.28, "beta": 0.35, "theta": 0.22, "delta": 0.15 },
+    { "timestamp": "23:15", "alpha": 0.22, "beta": 0.18, "theta": 0.35, "delta": 0.25 },
+    { "timestamp": "23:30", "alpha": 0.15, "beta": 0.12, "theta": 0.38, "delta": 0.35 },
+    { "timestamp": "23:45", "alpha": 0.10, "beta": 0.08, "theta": 0.32, "delta": 0.50 },
+    { "timestamp": "00:00", "alpha": 0.08, "beta": 0.06, "theta": 0.28, "delta": 0.58 },
+    { "timestamp": "00:30", "alpha": 0.06, "beta": 0.05, "theta": 0.25, "delta": 0.64 },
+    { "timestamp": "01:00", "alpha": 0.12, "beta": 0.10, "theta": 0.40, "delta": 0.38 },
+    { "timestamp": "01:30", "alpha": 0.15, "beta": 0.12, "theta": 0.38, "delta": 0.35 },
+    { "timestamp": "02:00", "alpha": 0.12, "beta": 0.10, "theta": 0.35, "delta": 0.43 },
+    { "timestamp": "02:30", "alpha": 0.07, "beta": 0.05, "theta": 0.26, "delta": 0.62 },
+    { "timestamp": "03:00", "alpha": 0.10, "beta": 0.08, "theta": 0.42, "delta": 0.40 },
+    { "timestamp": "03:30", "alpha": 0.14, "beta": 0.12, "theta": 0.38, "delta": 0.36 },
+    { "timestamp": "04:00", "alpha": 0.16, "beta": 0.14, "theta": 0.36, "delta": 0.34 },
+    { "timestamp": "04:30", "alpha": 0.12, "beta": 0.10, "theta": 0.38, "delta": 0.40 },
+    { "timestamp": "05:00", "alpha": 0.08, "beta": 0.06, "theta": 0.28, "delta": 0.58 },
+    { "timestamp": "05:30", "alpha": 0.15, "beta": 0.12, "theta": 0.40, "delta": 0.33 },
+    { "timestamp": "06:00", "alpha": 0.20, "beta": 0.15, "theta": 0.35, "delta": 0.30 },
+    { "timestamp": "06:30", "alpha": 0.30, "beta": 0.28, "theta": 0.25, "delta": 0.17 }
+  ],
+  "vitals_series": [
+    { "timestamp": "23:00", "heart_rate": 72, "hrv": 35, "systolic": 118, "diastolic": 76 },
+    { "timestamp": "23:30", "heart_rate": 65, "hrv": 38, "systolic": 115, "diastolic": 74 },
+    { "timestamp": "00:00", "heart_rate": 58, "hrv": 42, "systolic": 112, "diastolic": 72 },
+    { "timestamp": "00:30", "heart_rate": 54, "hrv": 45, "systolic": 110, "diastolic": 70 },
+    { "timestamp": "01:00", "heart_rate": 56, "hrv": 44, "systolic": 112, "diastolic": 72 },
+    { "timestamp": "01:30", "heart_rate": 60, "hrv": 40, "systolic": 114, "diastolic": 73 },
+    { "timestamp": "02:00", "heart_rate": 55, "hrv": 46, "systolic": 110, "diastolic": 70 },
+    { "timestamp": "02:30", "heart_rate": 52, "hrv": 48, "systolic": 108, "diastolic": 68 },
+    { "timestamp": "03:00", "heart_rate": 58, "hrv": 43, "systolic": 112, "diastolic": 72 },
+    { "timestamp": "03:30", "heart_rate": 56, "hrv": 44, "systolic": 110, "diastolic": 71 },
+    { "timestamp": "04:00", "heart_rate": 58, "hrv": 42, "systolic": 112, "diastolic": 72 },
+    { "timestamp": "04:30", "heart_rate": 55, "hrv": 45, "systolic": 110, "diastolic": 70 },
+    { "timestamp": "05:00", "heart_rate": 52, "hrv": 47, "systolic": 108, "diastolic": 68 },
+    { "timestamp": "05:30", "heart_rate": 58, "hrv": 43, "systolic": 112, "diastolic": 72 },
+    { "timestamp": "06:00", "heart_rate": 62, "hrv": 40, "systolic": 115, "diastolic": 74 },
+    { "timestamp": "06:30", "heart_rate": 70, "hrv": 36, "systolic": 118, "diastolic": 76 }
+  ]
+}

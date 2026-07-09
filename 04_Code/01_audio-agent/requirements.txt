@@ -1,0 +1,36 @@
+# =============================================================
+# Voice Agent dependencies (Python 3.11, CPU-only / Intel Iris Xe)
+# Install inside the conda env created by setup.sh
+# System libs (ffmpeg, libsndfile, portaudio) are installed via conda.
+# =============================================================
+
+# --- Core / config ---
+python-dotenv>=1.0.1
+numpy>=1.26,<2.2
+
+# --- Audio I/O (microphone + speaker) ---
+sounddevice>=0.4.6        # PortAudio bindings: record mic + play audio
+soundfile>=0.12.1         # read/write wav (needs libsndfile)
+
+# --- STT: local (offline, multilingual, CPU int8) ---
+faster-whisper>=1.0.3
+
+# --- TTS: local (offline, fast, ONNX) ---
+piper-tts>=1.2.0
+onnxruntime>=1.17
+
+# --- TTS: API/online (no key needed) ---
+gTTS>=2.5.1
+
+# --- LLM: API (Google Gemini cloud) — new official SDK ---
+google-genai>=1.0.0
+
+# --- LLM: local (Ollama) is reached over HTTP, only needs requests ---
+requests>=2.31
+
+# --- Web UI + realtime streaming ---
+fastapi>=0.110
+uvicorn>=0.29
+python-multipart>=0.0.9   # parse uploaded audio blobs
+websockets>=12.0          # realtime audio stream
+webrtcvad-wheels>=2.0.14  # voice activity detection (turn + barge-in)

@@ -1,0 +1,148 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DailyVitalsAndActivities",
+  "description": "Background continuous tracking vitals and activities synced from wearables (Galaxy Fit 3).",
+  "type": "object",
+  "required": ["metadata", "daily_summary", "activities"],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "required": ["user_id", "date", "synced_at"],
+      "properties": {
+        "user_id": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "synced_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "daily_summary": {
+      "type": "object",
+      "required": ["resting_heart_rate_bpm", "average_blood_oxygen_pct", "average_blood_pressure"],
+      "properties": {
+        "resting_heart_rate_bpm": {
+          "type": "integer"
+        },
+        "average_blood_oxygen_pct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "average_blood_pressure": {
+          "type": "object",
+          "required": ["systolic", "diastolic"],
+          "properties": {
+            "systolic": {
+              "type": "integer"
+            },
+            "diastolic": {
+              "type": "integer"
+            }
+          }
+        },
+        "sleep_summary": {
+          "type": "object",
+          "properties": {
+            "total_sleep_seconds": {
+              "type": "integer"
+            },
+            "sleep_score": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "activities": {
+      "type": "object",
+      "required": ["steps", "active_minutes", "calories_burned_kcal"],
+      "properties": {
+        "steps": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "active_minutes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "calories_burned_kcal": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "heart_rate_log": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["timestamp", "bpm"],
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "bpm": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "blood_oxygen_log": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["timestamp", "spo2_pct"],
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "spo2_pct": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "workout_sessions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["workout_id", "type", "timestamp_start", "timestamp_end", "duration_seconds", "calories_burned_kcal"],
+        "properties": {
+          "workout_id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "timestamp_start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "timestamp_end": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "duration_seconds": {
+            "type": "integer"
+          },
+          "calories_burned_kcal": {
+            "type": "integer"
+          },
+          "average_heart_rate": {
+            "type": "integer"
+          },
+          "max_heart_rate": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  }
+}

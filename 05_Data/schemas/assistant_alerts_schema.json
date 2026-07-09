@@ -1,0 +1,123 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AssistantDialoguesAndAlertEvents",
+  "description": "Dialogue logs, health logging events, and proactive voice alerting states.",
+  "type": "object",
+  "required": ["metadata", "interaction_log"],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "required": ["session_id", "user_id", "timestamp"],
+      "properties": {
+        "session_id": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "interaction_log": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["timestamp", "speaker", "text"],
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "speaker": {
+            "type": "string",
+            "enum": ["user", "assistant"]
+          },
+          "text": {
+            "type": "string"
+          },
+          "vosk_confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "action_details": {
+            "type": "object",
+            "properties": {
+              "intent_detected": {
+                "type": "string"
+              },
+              "tool_called": {
+                "type": "string"
+              },
+              "context_tokens_used": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    },
+    "voice_health_logs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["timestamp", "category", "raw_statement", "extracted_entities"],
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "category": {
+            "type": "string",
+            "enum": ["symptom", "medication", "diet", "sleep_comment", "exercise"]
+          },
+          "raw_statement": {
+            "type": "string"
+          },
+          "extracted_entities": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "proactive_alerts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["alert_id", "timestamp", "vital_type", "value", "threshold", "alert_text", "call_status"],
+        "properties": {
+          "alert_id": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "vital_type": {
+            "type": "string",
+            "enum": ["heart_rate", "blood_pressure", "spo2", "sleep_apnea_indices"]
+          },
+          "value": {
+            "type": "number"
+          },
+          "threshold": {
+            "type": "number"
+          },
+          "alert_text": {
+            "type": "string"
+          },
+          "call_status": {
+            "type": "string",
+            "enum": ["pending", "dialed", "connected", "ignored", "failed"]
+          }
+        }
+      }
+    }
+  }
+}

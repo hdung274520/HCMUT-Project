@@ -1,0 +1,114 @@
+{
+  "$schema": "../../../05_Data/schemas/assistant_alerts_schema.json",
+  "metadata": {
+    "session_id": "dialog-20260630-001",
+    "user_id": "user-hdung-001",
+    "timestamp": "2026-06-30T08:00:00+07:00"
+  },
+  "interaction_log": [
+    {
+      "timestamp": "2026-06-30T08:00:12+07:00",
+      "speaker": "user",
+      "text": "Chào buổi sáng, hôm nay tôi ngủ có ngon không?",
+      "vosk_confidence": 0.92
+    },
+    {
+      "timestamp": "2026-06-30T08:00:18+07:00",
+      "speaker": "assistant",
+      "text": "Chào buổi sáng! Bạn ngủ được 7.5 giờ với điểm giấc ngủ 82/100, khá tốt đấy! Deep Sleep chiếm 22%, hơi thấp nên bạn có thể hạn chế caffeine sau 14h nhé.",
+      "action_details": {
+        "intent_detected": "query_sleep_quality",
+        "tool_called": "get_sleep_summary",
+        "context_tokens_used": 245
+      }
+    },
+    {
+      "timestamp": "2026-06-30T08:01:05+07:00",
+      "speaker": "user",
+      "text": "Nhịp tim của tôi bây giờ thế nào?",
+      "vosk_confidence": 0.88
+    },
+    {
+      "timestamp": "2026-06-30T08:01:12+07:00",
+      "speaker": "assistant",
+      "text": "Nhịp tim hiện tại là 74 bpm, nằm trong vùng bình thường. Nhịp tim nghỉ ngơi trung bình của bạn hôm nay là 64 bpm — rất ổn định!",
+      "action_details": {
+        "intent_detected": "query_heart_rate",
+        "tool_called": "get_current_vitals",
+        "context_tokens_used": 180
+      }
+    },
+    {
+      "timestamp": "2026-06-30T08:02:30+07:00",
+      "speaker": "user",
+      "text": "Huyết áp tôi ổn không?",
+      "vosk_confidence": 0.95
+    },
+    {
+      "timestamp": "2026-06-30T08:02:38+07:00",
+      "speaker": "assistant",
+      "text": "Huyết áp trung bình hôm nay là 120/78 mmHg — nằm trong ngưỡng lý tưởng. Baseline của bạn là 118/76, hoàn toàn ổn định!",
+      "action_details": {
+        "intent_detected": "query_blood_pressure",
+        "tool_called": "get_blood_pressure",
+        "context_tokens_used": 210
+      }
+    },
+    {
+      "timestamp": "2026-06-30T08:03:45+07:00",
+      "speaker": "user",
+      "text": "Sáng nay tôi chạy bộ 45 phút, kết quả ra sao?",
+      "vosk_confidence": 0.90
+    },
+    {
+      "timestamp": "2026-06-30T08:03:55+07:00",
+      "speaker": "assistant",
+      "text": "Tuyệt vời! Bạn chạy bộ 45 phút đốt 340 kcal, nhịp tim trung bình 142 bpm (vùng Aerobic). Max HR đạt 168 — hiệu quả cardiovascular tốt!",
+      "action_details": {
+        "intent_detected": "query_workout",
+        "tool_called": "get_workout_summary",
+        "context_tokens_used": 320
+      }
+    }
+  ],
+  "voice_health_logs": [
+    {
+      "timestamp": "2026-06-30T07:30:00+07:00",
+      "category": "exercise",
+      "raw_statement": "Tôi vừa chạy bộ xong 45 phút",
+      "extracted_entities": {
+        "activity": "running",
+        "duration": "45 minutes"
+      }
+    },
+    {
+      "timestamp": "2026-06-30T12:00:00+07:00",
+      "category": "diet",
+      "raw_statement": "Tôi ăn trưa với cơm gà và rau",
+      "extracted_entities": {
+        "meal_type": "lunch",
+        "food_items": "rice, chicken, vegetables"
+      }
+    }
+  ],
+  "proactive_alerts": [
+    {
+      "alert_id": "alert-20260630-001",
+      "timestamp": "2026-06-30T07:10:00+07:00",
+      "vital_type": "heart_rate",
+      "value": 168,
+      "threshold": 170,
+      "alert_text": "Nhịp tim đang tiến gần ngưỡng cảnh báo (168/170 bpm) trong lúc chạy bộ.",
+      "call_status": "connected"
+    },
+    {
+      "alert_id": "alert-20260630-002",
+      "timestamp": "2026-06-30T03:15:00+07:00",
+      "vital_type": "spo2",
+      "value": 94,
+      "threshold": 95,
+      "alert_text": "SpO2 giảm nhẹ xuống 94% trong giấc ngủ — tiếp tục theo dõi.",
+      "call_status": "pending"
+    }
+  ]
+}

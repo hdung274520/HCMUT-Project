@@ -1,0 +1,46 @@
+{
+  "$schema": "../../../05_Data/schemas/user_profile_schema.json",
+  "metadata": {
+    "user_id": "user-hdung-001",
+    "updated_at": "2026-06-30T09:00:00+07:00"
+  },
+  "demographics": {
+    "age": 24,
+    "gender": "male",
+    "height_cm": 172,
+    "weight_kg": 68,
+    "calculated_metrics": {
+      "bmi": 22.99,
+      "bmr_kcal": 1725
+    }
+  },
+  "physiological_baselines": {
+    "max_heart_rate": 196,
+    "resting_heart_rate": {
+      "min": 58,
+      "max": 72,
+      "avg": 65
+    },
+    "target_heart_rate_zones": {
+      "warm_up": { "min": 98, "max": 118 },
+      "fat_burn": { "min": 118, "max": 137 },
+      "aerobic": { "min": 137, "max": 157 },
+      "anaerobic": { "min": 157, "max": 176 }
+    },
+    "blood_pressure_baseline": {
+      "systolic": 118,
+      "diastolic": 76
+    }
+  },
+  "eeg_baselines": {
+    "alpha_dominant_rhythm_hz": 10.2,
+    "individual_alpha_frequency_iaf": 10.5,
+    "baseline_sessions_completed": 12,
+    "average_power_bands": {
+      "alpha": 0.32,
+      "beta": 0.18,
+      "theta": 0.28,
+      "delta": 0.22
+    }
+  }
+}

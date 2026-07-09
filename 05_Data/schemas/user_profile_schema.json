@@ -1,0 +1,156 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "UserProfileAndBaselines",
+  "description": "User profile, physiological metrics, heart rate zones, and adaptive EEG baselines.",
+  "type": "object",
+  "required": ["metadata", "demographics", "physiological_baselines", "eeg_baselines"],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "required": ["user_id", "updated_at"],
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "description": "Unique identifier for the user"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "demographics": {
+      "type": "object",
+      "required": ["age", "gender", "height_cm", "weight_kg"],
+      "properties": {
+        "age": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 120
+        },
+        "gender": {
+          "type": "string",
+          "enum": ["male", "female", "other"]
+        },
+        "height_cm": {
+          "type": "number",
+          "minimum": 30,
+          "maximum": 300
+        },
+        "weight_kg": {
+          "type": "number",
+          "minimum": 5,
+          "maximum": 500
+        },
+        "calculated_metrics": {
+          "type": "object",
+          "properties": {
+            "bmi": {
+              "type": "number"
+            },
+            "bmr_kcal": {
+              "type": "number",
+              "description": "Basal Metabolic Rate in kcal/day"
+            }
+          }
+        }
+      }
+    },
+    "physiological_baselines": {
+      "type": "object",
+      "required": ["max_heart_rate", "resting_heart_rate", "blood_pressure_baseline"],
+      "properties": {
+        "max_heart_rate": {
+          "type": "integer",
+          "description": "Max HR calculated as 220 - age"
+        },
+        "resting_heart_rate": {
+          "type": "object",
+          "required": ["min", "max", "avg"],
+          "properties": {
+            "min": {
+              "type": "integer"
+            },
+            "max": {
+              "type": "integer"
+            },
+            "avg": {
+              "type": "integer"
+            }
+          }
+        },
+        "target_heart_rate_zones": {
+          "type": "object",
+          "properties": {
+            "warm_up": {
+              "type": "object",
+              "properties": {
+                "min": { "type": "integer" },
+                "max": { "type": "integer" }
+              }
+            },
+            "fat_burn": {
+              "type": "object",
+              "properties": {
+                "min": { "type": "integer" },
+                "max": { "type": "integer" }
+              }
+            },
+            "aerobic": {
+              "type": "object",
+              "properties": {
+                "min": { "type": "integer" },
+                "max": { "type": "integer" }
+              }
+            },
+            "anaerobic": {
+              "type": "object",
+              "properties": {
+                "min": { "type": "integer" },
+                "max": { "type": "integer" }
+              }
+            }
+          }
+        },
+        "blood_pressure_baseline": {
+          "type": "object",
+          "required": ["systolic", "diastolic"],
+          "properties": {
+            "systolic": {
+              "type": "integer"
+            },
+            "diastolic": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "eeg_baselines": {
+      "type": "object",
+      "required": ["alpha_dominant_rhythm_hz", "baseline_sessions_completed"],
+      "properties": {
+        "alpha_dominant_rhythm_hz": {
+          "type": "number",
+          "description": "Adaptive Alpha frequency adjusted for age"
+        },
+        "individual_alpha_frequency_iaf": {
+          "type": "number"
+        },
+        "baseline_sessions_completed": {
+          "type": "integer",
+          "description": "Number of baseline calibration sessions run"
+        },
+        "average_power_bands": {
+          "type": "object",
+          "properties": {
+            "alpha": { "type": "number" },
+            "beta": { "type": "number" },
+            "theta": { "type": "number" },
+            "delta": { "type": "number" }
+          }
+        }
+      }
+    }
+  }
+}
