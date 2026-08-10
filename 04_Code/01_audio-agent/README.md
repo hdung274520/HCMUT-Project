@@ -92,8 +92,7 @@ Nếu agent ngắt lời quá sớm/muộn, chỉnh trong `.env.local`:
 ```
 01_audio-agent/
 ├── run.py               # chạy CLI (giọng nói / --text)
-├── server.py            # web server (FastAPI) cho giao diện trình duyệt
-├── web/index.html       # giao diện web (nút nói + khung chat)
+├── server.py            # web server (FastAPI), phục vụ dashboard ở ../04_web-app
 ├── download_models.py   # tải Piper voice
 ├── setup.sh             # dựng môi trường conda
 ├── requirements.txt

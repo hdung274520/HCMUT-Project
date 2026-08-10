@@ -27,22 +27,22 @@
       "delta": 0.42
     },
     "ai_summary_bullets": [
-      "Tổng thời gian ngủ 7.5 giờ — mức tốt cho sức khỏe.",
-      "Giai đoạn ngủ sâu (Deep Sleep) chiếm 22% — hơi thấp, nên tăng cường.",
-      "HRV trung bình 42.5ms — trong ngưỡng bình thường.",
-      "Nhịp tim khi ngủ ổn định, trung bình 58 bpm.",
-      "Sóng Delta chiếm ưu thế — chất lượng phục hồi tốt."
+      "Total sleep time 7.5 hours — a good level for your health.",
+      "Deep Sleep makes up 22% — a bit low, worth improving.",
+      "Average HRV 42.5ms — within the normal range.",
+      "Heart rate during sleep is stable, averaging 58 bpm.",
+      "Delta waves dominate — good recovery quality."
     ],
     "alerts": [
       {
         "type": "sleep_quality",
         "severity": "info",
-        "message": "Deep Sleep chỉ chiếm 22% — nên hạn chế caffeine sau 14h."
+        "message": "Deep Sleep is only 22% — consider limiting caffeine after 2 PM."
       },
       {
         "type": "heart_rate",
         "severity": "info",
-        "message": "Nhịp tim ổn định trong suốt giấc ngủ."
+        "message": "Heart rate stayed stable throughout sleep."
       }
     ]
   },

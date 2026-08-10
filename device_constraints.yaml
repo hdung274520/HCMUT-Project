@@ -29,13 +29,12 @@ hardware:
     gpu: "Broadcom VideoCore VI (None-CUDA)"
 
 # 3. Trí tuệ Nhân tạo (Artificial Intelligence Engine)
-# Các mô hình STT, TTS và Agent core sẽ chạy trực tiếp trên Raspberry Pi 4.
-# Máy Fedora 44 chỉ đóng vai trò làm bộ kết nối, SSH terminal và phát triển.
+# Các mô hình STT, TTS và Agent core chạy hoàn toàn offline bằng cách tự động chọn cấu hình phù hợp với thiết bị.
 ai_engine:
-  llm_brand: "Google Gemini"
-  llm_model: "gemini-1.5-flash"  # Sử dụng Cloud API từ Raspberry Pi 4
-  stt_model: "vosk"             # Chạy offline siêu nhẹ trên CPU Raspberry Pi 4 (hoặc Deepgram API)
-  tts_model: "piper-tts"        # Chạy offline siêu nhanh tối ưu cho Raspberry Pi 4 (ONNX)
+  llm_brand: "Ollama (Offline)"
+  llm_model: "qwen2.5:3b (PC) / qwen2.5:0.5b (Raspberry Pi 4)"
+  stt_model: "faster-whisper-base (PC) / faster-whisper-tiny (Raspberry Pi 4)"
+  tts_model: "piper-tts (ONNX)"
 
 # 4. Thiết bị đo tín hiệu sinh học (Medical/Biological Sensors)
 # Cấu hình thiết bị đo EEG/PPG kết hợp Hợp nhất cảm biến (Sensor Fusion)

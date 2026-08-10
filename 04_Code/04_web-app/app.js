@@ -23,6 +23,36 @@ let sessionData = null;
 let alertsData = null;
 let chartsInitialized = false;
 
+// ========== UI strings ==========
+// Dynamically-inserted UI text (static text lives directly in index.html).
+const STR = {
+  'status.idle':       'Tap to start',
+  'status.listening':  '🟢 Listening... go ahead',
+  'status.thinking':   '🤔 Processing your answer...',
+  'status.speaking':   '🔊 Assistant is replying...',
+  'status.connectFail':'Cannot connect to Audio Agent (port 8000)',
+  'status.connError':  'Audio Agent connection error',
+  'status.micError':   'Microphone access error: ',
+  'status.audioFail':  "Couldn't play audio (browser autoplay blocked?): ",
+  'transcript.hint':   'Listening... say something',
+  'transcript.you':    'You:',
+  'gender.male':       'Male',
+  'gender.female':     'Female',
+  'gender.other':      'Other',
+  'act.steps':         'Steps',
+  'act.activeMin':     'Active min',
+  'act.cal':           'Calories',
+  'hyp.awake':         'Awake',
+  'hyp.light':         'Light',
+  'hyp.deep':          'Deep',
+  'zone.warmUp':       'Warm-up',
+  'zone.fatBurn':      'Fat burn',
+  'unit.min':          'min',
+  'chat.cleared':      'Conversation cleared. Tap the orb to talk again.',
+};
+
+function t(key) { return STR[key] ?? key; }
+
 // ========== Init ==========
 document.addEventListener('DOMContentLoaded', async () => {
   setHeaderDate();
@@ -39,7 +69,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 function setHeaderDate() {
   const now = new Date();
   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-  headerDate.textContent = now.toLocaleDateString('vi-VN', options);
+  headerDate.textContent = now.toLocaleDateString('en-US', options);
 }
 
 // ========== Data Loading ==========
@@ -140,50 +170,47 @@ function setupChat() {
   });
 }
 
-// Build system instruction with health context from loaded data
+// Build the English system instruction with health context from loaded data.
 function buildSystemInstruction() {
-  let prompt = 'Bạn là một trợ lý sức khỏe cực kỳ thân thiện, nhiệt tình và trả lời ngắn gọn (tối đa 2-3 câu). '
-    + 'Bạn sẽ trả lời các câu hỏi về chỉ số sinh hiệu và sức khỏe của người dùng. '
-    + 'Không dùng markdown, emoji hay liệt kê vì câu trả lời sẽ được đọc to.\n\n';
+  let prompt = 'You are an extremely friendly, warm health assistant that answers briefly (at most 2-3 sentences). '
+    + 'You answer questions about the user\'s vital signs and health. '
+    + 'Always reply in English. No markdown, emoji or lists, since the reply will be read aloud.\n\n';
 
   // Inject health data context
   if (profileData) {
     const d = profileData.demographics;
     const bl = profileData.physiological_baselines;
-    prompt += `Hồ sơ người dùng: ${d.age} tuổi, ${d.gender === 'male' ? 'nam' : 'nữ'}, `
-      + `${d.height_cm}cm, ${d.weight_kg}kg, BMI=${d.calculated_metrics.bmi}, `
-      + `BMR=${d.calculated_metrics.bmr_kcal}kcal. `
-      + `Nhịp tim nghỉ trung bình=${bl.resting_heart_rate.avg}bpm, `
-      + `nhịp tim tối đa=${bl.max_heart_rate}bpm, `
-      + `huyết áp baseline=${bl.blood_pressure_baseline.systolic}/${bl.blood_pressure_baseline.diastolic}mmHg.\n`;
+    const gender = d.gender === 'male' ? 'male' : 'female';
+    prompt += `User profile: ${d.age} years old, ${gender}, ${d.height_cm}cm, ${d.weight_kg}kg, `
+      + `BMI=${d.calculated_metrics.bmi}, BMR=${d.calculated_metrics.bmr_kcal}kcal. `
+      + `Average resting heart rate=${bl.resting_heart_rate.avg}bpm, max heart rate=${bl.max_heart_rate}bpm, `
+      + `baseline blood pressure=${bl.blood_pressure_baseline.systolic}/${bl.blood_pressure_baseline.diastolic}mmHg.\n`;
   }
 
   if (vitalsData) {
     const s = vitalsData.daily_summary;
-    prompt += `Sinh hiệu hôm nay: Nhịp tim nghỉ=${s.resting_heart_rate_bpm}bpm, `
-      + `huyết áp trung bình=${s.average_blood_pressure.systolic}/${s.average_blood_pressure.diastolic}mmHg, `
-      + `SpO2 trung bình=${s.average_blood_oxygen_pct}%, `
-      + `điểm giấc ngủ=${s.sleep_summary.sleep_score}/100, `
-      + `thời lượng ngủ=${s.sleep_summary.total_sleep_hours}h. `
-      + `Hoạt động: ${vitalsData.activities.steps} bước, `
-      + `${vitalsData.activities.active_minutes} phút, `
+    prompt += `Today's vitals: resting heart rate=${s.resting_heart_rate_bpm}bpm, `
+      + `average blood pressure=${s.average_blood_pressure.systolic}/${s.average_blood_pressure.diastolic}mmHg, `
+      + `average SpO2=${s.average_blood_oxygen_pct}%, sleep score=${s.sleep_summary.sleep_score}/100, `
+      + `sleep duration=${s.sleep_summary.total_sleep_hours}h. `
+      + `Activity: ${vitalsData.activities.steps} steps, ${vitalsData.activities.active_minutes} min, `
       + `${vitalsData.activities.calories_burned_kcal}kcal.\n`;
   }
 
   if (sessionData && sessionData.summary_insights) {
     const insights = sessionData.summary_insights;
     if (insights.ai_summary_bullets && insights.ai_summary_bullets.length > 0) {
-      prompt += `Phân tích AI: ${insights.ai_summary_bullets.join('. ')}.\n`;
+      prompt += 'AI analysis: ' + `${insights.ai_summary_bullets.join('. ')}.\n`;
     }
     if (insights.alerts && insights.alerts.length > 0) {
-      prompt += `Cảnh báo: ${insights.alerts.map(a => a.message).join('. ')}.\n`;
+      prompt += 'Alerts: ' + `${insights.alerts.map(a => a.message).join('. ')}.\n`;
     }
   }
 
   if (alertsData && alertsData.proactive_alerts) {
     const active = alertsData.proactive_alerts.filter(a => a.call_status !== 'resolved');
     if (active.length > 0) {
-      prompt += `Cảnh báo chủ động: ${active.map(a => a.alert_text).join('. ')}.\n`;
+      prompt += 'Proactive alerts: ' + `${active.map(a => a.alert_text).join('. ')}.\n`;
     }
   }
 
@@ -219,21 +246,22 @@ async function startAgent() {
       audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
     });
   } catch (e) {
-    statusText.textContent = 'Lỗi truy cập micro: ' + e.message;
+    statusText.textContent = t('status.micError') + e.message;
     return;
   }
 
-  // Build system instruction with health context
+  // Build the English system instruction with health context
   const systemInstruction = buildSystemInstruction();
 
   // Connect WebSocket to audio agent server
-  agentWs = new WebSocket(AGENT_WS_URL + '?system_instruction=' + encodeURIComponent(systemInstruction));
+  agentWs = new WebSocket(AGENT_WS_URL
+    + '?system_instruction=' + encodeURIComponent(systemInstruction));
   agentWs.binaryType = 'arraybuffer';
   agentWs.onmessage = onAgentMessage;
   agentWs.onclose = () => { if (agentRunning) stopAgent(); };
   agentWs.onerror = (e) => {
     console.error('WebSocket error:', e);
-    statusText.textContent = 'Lỗi kết nối Audio Agent';
+    statusText.textContent = t('status.connError');
     setConnectionBadge(false);
   };
 
@@ -243,8 +271,8 @@ async function startAgent() {
       setTimeout(() => reject(new Error('timeout')), 5000);
     });
   } catch (e) {
-    statusText.textContent = 'Không thể kết nối Audio Agent (port 8000)';
-    if (agentMicStream) agentMicStream.getTracks().forEach(t => t.stop());
+    statusText.textContent = t('status.connectFail');
+    if (agentMicStream) agentMicStream.getTracks().forEach(tr => tr.stop());
     return;
   }
 
@@ -277,7 +305,7 @@ async function startAgent() {
   const transBox = document.getElementById('live-transcript');
   if (transBox) {
     transBox.style.display = 'flex';
-    transBox.innerHTML = '<span style="opacity: 0.6;"><i class="fa-solid fa-ear-hearing" style="margin-right: 6px;"></i>Đang nghe... hãy nói gì đó</span>';
+    transBox.innerHTML = '<span style="opacity: 0.6;"><i class="fa-solid fa-ear-hearing" style="margin-right: 6px;"></i>' + t('transcript.hint') + '</span>';
   }
 }
 
@@ -288,7 +316,7 @@ function stopAgent() {
 
   if (agentWorkletNode) agentWorkletNode.disconnect();
   if (agentAudioCtx) agentAudioCtx.close();
-  if (agentMicStream) agentMicStream.getTracks().forEach(t => t.stop());
+  if (agentMicStream) agentMicStream.getTracks().forEach(tr => tr.stop());
   if (agentWs && agentWs.readyState === 1) agentWs.close();
 
   stopAgentPlayback();
@@ -401,27 +429,27 @@ function setOrbState(s) {
   if (s === 'listening') {
     orb.classList.add('listening');
     orb.innerHTML = '<i class="fa-solid fa-microphone"></i>';
-    statusText.textContent = '🟢 Đang nghe... bạn nói đi';
+    statusText.textContent = t('status.listening');
     
     // Automatically show/reset the transcript box for the next turn
     if (transBox && agentRunning) {
       transBox.style.display = 'flex';
-      transBox.innerHTML = '<span style="opacity: 0.6;"><i class="fa-solid fa-ear-hearing" style="margin-right: 6px;"></i>Đang nghe... hãy nói gì đó</span>';
+      transBox.innerHTML = '<span style="opacity: 0.6;"><i class="fa-solid fa-ear-hearing" style="margin-right: 6px;"></i>' + t('transcript.hint') + '</span>';
     }
   } else if (s === 'thinking') {
     orb.classList.add('thinking');
     orb.innerHTML = '<i class="fa-solid fa-arrows-spin fa-spin"></i>';
-    statusText.textContent = '🤔 Đang xử lý câu trả lời...';
+    statusText.textContent = t('status.thinking');
   } else if (s === 'speaking') {
     orb.classList.add('speaking');
     orb.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
-    statusText.textContent = '🔊 Trợ lý đang trả lời...';
+    statusText.textContent = t('status.speaking');
     
     // Hide transcript box when agent is talking
     if (transBox) transBox.style.display = 'none';
   } else {
     orb.innerHTML = '<i class="fa-solid fa-microphone"></i>';
-    statusText.textContent = 'Nhấn để bắt đầu';
+    statusText.textContent = t('status.idle');
     
     // Hide and clear transcript box on disconnect/idle
     if (transBox) {
@@ -476,7 +504,7 @@ function onAgentMessage(ev) {
     const transBox = document.getElementById('live-transcript');
     if (transBox) {
       transBox.style.display = 'flex';
-      transBox.innerHTML = `<span style="font-weight: 600; color: var(--primary-light);"><i class="fa-solid fa-microphone" style="margin-right: 6px; color: var(--success)"></i>Bạn:</span> <span style="margin-left: 5px;">"${m.text}"</span>`;
+      transBox.innerHTML = `<span style="font-weight: 600; color: var(--primary-light);"><i class="fa-solid fa-microphone" style="margin-right: 6px; color: var(--success)"></i>${t('transcript.you')}</span> <span style="margin-left: 5px;">"${m.text}"</span>`;
     }
   } else if (m.type === 'bot_chunk') {
     handleTextChunk(m.text, 'bot');
@@ -498,7 +526,10 @@ function onAgentMessage(ev) {
     // Full audio response (non-realtime mode)
     stopAgentPlayback();
     const player = new Audio(`data:${m.mime};base64,${m.data}`);
-    player.play().catch(e => console.warn('Audio playback error:', e));
+    player.play().catch(e => {
+      console.warn('Audio playback error:', e);
+      statusText.textContent = t('status.audioFail') + e.message;
+    });
   } else if (m.type === 'audio_chunk') {
     // Realtime PCM audio chunk from Gemini Live
     playPCMChunk(m.data);
@@ -523,7 +554,7 @@ function clearAgentHistory() {
   if (agentWs && agentWs.readyState === 1) {
     agentWs.send('reset');
   }
-  chatArea.innerHTML = '<div class="meta-info"><i class="fa-solid fa-clock-rotate-left" style="margin-right:6px"></i> Hội thoại đã được xóa. Nhấn quả cầu để nói chuyện lại.</div>';
+  chatArea.innerHTML = '<div class="meta-info"><i class="fa-solid fa-clock-rotate-left" style="margin-right:6px"></i> ' + t('chat.cleared') + '</div>';
   lastWho = null;
   lastBubble = null;
 }
@@ -532,7 +563,7 @@ function clearAgentHistory() {
 function renderProfile() {
   if (!profileData) return;
   const d = profileData.demographics;
-  const genderText = d.gender === 'male' ? 'Nam' : d.gender === 'female' ? 'Nữ' : 'Khác';
+  const genderText = d.gender === 'male' ? t('gender.male') : d.gender === 'female' ? t('gender.female') : t('gender.other');
   document.getElementById('profile-name').textContent = `User ${profileData.metadata.user_id.split('-').pop()}`;
   document.getElementById('profile-meta').textContent = `${d.age} tuổi · ${genderText} · ${d.height_cm}cm / ${d.weight_kg}kg`;
   document.getElementById('stat-bmi').textContent = d.calculated_metrics.bmi.toFixed(1);
@@ -646,7 +677,7 @@ function renderActivityChart() {
   new Chart(ctx, {
     type: 'doughnut',
     data: {
-      labels: ['Bước chân', 'Phút hoạt động', 'Calo'],
+      labels: [t('act.steps'), t('act.activeMin'), t('act.cal')],
       datasets: [{
         data: [
           Math.min((a.steps / goalSteps) * 100, 100),
@@ -685,15 +716,15 @@ function renderActivityChart() {
   const statsEl = document.getElementById('activity-stats');
   statsEl.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center">
-      <span style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#6366f1;display:inline-block"></span> Bước chân</span>
+      <span style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#6366f1;display:inline-block"></span> ${t('act.steps')}</span>
       <span style="font-weight:700">${a.steps.toLocaleString()} / ${goalSteps.toLocaleString()}</span>
     </div>
     <div style="display:flex;justify-content:space-between;align-items:center">
-      <span style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block"></span> Phút hoạt động</span>
+      <span style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block"></span> ${t('act.activeMin')}</span>
       <span style="font-weight:700">${a.active_minutes} / ${goalMinutes}</span>
     </div>
     <div style="display:flex;justify-content:space-between;align-items:center">
-      <span style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#f59e0b;display:inline-block"></span> Calo</span>
+      <span style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#f59e0b;display:inline-block"></span> ${t('act.cal')}</span>
       <span style="font-weight:700">${a.calories_burned_kcal.toLocaleString()} / ${goalCal.toLocaleString()}</span>
     </div>
   `;
@@ -1088,10 +1119,10 @@ function renderHypnogramSummary() {
   const totalSec = sessionData.metadata.duration_seconds;
 
   const stageConfig = [
-    { key: 'Awake', label: 'Thức',     cssClass: 'awake' },
-    { key: 'REM',   label: 'REM',      cssClass: 'rem' },
-    { key: 'Light', label: 'Ngủ nhẹ',  cssClass: 'light' },
-    { key: 'Deep',  label: 'Ngủ sâu',  cssClass: 'deep' }
+    { key: 'Awake', label: t('hyp.awake'), cssClass: 'awake' },
+    { key: 'REM',   label: 'REM',          cssClass: 'rem' },
+    { key: 'Light', label: t('hyp.light'), cssClass: 'light' },
+    { key: 'Deep',  label: t('hyp.deep'),  cssClass: 'deep' }
   ];
 
   stageConfig.forEach(s => {
@@ -1219,8 +1250,8 @@ function renderHRZones() {
   const container = document.getElementById('hr-zones');
 
   const zoneConfig = [
-    { key: 'warm_up', label: 'Khởi động', color: '#60a5fa' },
-    { key: 'fat_burn', label: 'Đốt mỡ', color: '#10b981' },
+    { key: 'warm_up', label: t('zone.warmUp'), color: '#60a5fa' },
+    { key: 'fat_burn', label: t('zone.fatBurn'), color: '#10b981' },
     { key: 'aerobic', label: 'Aerobic', color: '#f59e0b' },
     { key: 'anaerobic', label: 'Anaerobic', color: '#ef4444' }
   ];
@@ -1332,7 +1363,7 @@ function renderWorkouts() {
       </div>
       <div class="workout-details">
         <div class="workout-name">${w.type}</div>
-        <div class="workout-time">${timeStr} · ${durationMin} phút</div>
+        <div class="workout-time">${timeStr} · ${durationMin} ${t('unit.min')}</div>
       </div>
       <div class="workout-stats">
         <div class="workout-stat">
@@ -1389,7 +1420,7 @@ function renderAlerts() {
         <div class="alert-title">${alert.type.replace(/_/g, ' ').toUpperCase()}</div>
         <div class="alert-message">${alert.message}</div>
         <div class="alert-meta">
-          <span><i class="fa-solid fa-clock" style="margin-right:4px"></i>${new Date(alert.timestamp).toLocaleTimeString('vi-VN')}</span>
+          <span><i class="fa-solid fa-clock" style="margin-right:4px"></i>${new Date(alert.timestamp).toLocaleTimeString('en-US')}</span>
           ${alert.call_status ? `<span class="alert-status-tag ${alert.call_status}">${alert.call_status}</span>` : ''}
         </div>
       </div>

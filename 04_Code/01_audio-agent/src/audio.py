@@ -27,7 +27,7 @@ def record_until_silence() -> np.ndarray | None:
     silent_run = 0
     started = False
 
-    print("🎤  Đang nghe... (nói đi, im lặng để kết thúc lượt)", flush=True)
+    print("🎤  Listening... (speak; stay silent to end your turn)", flush=True)
     with sd.InputStream(samplerate=sr, channels=1, dtype="float32", blocksize=block) as stream:
         for _ in range(max_blocks):
             data, _ = stream.read(block)
@@ -71,7 +71,7 @@ def play_wav(path: Path) -> None:
         sd.play(data, sr)
         sd.wait()
     except Exception as exc:  # noqa: BLE001 - playback must never crash the loop
-        print(f"⚠️  Không phát được âm thanh: {exc}", file=sys.stderr)
+        print(f"⚠️  Could not play audio: {exc}", file=sys.stderr)
 
 
 def play_samples(audio: np.ndarray, sr: int) -> None:

@@ -12,7 +12,10 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import csv
 import tempfile
+import time
+from datetime import datetime
 from pathlib import Path
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
@@ -30,41 +33,73 @@ WEB_DIR = Path(__file__).resolve().parent.parent / "04_web-app"
 
 app = FastAPI(title="Health Dashboard + Voice Agent")
 
-# Heavy, stateless models are loaded once and shared across connections.
-STT = None
-TTS = None
+SUPPORTED_LANGS = {"en"}
+
+# Per-turn response-time log — one CSV row per completed STT->LLM->TTS turn, so a
+# live mic test session can be pulled straight into a spreadsheet afterward.
+RESPONSE_LOG = Path(__file__).resolve().parent / "logs" / "response_times.csv"
+RESPONSE_LOG_FIELDS = [
+    "timestamp", "question", "answer",
+    "stt_s", "llm_s", "tts_s", "total_s",
+    "stt_model", "llm_model", "tts_provider",
+]
+
+
+def _log_turn(
+    question: str, answer: str, stt_s: float, llm_s: float, tts_s: float | None,
+    stt_model: str = None,
+) -> None:
+    RESPONSE_LOG.parent.mkdir(parents=True, exist_ok=True)
+    is_new = not RESPONSE_LOG.exists()
+    total_s = stt_s + llm_s + (tts_s or 0.0)
+    with open(RESPONSE_LOG, "a", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=RESPONSE_LOG_FIELDS)
+        if is_new:
+            w.writeheader()
+        w.writerow({
+            "timestamp": datetime.now().isoformat(timespec="seconds"),
+            "question": question, "answer": answer,
+            "stt_s": round(stt_s, 3), "llm_s": round(llm_s, 3),
+            "tts_s": round(tts_s, 3) if tts_s is not None else "",
+            "total_s": round(total_s, 3),
+            "stt_model": f"whisper-{stt_model or CONFIG.whisper_model}",
+            "llm_model": CONFIG.ollama_model if CONFIG.llm_provider == "ollama" else CONFIG.gemini_model,
+            "tts_provider": CONFIG.tts_provider,
+        })
+    print(
+        f"   ⏱️  STT={stt_s:.2f}s  LLM={llm_s:.2f}s  "
+        f"TTS={f'{tts_s:.2f}s' if tts_s is not None else 'n/a'}  TOTAL={total_s:.2f}s",
+        flush=True,
+    )
 
 
 @app.on_event("startup")
 def _startup() -> None:
-    global STT, TTS
     print(
         f"⚙️  MODE={CONFIG.mode} | STT={CONFIG.stt_provider} | "
         f"LLM={CONFIG.llm_provider} | TTS={CONFIG.tts_provider} | LANG={CONFIG.language}"
     )
-    print("⏳  Đang nạp mô hình...", flush=True)
-    STT = get_stt()
-    TTS = get_tts()
-    print("✅  Server realtime sẵn sàng.")
+    print("⏳  Loading models...", flush=True)
+    # Warm the STT cache so the first turn isn't slow.
+    if CONFIG.mode != "realtime":
+        get_stt(CONFIG.language)
+    print("✅  Server ready.")
 
 
-def _friendly_error(exc: Exception) -> str:
+def _friendly_error(exc: Exception, language: str = "en") -> str:
     msg = str(exc)
     quota = "429" in msg or "RESOURCE_EXHAUSTED" in msg
-    if CONFIG.language == "vi":
-        return ("Xin lỗi, hệ thống đang quá tải (hết lượt gọi miễn phí), bạn thử lại sau ít phút nhé."
-                if quota else "Xin lỗi, có lỗi khi xử lý. Bạn thử lại giúp tôi nhé.")
     return ("Sorry, the service is rate-limited right now, please try again shortly."
             if quota else "Sorry, something went wrong. Please try again.")
 
 
-def _synth(text: str) -> dict:
+def _synth(text: str, tts) -> dict:
     """Synthesize speech, return base64 audio + mime."""
     with tempfile.TemporaryDirectory() as tmp:
-        out = TTS.speak_to_file(text, Path(tmp) / "reply.wav")
+        out = tts.speak_to_file(text, Path(tmp) / "reply.wav")
         data = out.read_bytes()
         mime = "audio/mpeg" if out.suffix == ".mp3" else "audio/wav"
-    return {"audio": base64.b64encode(data).decode(), "mime": mime}
+    return {"data": base64.b64encode(data).decode(), "mime": mime}
 
 
 @app.get("/")
@@ -72,13 +107,25 @@ def index() -> FileResponse:
     return FileResponse(WEB_DIR / "index.html", headers={"Cache-Control": "no-cache"})
 
 
+# Standalone response-time test harness, decoupled from the health dashboard UI.
+TEST_UI_DIR = Path(__file__).resolve().parent / "test_ui"
+
+
+@app.get("/test")
+def test_ui() -> FileResponse:
+    return FileResponse(TEST_UI_DIR / "index.html", headers={"Cache-Control": "no-cache"})
+
+
 @app.get("/api/config")
 def config() -> dict:
     return {
         "mode": CONFIG.mode,
         "language": CONFIG.language,
+        "languages": sorted(SUPPORTED_LANGS),
         "stt": CONFIG.stt_provider,
+        "stt_model": CONFIG.whisper_model if CONFIG.stt_provider == "faster_whisper" else None,
         "llm": CONFIG.llm_provider,
+        "llm_model": CONFIG.ollama_model if CONFIG.llm_provider == "ollama" else CONFIG.gemini_model,
         "tts": CONFIG.tts_provider,
     }
 
@@ -86,19 +133,34 @@ def config() -> dict:
 class Session:
     """One realtime conversation over a WebSocket."""
 
-    def __init__(self, ws: WebSocket, system_instruction: str = None) -> None:
+    def __init__(
+        self, ws: WebSocket, system_instruction: str = None, language: str = None,
+        stt_model: str = None,
+    ) -> None:
         self.ws = ws
         self.system_instruction = system_instruction
-        if CONFIG.mode != "realtime":
-            self.llm = get_llm()          # fresh chat history per connection
-            self.vad = TurnDetector()
+        self.language = language if language in SUPPORTED_LANGS else CONFIG.language
+        self.stt_model_override = stt_model
+        self.stt_model_name = stt_model or CONFIG.whisper_model
         self.task: asyncio.Task | None = None
+
+    async def setup(self) -> None:
+        """Build STT/LLM/TTS off the event loop — swapping to an uncached Whisper
+        size (e.g. large-v3) can take several seconds and must not block other
+        connections."""
+        if CONFIG.mode == "realtime":
+            return
+        self.stt = await asyncio.to_thread(get_stt, self.language, self.stt_model_override)
+        self.stt_model_name = getattr(self.stt, "model_name", self.stt_model_name)
+        self.tts = await asyncio.to_thread(get_tts, self.language)
+        self.llm = get_llm(self.system_instruction, self.language)  # fresh chat history per connection
+        self.vad = TurnDetector()
 
     async def send(self, **msg) -> None:
         await self.ws.send_json(msg)
 
     async def run(self) -> None:
-        await self.send(type="ready")
+        await self.send(type="ready", stt_model=self.stt_model_name)
         await self.send(type="state", value="listening")
         if CONFIG.mode == "realtime":
             await self._run_realtime()
@@ -117,7 +179,7 @@ class Session:
         from google.genai import types
 
         if not CONFIG.gemini_api_key:
-            await self.send(type="error", text="GEMINI_API_KEY chưa được đặt trong .env.local")
+            await self.send(type="error", text="GEMINI_API_KEY is not set in .env.local")
             return
 
         client = genai.Client(
@@ -137,20 +199,8 @@ class Session:
         else:
             voice_name = "Aoede" # Aoede / Zephyr
             
-        if self.system_instruction:
-            import datetime
-            now = datetime.datetime.now().astimezone()
-            local_time_str = now.strftime("%Y-%m-%d %H:%M:%S")
-            tz_offset = now.strftime("%z")
-            formatted_tz = f"UTC{tz_offset[:3]}:{tz_offset[3:]}" if tz_offset else "local timezone"
-            if CONFIG.language == "vi":
-                time_context = f"\nThời gian hiện tại của hệ thống: {local_time_str} (Múi giờ: {formatted_tz}). Hãy tham chiếu thời gian này khi người dùng hỏi về thời điểm hoặc các chỉ số sinh hiệu gần đây."
-            else:
-                time_context = f"\nCurrent system time: {local_time_str} (Timezone: {formatted_tz}). Reference this time when user asks about recent vitals or timing."
-            system_instruction = self.system_instruction + time_context
-        else:
-            from src.llm import _system_prompt
-            system_instruction = _system_prompt()
+        from src.llm import resolve_system_prompt
+        system_instruction = resolve_system_prompt(self.system_instruction, self.language)
         
         live_config = types.LiveConnectConfig(
             response_modalities=["AUDIO"],
@@ -175,7 +225,7 @@ class Session:
         
         try:
             async with client.aio.live.connect(model=live_model, config=live_config) as session:
-                print("✅ Kết nối thành công Gemini Live API.", flush=True)
+                print("✅ Connected to Gemini Live API.", flush=True)
                 
                 async def read_from_client():
                     try:
@@ -200,7 +250,7 @@ class Session:
                     except WebSocketDisconnect:
                         print("Client disconnected (WebSocketDisconnect).", flush=True)
                     except Exception as e:
-                        print(f"Lỗi đọc từ Client: {e}", flush=True)
+                        print(f"Error reading from client: {e}", flush=True)
                         
                 async def read_from_gemini():
                     try:
@@ -253,7 +303,7 @@ class Session:
                                         value="listening"
                                     )
                     except Exception as e:
-                        print(f"Lỗi đọc từ Gemini: {e}", flush=True)
+                        print(f"Error reading from Gemini: {e}", flush=True)
                         
                 # Wait for both tasks
                 await asyncio.gather(read_from_client(), read_from_gemini())
@@ -264,51 +314,69 @@ class Session:
             await self.send(type="error", text=f"Gemini Live error: {err}")
 
     async def _on_audio(self, pcm: bytes) -> None:
+        # No barge-in: a reply in flight (STT/LLM/TTS) always runs to
+        # completion. New speech detected while one is active is dropped —
+        # the user just waits for the current turn to finish.
         for ev in self.vad.process(pcm):
-            if ev == "speech_start":
-                # Barge-in: user interrupts the bot mid-reply.
+            if isinstance(ev, tuple) and ev[0] == "utterance":
                 if self.task and not self.task.done():
-                    self.task.cancel()
-                    await self.send(type="interrupt")
-                await self.send(type="state", value="listening")
-            elif isinstance(ev, tuple) and ev[0] == "utterance":
+                    continue
                 audio = ev[1]
-                if self.task and not self.task.done():
-                    self.task.cancel()
                 self.task = asyncio.create_task(self._handle(audio))
 
     async def _on_control(self, text: str) -> None:
         if text == "reset":
-            self.llm = get_llm()
+            self.llm = get_llm(self.system_instruction, self.language)
             await self.send(type="state", value="listening")
 
     async def _handle(self, audio) -> None:
         try:
             import numpy as np
-            print(f"🎧 utterance {len(audio)/16000:.2f}s đỉnh={np.abs(audio).max():.3f}", flush=True)
+            print(f"🎧 utterance {len(audio)/16000:.2f}s peak={np.abs(audio).max():.3f}", flush=True)
             await self.send(type="state", value="thinking")
-            user_text = (await asyncio.to_thread(STT.transcribe, audio)).strip()
-            print(f"   📝 STT: {user_text!r}", flush=True)
+
+            t0 = time.perf_counter()
+            user_text = (await asyncio.to_thread(self.stt.transcribe, audio)).strip()
+            stt_s = time.perf_counter() - t0
+            print(f"   📝 STT ({stt_s:.2f}s): {user_text!r}", flush=True)
             if not user_text:
                 await self.send(type="state", value="listening")
                 return
             await self.send(type="user", text=user_text)
 
+            t0 = time.perf_counter()
             try:
                 bot_text = (await asyncio.to_thread(self.llm.reply, user_text)).strip()
             except Exception as exc:
                 import traceback
                 traceback.print_exc()
-                bot_text = _friendly_error(exc)
+                bot_text = _friendly_error(exc, self.language)
+            llm_s = time.perf_counter() - t0
             await self.send(type="bot", text=bot_text)
 
             await self.send(type="state", value="speaking")
-            try:
-                audio_msg = await asyncio.to_thread(_synth, bot_text)
-                await self.send(type="audio", **audio_msg)
-            except Exception:
-                import traceback
-                traceback.print_exc()
+            tts_s = None
+            if bot_text.strip(" .!?,"):
+                try:
+                    t0 = time.perf_counter()
+                    audio_msg = await asyncio.to_thread(_synth, bot_text, self.tts)
+                    tts_s = time.perf_counter() - t0
+                    print(
+                        f"   🔊 TTS ({tts_s:.2f}s): mime={audio_msg['mime']} "
+                        f"b64_len={len(audio_msg['data'])} head={audio_msg['data'][:16]!r}",
+                        flush=True,
+                    )
+                    await self.send(type="audio", **audio_msg)
+                except Exception:
+                    import traceback
+                    traceback.print_exc()
+            _log_turn(user_text, bot_text, stt_s, llm_s, tts_s, stt_model=self.stt_model_name)
+            await self.send(
+                type="timing",
+                stt_s=round(stt_s, 3), llm_s=round(llm_s, 3),
+                tts_s=round(tts_s, 3) if tts_s is not None else None,
+                total_s=round(stt_s + llm_s + (tts_s or 0.0), 3),
+            )
         except asyncio.CancelledError:
             pass  # barge-in cancelled this reply
         except Exception:
@@ -322,13 +390,24 @@ class Session:
 
 
 @app.websocket("/ws")
-async def ws_endpoint(ws: WebSocket, system_instruction: str = None) -> None:
+async def ws_endpoint(
+    ws: WebSocket, system_instruction: str = None, lang: str = None, stt_model: str = None,
+) -> None:
     await ws.accept()
-    session = Session(ws, system_instruction=system_instruction)
+    session = Session(ws, system_instruction=system_instruction, language=lang, stt_model=stt_model)
     try:
+        await session.send(type="state", value="loading")
+        await session.setup()
         await session.run()
     except WebSocketDisconnect:
         pass
+    except Exception as exc:
+        import traceback
+        traceback.print_exc()
+        try:
+            await session.send(type="error", text=f"Failed to load model: {exc}")
+        except Exception:
+            pass
     finally:
         if session.task and not session.task.done():
             session.task.cancel()

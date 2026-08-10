@@ -14,23 +14,66 @@ class BaseSTT:
 
 
 class FasterWhisperSTT(BaseSTT):
-    """Offline, multilingual STT running int8 on CPU."""
+    """Offline English STT running int8 on CPU."""
 
-    def __init__(self) -> None:
+    def __init__(self, language: str | None = None, model: str | None = None) -> None:
         from faster_whisper import WhisperModel
+        from .config import resolve_whisper_model
 
-        # int8 keeps RAM/CPU low — ideal for a GPU-less i5 laptop.
-        self.model = WhisperModel(CONFIG.whisper_model, device="cpu", compute_type="int8")
-        self.lang = CONFIG.language if CONFIG.language in {"vi", "en"} else None
+        self.lang = "en"
+        self.model_name = model or resolve_whisper_model()
+
+        # int8 keeps RAM/CPU low — ideal for a GPU-less i5 laptop / Raspberry Pi 4.
+        self.model = WhisperModel(
+            self.model_name,
+            device="cpu",
+            compute_type="int8",
+            cpu_threads=CONFIG.whisper_cpu_threads,
+        )
+
+    # Segment-quality gates that drop hallucinated / low-confidence output
+    # (faster-whisper applies these internally for temperature fallback; we also
+    # use them to discard whole segments that would otherwise be returned).
+    NO_SPEECH_MAX = 0.6      # p(this was actually silence/noise, not speech)
+    LOGPROB_MIN = -1.0       # average token log-probability (confidence)
+    COMPRESSION_RATIO_MAX = 2.4  # gzip ratio — very repetitive text compresses hard
 
     def transcribe(self, audio: np.ndarray) -> str:
-        segments, _ = self.model.transcribe(
-            audio.astype(np.float32),
-            language=self.lang,
-            beam_size=1,            # greedy = faster on CPU
-            vad_filter=True,
-        )
-        return " ".join(seg.text for seg in segments).strip()
+        try:
+            segments, info = self.model.transcribe(
+                audio.astype(np.float32),
+                language=self.lang,
+                beam_size=CONFIG.whisper_beam_size,
+                # Whisper's own VAD trims leading/trailing silence & noise the
+                # caller's VAD let through (server's WebRTC VAD is coarse, and
+                # the CLI's energy-threshold VAD is coarser still).
+                vad_filter=True,
+                # Don't let a hallucinated segment poison the next one — the
+                # classic cause of runaway repetition loops on short/noisy audio.
+                condition_on_previous_text=False,
+            )
+
+            kept = []
+            for seg in segments:
+                if (
+                    seg.no_speech_prob > self.NO_SPEECH_MAX
+                    or seg.avg_logprob < self.LOGPROB_MIN
+                    or seg.compression_ratio > self.COMPRESSION_RATIO_MAX
+                ):
+                    print(
+                        f"   [STT Filter] Dropped low-quality segment "
+                        f"(no_speech={seg.no_speech_prob:.2f} logprob={seg.avg_logprob:.2f} "
+                        f"compression={seg.compression_ratio:.2f}): '{seg.text.strip()}'",
+                        flush=True,
+                    )
+                    continue
+                kept.append(seg.text)
+            text = " ".join(kept).strip()
+            print(f"   [STT Debug] lang={info.language} (p={info.language_probability:.2f}) | result='{text}'", flush=True)
+            return text
+        except Exception as e:
+            print(f"   [STT Error] Speech recognition failed: {e}", flush=True)
+            return ""
 
 
 class GeminiSTT(BaseSTT):
@@ -40,7 +83,7 @@ class GeminiSTT(BaseSTT):
         from google import genai
 
         if not CONFIG.gemini_api_key:
-            raise RuntimeError("GEMINI_API_KEY chưa được đặt trong .env.local")
+            raise RuntimeError("GEMINI_API_KEY is not set in .env.local")
         self.client = genai.Client(api_key=CONFIG.gemini_api_key)
 
     def transcribe(self, audio: np.ndarray) -> str:
@@ -76,12 +119,24 @@ class GeminiSTT(BaseSTT):
                 tmp.unlink()
 
 
-def get_stt() -> BaseSTT | None:
+# faster-whisper models are heavy to load, so keep one instance cached — reused
+# instantly on repeat requests for the same (language, model). A different model
+# (e.g. switching the Whisper size to compare in the test harness) evicts the old
+# one first so several GB-sized models don't pile up in RAM at once.
+_WHISPER_CACHE: dict[str, "FasterWhisperSTT"] = {}
+
+
+def get_stt(language: str | None = None, model: str | None = None) -> BaseSTT | None:
     provider = CONFIG.stt_provider
+    lang = language or CONFIG.language
     if provider == "faster_whisper":
-        return FasterWhisperSTT()
+        key = f"{lang}:{model or CONFIG.whisper_model}"
+        if key not in _WHISPER_CACHE:
+            _WHISPER_CACHE.clear()
+            _WHISPER_CACHE[key] = FasterWhisperSTT(lang, model=model)
+        return _WHISPER_CACHE[key]
     if provider == "gemini":
         return GeminiSTT()
     if provider == "gemini_live":
         return None
-    raise ValueError(f"STT provider không hợp lệ: {provider}")
+    raise ValueError(f"Invalid STT provider: {provider}")

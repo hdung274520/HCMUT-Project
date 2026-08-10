@@ -23,15 +23,17 @@ FRAME_BYTES = int(SAMPLE_RATE * FRAME_MS / 1000) * 2  # 20 ms of int16 = 640 byt
 class TurnDetector:
     def __init__(
         self,
-        aggressiveness: int = 2,
-        start_frames: int = 5,      # ~100 ms of speech to confirm a turn started
+        aggressiveness: int = 3,
+        start_frames: int = 8,      # ~160 ms of speech to confirm a turn started (filters brief noise blips)
         end_silence_ms: int = 700,  # silence after speech that ends the turn
         preroll_ms: int = 200,      # audio kept before detected speech
+        min_rms: float = 0.02,      # ignore frames quieter than this even if WebRTC VAD flags them as speech
     ) -> None:
         self.vad = webrtcvad.Vad(aggressiveness)
         self.start_frames = start_frames
         self.end_frames = int(end_silence_ms / FRAME_MS)
         self.preroll = collections.deque(maxlen=int(preroll_ms / FRAME_MS))
+        self.min_rms = min_rms
         self._buf = bytearray()
         self._reset()
 
@@ -53,7 +55,12 @@ class TurnDetector:
 
     def _frame(self, frame: bytes) -> list:
         events: list = []
-        is_speech = self.vad.is_speech(frame, SAMPLE_RATE)
+        pcm16 = np.frombuffer(frame, dtype=np.int16).astype(np.float32) / 32768.0
+        rms = float(np.sqrt(np.mean(pcm16 ** 2)))
+        # WebRTC VAD is a spectral classifier, not amplitude-based — quiet room
+        # noise (fan hum, mic hiss) can still spectrally look like speech. Gate
+        # it on loudness too so it can't repeatedly barge in on a real reply.
+        is_speech = rms >= self.min_rms and self.vad.is_speech(frame, SAMPLE_RATE)
 
         if not self.triggered:
             self.preroll.append(frame)

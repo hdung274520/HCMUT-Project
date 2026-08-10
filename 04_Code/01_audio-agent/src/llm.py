@@ -3,11 +3,6 @@ from __future__ import annotations
 
 from .config import CONFIG
 
-SYSTEM_PROMPT_VI = (
-    "Bạn là trợ lý sức khỏe bằng giọng nói cho dự án theo dõi tín hiệu y sinh "
-    "(EEG giấc ngủ, nhịp tim, huyết áp). Trả lời ngắn gọn, tự nhiên, bằng tiếng Việt, "
-    "tối đa 2-3 câu vì câu trả lời sẽ được đọc to. Không dùng markdown, emoji hay liệt kê."
-)
 SYSTEM_PROMPT_EN = (
     "You are a spoken health assistant for a medical-signal monitoring project "
     "(sleep EEG, heart rate, blood pressure). Answer briefly and naturally in English, "
@@ -15,20 +10,26 @@ SYSTEM_PROMPT_EN = (
 )
 
 
-def _system_prompt() -> str:
+def _time_context() -> str:
     import datetime
     now = datetime.datetime.now().astimezone()
     local_time_str = now.strftime("%Y-%m-%d %H:%M:%S")
     tz_offset = now.strftime("%z")
     formatted_tz = f"UTC{tz_offset[:3]}:{tz_offset[3:]}" if tz_offset else "local timezone"
-    
-    if CONFIG.language == "vi":
-        time_context = f"\nThời gian hiện tại của hệ thống: {local_time_str} (Múi giờ: {formatted_tz}). Hãy tham chiếu thời gian này khi người dùng hỏi về thời điểm hoặc các chỉ số sinh hiệu gần đây."
-    else:
-        time_context = f"\nCurrent system time: {local_time_str} (Timezone: {formatted_tz}). Reference this time when user asks about recent vitals or timing."
-        
-    base_prompt = SYSTEM_PROMPT_VI if CONFIG.language == "vi" else SYSTEM_PROMPT_EN
-    return base_prompt + time_context
+    return f"\nCurrent system time: {local_time_str} (Timezone: {formatted_tz}). Reference this time when user asks about recent vitals or timing."
+
+
+def _system_prompt() -> str:
+    return SYSTEM_PROMPT_EN + _time_context()
+
+
+def resolve_system_prompt(custom: str | None = None, language: str | None = None) -> str:
+    """Custom prompt (e.g. a browser-built one carrying live vitals data) wins
+    if given; otherwise fall back to the generic English one. Both get the
+    current time appended. (`language` kept for call-site compatibility.)"""
+    if custom:
+        return custom + _time_context()
+    return _system_prompt()
 
 
 class BaseLLM:
@@ -37,17 +38,19 @@ class BaseLLM:
 
 
 class GeminiLLM(BaseLLM):
-    def __init__(self) -> None:
+    def __init__(self, system_instruction: str | None = None, language: str | None = None) -> None:
         from google import genai
         from google.genai import types
 
         if not CONFIG.gemini_api_key:
-            raise RuntimeError("GEMINI_API_KEY chưa được đặt trong .env.local")
+            raise RuntimeError("GEMINI_API_KEY is not set in .env.local")
         # Keep a reference so the underlying httpx client isn't closed on GC.
         self.client = genai.Client(api_key=CONFIG.gemini_api_key)
         self.chat = self.client.chats.create(
             model=CONFIG.gemini_model,
-            config=types.GenerateContentConfig(system_instruction=_system_prompt()),
+            config=types.GenerateContentConfig(
+                system_instruction=resolve_system_prompt(system_instruction, language)
+            ),
         )
 
     def reply(self, user_text: str) -> str:
@@ -58,10 +61,10 @@ class GeminiLLM(BaseLLM):
 class OllamaLLM(BaseLLM):
     """Local model over Ollama's HTTP API. Keeps short conversation history."""
 
-    def __init__(self) -> None:
+    def __init__(self, system_instruction: str | None = None, language: str | None = None) -> None:
         import requests  # noqa: F401
 
-        self.history = [{"role": "system", "content": _system_prompt()}]
+        self.history = [{"role": "system", "content": resolve_system_prompt(system_instruction, language)}]
 
     def reply(self, user_text: str) -> str:
         import requests
@@ -78,12 +81,12 @@ class OllamaLLM(BaseLLM):
         return text
 
 
-def get_llm() -> BaseLLM | None:
+def get_llm(system_instruction: str | None = None, language: str | None = None) -> BaseLLM | None:
     provider = CONFIG.llm_provider
     if provider == "gemini":
-        return GeminiLLM()
+        return GeminiLLM(system_instruction, language)
     if provider == "ollama":
-        return OllamaLLM()
+        return OllamaLLM(system_instruction, language)
     if provider == "gemini_live":
         return None
-    raise ValueError(f"LLM provider không hợp lệ: {provider}")
+    raise ValueError(f"Invalid LLM provider: {provider}")

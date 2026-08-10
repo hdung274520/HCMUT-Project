@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Health Dashboard — Trợ lý Sức khỏe</title>
-  <meta name="description" content="Dashboard theo dõi sức khỏe thời gian thực với EEG, sinh hiệu và trợ lý giọng nói AI.">
+  <title>Health Dashboard — Health Assistant</title>
+  <meta name="description" content="Real-time health monitoring dashboard with EEG, vitals and an AI voice assistant.">
 
   <!-- Google Fonts (Plus Jakarta Sans) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -35,25 +35,25 @@
 
       <!-- Navigation -->
       <nav class="sidebar-nav">
-        <h3><i class="fa-solid fa-compass"></i> Điều hướng</h3>
+        <h3><i class="fa-solid fa-compass"></i> Navigation</h3>
         <button class="nav-btn active" data-panel="overview" id="nav-overview">
-          <i class="fa-solid fa-chart-line"></i> Tổng quan
+          <i class="fa-solid fa-chart-line"></i> Overview
         </button>
         <button class="nav-btn" data-panel="sleep" id="nav-sleep">
-          <i class="fa-solid fa-moon"></i> Giấc ngủ & EEG
+          <i class="fa-solid fa-moon"></i> Sleep & EEG
         </button>
         <button class="nav-btn" data-panel="vitals" id="nav-vitals">
-          <i class="fa-solid fa-heart-pulse"></i> Sinh hiệu
+          <i class="fa-solid fa-heart-pulse"></i> Vitals
         </button>
         <button class="nav-btn" data-panel="alerts" id="nav-alerts">
-          <i class="fa-solid fa-bell"></i> Cảnh báo
+          <i class="fa-solid fa-bell"></i> Alerts
           <span class="badge" id="alert-badge">2</span>
         </button>
       </nav>
 
       <!-- User Profile Card -->
       <div class="sidebar-section" id="profile-card">
-        <h3><i class="fa-solid fa-user-circle"></i> Hồ sơ người dùng</h3>
+        <h3><i class="fa-solid fa-user-circle"></i> User Profile</h3>
         <div class="profile-info">
           <div class="profile-avatar">
             <i class="fa-solid fa-user"></i>
@@ -87,10 +87,10 @@
       <div class="sidebar-section" style="margin-top: auto;">
         <div class="sync-status">
           <div class="sync-dot active"></div>
-          <span id="sync-text">Dữ liệu đã đồng bộ</span>
+          <span id="sync-text">Data synced</span>
         </div>
         <button class="sidebar-action-btn btn-reset" onclick="location.reload()">
-          <i class="fa-solid fa-arrows-rotate"></i> Làm mới dữ liệu
+          <i class="fa-solid fa-arrows-rotate"></i> Refresh data
         </button>
       </div>
     </aside>
@@ -104,7 +104,7 @@
             <i class="fa-solid fa-bars"></i>
           </button>
           <div class="header-title">
-            <h1>Trợ lý Sức khỏe</h1>
+            <h1>Health Assistant</h1>
             <span class="header-date" id="header-date"></span>
           </div>
         </div>
@@ -113,7 +113,7 @@
             <span class="agent-dot" id="agent-status-dot"></span>
             <span class="agent-status-text" id="agent-status-text">DASHBOARD</span>
           </div>
-          <button class="header-icon-btn" id="toggle-chat" title="Mở trợ lý giọng nói">
+          <button class="header-icon-btn" id="toggle-chat" title="Open voice assistant">
             <i class="fa-solid fa-microphone-lines"></i>
           </button>
         </div>
@@ -133,7 +133,7 @@
                   <i class="fa-solid fa-heart-pulse"></i>
                 </div>
                 <div class="stat-body">
-                  <span class="stat-label">Nhịp tim</span>
+                  <span class="stat-label">Heart Rate</span>
                   <span class="stat-value" id="ov-hr">—</span>
                   <span class="stat-unit">bpm</span>
                 </div>
@@ -146,7 +146,7 @@
                   <i class="fa-solid fa-gauge-high"></i>
                 </div>
                 <div class="stat-body">
-                  <span class="stat-label">Huyết áp</span>
+                  <span class="stat-label">Blood Pressure</span>
                   <span class="stat-value" id="ov-bp">—</span>
                   <span class="stat-unit">mmHg</span>
                 </div>
@@ -172,9 +172,9 @@
                   <i class="fa-solid fa-moon"></i>
                 </div>
                 <div class="stat-body">
-                  <span class="stat-label">Giấc ngủ</span>
+                  <span class="stat-label">Sleep</span>
                   <span class="stat-value" id="ov-sleep">—</span>
-                  <span class="stat-unit">điểm</span>
+                  <span class="stat-unit">points</span>
                 </div>
                 <div class="stat-trend up">
                   <i class="fa-solid fa-arrow-trend-up"></i>
@@ -186,7 +186,7 @@
             <div class="charts-row">
               <div class="chart-card wide">
                 <div class="chart-header">
-                  <h3><i class="fa-solid fa-heart-pulse"></i> Nhịp tim trong ngày</h3>
+                  <h3><i class="fa-solid fa-heart-pulse"></i> Heart Rate Today</h3>
                   <span class="chart-badge">Realtime</span>
                 </div>
                 <div class="chart-container">
@@ -195,7 +195,7 @@
               </div>
               <div class="chart-card">
                 <div class="chart-header">
-                  <h3><i class="fa-solid fa-person-running"></i> Hoạt động</h3>
+                  <h3><i class="fa-solid fa-person-running"></i> Activity</h3>
                 </div>
                 <div class="chart-container">
                   <canvas id="chart-activity"></canvas>
@@ -207,7 +207,7 @@
             <!-- AI Insights -->
             <div class="insights-card">
               <div class="chart-header">
-                <h3><i class="fa-solid fa-brain"></i> AI Insights — Phân tích giấc ngủ</h3>
+                <h3><i class="fa-solid fa-brain"></i> AI Insights — Sleep Analysis</h3>
                 <span class="chart-badge ai">AI Generated</span>
               </div>
               <ul class="insight-list" id="insight-list"></ul>
@@ -219,7 +219,7 @@
             <div class="charts-row">
               <div class="chart-card wide">
                 <div class="chart-header">
-                  <h3><i class="fa-solid fa-brain"></i> Sóng não EEG qua đêm</h3>
+                  <h3><i class="fa-solid fa-brain"></i> Overnight EEG Brainwaves</h3>
                   <span class="chart-badge">Alpha · Beta · Theta · Delta</span>
                 </div>
                 <div class="chart-container tall">
@@ -228,7 +228,7 @@
               </div>
               <div class="chart-card">
                 <div class="chart-header">
-                  <h3><i class="fa-solid fa-moon"></i> Phân bố giai đoạn ngủ</h3>
+                  <h3><i class="fa-solid fa-moon"></i> Sleep Stage Distribution</h3>
                 </div>
                 <div class="chart-container">
                   <canvas id="chart-sleep-dist"></canvas>
@@ -239,15 +239,15 @@
             <!-- Sleep Hypnogram (Samsung Health Style) -->
             <div class="chart-card full-width">
               <div class="chart-header">
-                <h3><i class="fa-solid fa-timeline"></i> Tiến trình giấc ngủ</h3>
+                <h3><i class="fa-solid fa-timeline"></i> Sleep Timeline</h3>
                 <span class="chart-badge">Hypnogram</span>
               </div>
               <div class="hypnogram-wrapper" id="hypnogram-wrapper">
                 <div class="hypnogram-y-labels">
-                  <span class="hyp-label awake">Thức</span>
+                  <span class="hyp-label awake">Awake</span>
                   <span class="hyp-label rem">REM</span>
-                  <span class="hyp-label light">Ngủ nhẹ</span>
-                  <span class="hyp-label deep">Ngủ sâu</span>
+                  <span class="hyp-label light">Light</span>
+                  <span class="hyp-label deep">Deep</span>
                 </div>
                 <canvas id="canvas-hypnogram"></canvas>
               </div>
@@ -257,7 +257,7 @@
             <!-- Sleep Vitals -->
             <div class="chart-card full-width">
               <div class="chart-header">
-                <h3><i class="fa-solid fa-heart-pulse"></i> Sinh hiệu khi ngủ</h3>
+                <h3><i class="fa-solid fa-heart-pulse"></i> Sleep Vitals</h3>
               </div>
               <div class="chart-container tall">
                 <canvas id="chart-sleep-vitals"></canvas>
@@ -273,7 +273,7 @@
                   <i class="fa-solid fa-heart"></i>
                 </div>
                 <div class="stat-body">
-                  <span class="stat-label">Nhịp tim nghỉ ngơi</span>
+                  <span class="stat-label">Resting Heart Rate</span>
                   <span class="stat-value" id="vt-rhr">—</span>
                   <span class="stat-unit">bpm</span>
                 </div>
@@ -283,7 +283,7 @@
                   <i class="fa-solid fa-wave-square"></i>
                 </div>
                 <div class="stat-body">
-                  <span class="stat-label">HRV trung bình</span>
+                  <span class="stat-label">Average HRV</span>
                   <span class="stat-value" id="vt-hrv">—</span>
                   <span class="stat-unit">ms</span>
                 </div>
@@ -293,9 +293,9 @@
                   <i class="fa-solid fa-shoe-prints"></i>
                 </div>
                 <div class="stat-body">
-                  <span class="stat-label">Bước chân</span>
+                  <span class="stat-label">Steps</span>
                   <span class="stat-value" id="vt-steps">—</span>
-                  <span class="stat-unit">bước</span>
+                  <span class="stat-unit">steps</span>
                 </div>
               </div>
               <div class="stat-card large" id="vital-card-cal">
@@ -303,7 +303,7 @@
                   <i class="fa-solid fa-fire-flame-curved"></i>
                 </div>
                 <div class="stat-body">
-                  <span class="stat-label">Calo tiêu thụ</span>
+                  <span class="stat-label">Calories Burned</span>
                   <span class="stat-value" id="vt-cal">—</span>
                   <span class="stat-unit">kcal</span>
                 </div>
@@ -313,7 +313,7 @@
             <!-- HR Zones -->
             <div class="chart-card full-width">
               <div class="chart-header">
-                <h3><i class="fa-solid fa-bullseye"></i> Vùng nhịp tim mục tiêu</h3>
+                <h3><i class="fa-solid fa-bullseye"></i> Target Heart Rate Zones</h3>
               </div>
               <div class="hr-zones" id="hr-zones"></div>
             </div>
@@ -321,7 +321,7 @@
             <!-- SpO2 chart -->
             <div class="chart-card full-width">
               <div class="chart-header">
-                <h3><i class="fa-solid fa-lungs"></i> SpO₂ trong ngày</h3>
+                <h3><i class="fa-solid fa-lungs"></i> SpO₂ Today</h3>
               </div>
               <div class="chart-container">
                 <canvas id="chart-spo2"></canvas>
@@ -331,7 +331,7 @@
             <!-- Workout Sessions -->
             <div class="chart-card full-width">
               <div class="chart-header">
-                <h3><i class="fa-solid fa-dumbbell"></i> Phiên tập luyện hôm nay</h3>
+                <h3><i class="fa-solid fa-dumbbell"></i> Today's Workouts</h3>
               </div>
               <div class="workout-list" id="workout-list"></div>
             </div>
@@ -343,7 +343,7 @@
             <!-- Health Logs -->
             <div class="chart-card full-width">
               <div class="chart-header">
-                <h3><i class="fa-solid fa-clipboard-list"></i> Nhật ký sức khỏe qua giọng nói</h3>
+                <h3><i class="fa-solid fa-clipboard-list"></i> Voice Health Logs</h3>
               </div>
               <div class="health-logs" id="health-logs"></div>
             </div>
@@ -362,10 +362,10 @@
               </span>
             </div>
             <div style="display:flex;gap:6px;align-items:center">
-              <button class="chat-reset-btn" id="chat-reset" title="Xóa hội thoại">
+              <button class="chat-reset-btn" id="chat-reset" title="Clear conversation">
                 <i class="fa-solid fa-arrows-rotate"></i>
               </button>
-              <button class="chat-close-btn" id="chat-close" title="Đóng">
+              <button class="chat-close-btn" id="chat-close" title="Close">
                 <i class="fa-solid fa-xmark"></i>
               </button>
             </div>
@@ -375,7 +375,7 @@
           <div class="chat-area" id="chat">
             <div class="meta-info">
               <i class="fa-solid fa-circle-info" style="margin-right: 6px;"></i>
-              Nhấn vào quả cầu Microphone để bắt đầu cuộc trò chuyện thời gian thực.
+              Tap the microphone orb to start a real-time conversation.
             </div>
             <!-- Pre-loaded conversation from data -->
           </div>
@@ -383,20 +383,16 @@
           <!-- Footer orb section (Audio Agent style) -->
           <footer class="chat-footer">
             <div class="live-transcript" id="live-transcript" style="display: none;"></div>
-            <button class="mic-orb" id="orb" title="Nhấp để nói">
+            <button class="mic-orb" id="orb" title="Click to talk">
               <i class="fa-solid fa-microphone"></i>
             </button>
-            <div class="footer-status-text" id="statusText">Nhấn để bắt đầu</div>
-            <div class="barge-in-info">
-              <i class="fa-solid fa-circle-info"></i>
-              <span>Hỗ trợ nói chen ngang (Barge-in): Nói bất cứ lúc nào để ngắt lời Bot.</span>
-            </div>
+            <div class="footer-status-text" id="statusText">Tap to start</div>
           </footer>
         </div>
       </div>
     </main>
   </div>
 
-  <script src="app.js?v=6"></script>
+  <script src="app.js?v=10"></script>
 </body>
 </html>

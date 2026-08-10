@@ -9,13 +9,13 @@
     {
       "timestamp": "2026-06-30T08:00:12+07:00",
       "speaker": "user",
-      "text": "Chào buổi sáng, hôm nay tôi ngủ có ngon không?",
+      "text": "Good morning, did I sleep well today?",
       "vosk_confidence": 0.92
     },
     {
       "timestamp": "2026-06-30T08:00:18+07:00",
       "speaker": "assistant",
-      "text": "Chào buổi sáng! Bạn ngủ được 7.5 giờ với điểm giấc ngủ 82/100, khá tốt đấy! Deep Sleep chiếm 22%, hơi thấp nên bạn có thể hạn chế caffeine sau 14h nhé.",
+      "text": "Good morning! You slept 7.5 hours with a sleep score of 82/100 — pretty good! Deep Sleep was 22%, a bit low, so you might want to limit caffeine after 2 PM.",
       "action_details": {
         "intent_detected": "query_sleep_quality",
         "tool_called": "get_sleep_summary",
@@ -25,13 +25,13 @@
     {
       "timestamp": "2026-06-30T08:01:05+07:00",
       "speaker": "user",
-      "text": "Nhịp tim của tôi bây giờ thế nào?",
+      "text": "How is my heart rate right now?",
       "vosk_confidence": 0.88
     },
     {
       "timestamp": "2026-06-30T08:01:12+07:00",
       "speaker": "assistant",
-      "text": "Nhịp tim hiện tại là 74 bpm, nằm trong vùng bình thường. Nhịp tim nghỉ ngơi trung bình của bạn hôm nay là 64 bpm — rất ổn định!",
+      "text": "Your current heart rate is 74 bpm, within the normal range. Your average resting heart rate today is 64 bpm — very stable!",
       "action_details": {
         "intent_detected": "query_heart_rate",
         "tool_called": "get_current_vitals",
@@ -41,13 +41,13 @@
     {
       "timestamp": "2026-06-30T08:02:30+07:00",
       "speaker": "user",
-      "text": "Huyết áp tôi ổn không?",
+      "text": "Is my blood pressure okay?",
       "vosk_confidence": 0.95
     },
     {
       "timestamp": "2026-06-30T08:02:38+07:00",
       "speaker": "assistant",
-      "text": "Huyết áp trung bình hôm nay là 120/78 mmHg — nằm trong ngưỡng lý tưởng. Baseline của bạn là 118/76, hoàn toàn ổn định!",
+      "text": "Your average blood pressure today is 120/78 mmHg — right in the ideal range. Your baseline is 118/76, perfectly stable!",
       "action_details": {
         "intent_detected": "query_blood_pressure",
         "tool_called": "get_blood_pressure",
@@ -57,13 +57,13 @@
     {
       "timestamp": "2026-06-30T08:03:45+07:00",
       "speaker": "user",
-      "text": "Sáng nay tôi chạy bộ 45 phút, kết quả ra sao?",
+      "text": "I went for a 45-minute run this morning, how did it go?",
       "vosk_confidence": 0.90
     },
     {
       "timestamp": "2026-06-30T08:03:55+07:00",
       "speaker": "assistant",
-      "text": "Tuyệt vời! Bạn chạy bộ 45 phút đốt 340 kcal, nhịp tim trung bình 142 bpm (vùng Aerobic). Max HR đạt 168 — hiệu quả cardiovascular tốt!",
+      "text": "Excellent! Your 45-minute run burned 340 kcal, with an average heart rate of 142 bpm (Aerobic zone). Max HR reached 168 — great cardiovascular effort!",
       "action_details": {
         "intent_detected": "query_workout",
         "tool_called": "get_workout_summary",
@@ -75,7 +75,7 @@
     {
       "timestamp": "2026-06-30T07:30:00+07:00",
       "category": "exercise",
-      "raw_statement": "Tôi vừa chạy bộ xong 45 phút",
+      "raw_statement": "I just finished a 45-minute run",
       "extracted_entities": {
         "activity": "running",
         "duration": "45 minutes"
@@ -84,7 +84,7 @@
     {
       "timestamp": "2026-06-30T12:00:00+07:00",
       "category": "diet",
-      "raw_statement": "Tôi ăn trưa với cơm gà và rau",
+      "raw_statement": "I had rice with chicken and vegetables for lunch",
       "extracted_entities": {
         "meal_type": "lunch",
         "food_items": "rice, chicken, vegetables"
@@ -98,7 +98,7 @@
       "vital_type": "heart_rate",
       "value": 168,
       "threshold": 170,
-      "alert_text": "Nhịp tim đang tiến gần ngưỡng cảnh báo (168/170 bpm) trong lúc chạy bộ.",
+      "alert_text": "Heart rate is approaching the alert threshold (168/170 bpm) during your run.",
       "call_status": "connected"
     },
     {
@@ -107,7 +107,7 @@
       "vital_type": "spo2",
       "value": 94,
       "threshold": 95,
-      "alert_text": "SpO2 giảm nhẹ xuống 94% trong giấc ngủ — tiếp tục theo dõi.",
+      "alert_text": "SpO2 dipped slightly to 94% during sleep — keep monitoring.",
       "call_status": "pending"
     }
   ]

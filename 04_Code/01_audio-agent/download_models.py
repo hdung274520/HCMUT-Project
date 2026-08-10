@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Download local model assets (Piper voices). faster-whisper auto-downloads on
-first run, so only Piper voices need fetching ahead of time.
+"""Download local model assets (Piper voices). faster-whisper sizes auto-download
+on first run, so only Piper voices need fetching ahead of time.
 
-    python download_models.py            # download voice for LANGUAGE in .env
-    python download_models.py --all      # download both vi and en voices
+    python download_models.py                 # Piper voice for LANGUAGE in .env
+    python download_models.py --all           # both vi and en Piper voices
 """
 from __future__ import annotations
 
@@ -27,7 +27,7 @@ LANG_VOICE = {"vi": "vi_VN-vais1000-medium", "en": "en_US-amy-medium"}
 def _download(url: str, dest: Path) -> None:
     dest.parent.mkdir(parents=True, exist_ok=True)
     if dest.exists():
-        print(f"  ✓ đã có {dest.name}")
+        print(f"  ✓ already have {dest.name}")
         return
     print(f"  ⬇ {dest.name} ...", flush=True)
     urllib.request.urlretrieve(url, dest)
@@ -54,7 +54,7 @@ def main() -> None:
 
     for v in targets:
         fetch_voice(v)
-    print("\nXong. Các file Piper nằm trong:", CONFIG.models_dir / "piper")
+    print("\nDone. Piper voice files are in:", CONFIG.models_dir / "piper")
 
 
 if __name__ == "__main__":

@@ -18,11 +18,11 @@ class VoiceAgent:
             f"⚙️  MODE={CONFIG.mode} | STT={CONFIG.stt_provider} | "
             f"LLM={CONFIG.llm_provider} | TTS={CONFIG.tts_provider} | LANG={CONFIG.language}"
         )
-        print("⏳  Đang nạp các mô hình...", flush=True)
+        print("⏳  Loading models...", flush=True)
         self.stt = get_stt()
         self.llm = get_llm()
         self.tts = get_tts()
-        print("✅  Sẵn sàng!\n")
+        print("✅  Ready!\n")
 
     def _say(self, text: str) -> None:
         audio_file = self.tts.speak_to_file(text, OUT_WAV)
@@ -37,8 +37,7 @@ class VoiceAgent:
 
     def run_voice(self) -> None:
         """Main hands-free loop. Ctrl+C to quit."""
-        greeting = "Xin chào, tôi nghe bạn đây." if CONFIG.language == "vi" else "Hi, I'm listening."
-        self._say(greeting)
+        self._say("Hi, I'm listening.")
         try:
             while True:
                 audio = record_until_silence()
@@ -47,24 +46,24 @@ class VoiceAgent:
                 user_text = self.stt.transcribe(audio)
                 if not user_text:
                     continue
-                print(f"🧑  Bạn: {user_text}")
-                if user_text.lower().strip(" .!?") in {"tạm biệt", "thoát", "goodbye", "exit", "quit"}:
-                    self._say("Tạm biệt!" if CONFIG.language == "vi" else "Goodbye!")
+                print(f"🧑  You: {user_text}")
+                if user_text.lower().strip(" .!?") in {"goodbye", "exit", "quit"}:
+                    self._say("Goodbye!")
                     break
                 self.handle_text(user_text)
         except KeyboardInterrupt:
-            print("\n👋  Kết thúc.")
+            print("\n👋  Done.")
 
     def run_text(self) -> None:
         """Type-to-chat fallback (LLM + TTS, no microphone). Useful for testing."""
-        print("Gõ tin nhắn (gõ 'exit' để thoát):")
+        print("Type a message (type 'exit' to quit):")
         try:
             while True:
-                user_text = input("🧑  Bạn: ").strip()
+                user_text = input("🧑  You: ").strip()
                 if not user_text:
                     continue
-                if user_text.lower() in {"exit", "quit", "thoát"}:
+                if user_text.lower() in {"exit", "quit"}:
                     break
                 self.handle_text(user_text)
         except (KeyboardInterrupt, EOFError):
-            print("\n👋  Kết thúc.")
+            print("\n👋  Done.")

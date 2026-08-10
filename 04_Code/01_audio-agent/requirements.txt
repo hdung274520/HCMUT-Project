@@ -15,7 +15,11 @@ soundfile>=0.12.1         # read/write wav (needs libsndfile)
 # --- STT: local (offline, multilingual, CPU int8) ---
 faster-whisper>=1.0.3
 
-# --- TTS: local (offline, fast, ONNX) ---
+# --- TTS: local, offline, natural voice (Silero, the app default) ---
+torch>=2.0
+omegaconf>=2.3
+
+# --- TTS: local, offline, fast/robotic (Piper, fallback for lower-end hardware) ---
 piper-tts>=1.2.0
 onnxruntime>=1.17
 
