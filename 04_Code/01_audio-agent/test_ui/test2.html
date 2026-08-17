@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TTS-Only Test Harness (Test 2)</title>
+<style>
+  :root {
+    --bg: #0f1614; --panel: #17201d; --panel2: #1d2823; --border: #2a3733;
+    --ink: #eaf4f1; --muted: #8fa39c; --accent: #17b892; --accent2: #0e7c6b;
+    --good: #2fa37f; --mid: #d0a23a; --bad: #d0563a;
+  }
+  @media (prefers-color-scheme: light) {
+    :root { --bg: #f4f8f6; --panel: #ffffff; --panel2: #eef4f1; --border: #dbe6e1;
+             --ink: #0f2e2a; --muted: #4d6a62; --accent: #0e7c6b; --accent2: #0a5e51; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font-family: -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .wrap { max-width: 780px; margin: 0 auto; padding: 28px 20px 60px; }
+  h1 { font-size: 1.3rem; margin: 0 0 4px; }
+  .sub { color: var(--muted); font-size: 0.85rem; margin-bottom: 24px; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px;
+          padding: 20px; margin-bottom: 16px; }
+  label { display: block; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em;
+          color: var(--muted); margin-bottom: 6px; }
+  select, textarea, input[type=text] {
+    width: 100%; padding: 9px 10px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--panel2); color: var(--ink); font-size: 0.92rem; font-family: inherit;
+  }
+  textarea { min-height: 70px; resize: vertical; }
+  .row { display: flex; gap: 14px; flex-wrap: wrap; }
+  .row > div { flex: 1; min-width: 200px; }
+  .field { margin-bottom: 14px; }
+  button.primary {
+    background: var(--accent); color: #06231c; border: none; border-radius: 8px;
+    padding: 11px 20px; font-size: 0.95rem; font-weight: 600; cursor: pointer;
+  }
+  button.primary:hover { background: var(--accent2); color: #fff; }
+  button.primary:disabled { opacity: 0.5; cursor: default; }
+  button.ghost {
+    background: transparent; color: var(--ink); border: 1px solid var(--border);
+    border-radius: 8px; padding: 9px 16px; font-size: 0.88rem; cursor: pointer;
+  }
+  button.ghost:hover { border-color: var(--accent); }
+  .status { font-size: 0.85rem; color: var(--muted); margin-top: 10px; min-height: 1.2em; }
+  .result { margin-top: 16px; display: none; }
+  .timing { display: flex; gap: 8px; margin: 12px 0; flex-wrap: wrap; }
+  .badge { border-radius: 8px; padding: 6px 10px; font-size: 0.82rem; font-variant-numeric: tabular-nums;
+           border: 1px solid var(--border); background: var(--panel2); }
+  .badge b { display: block; font-size: 1rem; }
+  .badge.good { border-color: var(--good); color: var(--good); }
+  .badge.mid { border-color: var(--mid); color: var(--mid); }
+  .badge.bad { border-color: var(--bad); color: var(--bad); }
+  audio { width: 100%; margin: 8px 0; }
+  .rating { display: flex; gap: 6px; margin: 4px 0; }
+  .rating button {
+    width: 40px; height: 40px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--panel2); color: var(--ink); font-size: 1rem; cursor: pointer; font-weight: 600;
+  }
+  .rating button.selected { background: var(--accent); color: #06231c; border-color: var(--accent); }
+  .rating button:disabled { opacity: 0.6; cursor: default; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); font-weight: 600; font-size: 0.72rem; text-transform: uppercase; }
+  td.num { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+  .empty { color: var(--muted); font-size: 0.85rem; padding: 12px 0; }
+  .footnote { color: var(--muted); font-size: 0.78rem; margin-top: 18px; }
+  code { background: var(--panel2); padding: 1px 5px; border-radius: 4px; }
+  .not-ready { color: var(--mid); font-size: 0.78rem; margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>TTS-Only Test Harness (Test 2)</h1>
+  <div class="sub">
+    Không qua STT/LLM — chỉ tổng hợp giọng nói trực tiếp từ văn bản. Bạn nghe thử rồi mới quyết định
+    có ghi log không. Kết quả lưu tại <code>logs/tts_test_times.csv</code>.
+    <br>Lưu ý: RTF đo được phụ thuộc tải CPU hiện tại của máy (trình duyệt, IDE đang mở...) —
+    không phải điều kiện phòng lab cô lập, nên số liệu phản ánh trải nghiệm thực tế của bạn.
+  </div>
+
+  <div class="card">
+    <div class="q-nav" style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+      <button class="ghost" id="prevBtn">&larr; Prev</button>
+      <span id="comboCount" style="font-size:0.82rem; color:var(--muted);">— / —</span>
+      <button class="ghost" id="nextBtn">Next &rarr;</button>
+      <span style="font-size:0.78rem; color:var(--muted);">Tự đổi provider + câu, rồi tự synthesize luôn</span>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="providerSelect">TTS Provider</label>
+        <select id="providerSelect"></select>
+      </div>
+      <div class="field">
+        <label for="sentenceSelect">Câu mẫu</label>
+        <select id="sentenceSelect">
+          <option value="0">Ngắn (5 từ)</option>
+          <option value="1">Vừa (10 từ)</option>
+          <option value="2">Dài (22 từ, có số)</option>
+          <option value="custom">Tự nhập...</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label for="textArea">Văn bản sẽ tổng hợp</label>
+      <textarea id="textArea" readonly></textarea>
+    </div>
+    <button class="primary" id="synthBtn">Synthesize &amp; Play</button>
+    <div class="status" id="status"></div>
+    <div class="not-ready" id="notReady"></div>
+
+    <div class="result" id="result">
+      <audio id="player" controls></audio>
+      <div class="timing" id="timing"></div>
+      <div class="field">
+        <label for="notesInput">Ghi chú (tuỳ chọn — gõ trước khi chọn đánh giá)</label>
+        <input type="text" id="notesInput" placeholder="vd: giọng robot, phát âm sai số, ngắt câu lạ...">
+      </div>
+      <div class="field">
+        <label>Đánh giá chất lượng giọng — chọn xong sẽ tự động log ngay</label>
+        <div class="rating" id="rating">
+          <button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button>
+          <button data-v="4">4</button><button data-v="5">5</button>
+        </div>
+      </div>
+      <div class="status" id="logStatus"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
+      <strong>Kết quả đã log trong phiên này</strong>
+    </div>
+    <div id="resultsEmpty" class="empty">Chưa có kết quả nào được log.</div>
+    <table id="resultsTable" style="display:none;">
+      <thead><tr><th>Provider</th><th>Câu</th><th class="num">RTF</th><th class="num">Rating</th></tr></thead>
+      <tbody id="resultsBody"></tbody>
+    </table>
+  </div>
+
+  <div class="footnote">
+    Muốn tổng hợp báo cáo Excel từ file log, dùng cùng cách với Test 1 (đọc <code>logs/tts_test_times.csv</code>).
+  </div>
+</div>
+
+<script>
+const SENTENCES = [
+  "I feel a bit dizzy.",
+  "My blood pressure this morning was 148 over 92.",
+  "My blood pressure this morning was 148 over 92, my heart rate was 88, and I've felt dizzy since I woke up.",
+];
+
+const providerSelect = document.getElementById("providerSelect");
+const sentenceSelect = document.getElementById("sentenceSelect");
+const textArea = document.getElementById("textArea");
+const notReady = document.getElementById("notReady");
+const statusEl = document.getElementById("status");
+const synthBtn = document.getElementById("synthBtn");
+const resultDiv = document.getElementById("result");
+const player = document.getElementById("player");
+const timingDiv = document.getElementById("timing");
+const ratingDiv = document.getElementById("rating");
+const notesInput = document.getElementById("notesInput");
+const logStatus = document.getElementById("logStatus");
+
+let providersMeta = {};
+let lastSynth = null; // {provider, model_detail, text, synth_s, audio_duration_s}
+let selectedRating = null;
+let alreadyLogged = false;
+
+// Full test matrix: all 3 sentences for each provider, provider-major order —
+// Next/Prev walks this as one continuous sequence (same convention as Test 1's
+// Whisper-family walk), auto-selecting provider+sentence and synthesizing.
+let TEST_MATRIX = [];
+let comboIdx = 0;
+const comboCount = document.getElementById("comboCount");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+
+fetch("/api/tts_providers").then(r => r.json()).then(d => {
+  providersMeta = d.providers;
+  for (const [key, label] of Object.entries(providersMeta)) {
+    const opt = document.createElement("option");
+    opt.value = key; opt.textContent = label;
+    providerSelect.appendChild(opt);
+  }
+  TEST_MATRIX = [];
+  Object.keys(providersMeta).forEach(provider => {
+    SENTENCES.forEach((s, si) => TEST_MATRIX.push({ provider, si }));
+  });
+  renderCombo();
+});
+notReady.textContent = "Chưa sẵn sàng (đã cài package nhưng chưa có checkpoint/API verify được): "
+  + "MeloTTS, sherpa-onnx (VITS), StyleTTS2, NeMo FastPitch, Matcha-TTS, Coqui VITS.";
+
+function renderCombo() {
+  if (!TEST_MATRIX.length) return;
+  const c = TEST_MATRIX[comboIdx];
+  comboCount.textContent = `${comboIdx + 1} / ${TEST_MATRIX.length}`;
+  providerSelect.value = c.provider;
+  sentenceSelect.value = String(c.si);
+  renderText();
+  doSynth();
+}
+
+function goTo(idx) {
+  comboIdx = (idx + TEST_MATRIX.length) % TEST_MATRIX.length;
+  renderCombo();
+}
+prevBtn.onclick = () => goTo(comboIdx - 1);
+nextBtn.onclick = () => goTo(comboIdx + 1);
+
+function renderText() {
+  const v = sentenceSelect.value;
+  if (v === "custom") {
+    textArea.readOnly = false;
+    textArea.value = "";
+    textArea.placeholder = "Nhập câu bạn muốn test...";
+  } else {
+    textArea.readOnly = true;
+    textArea.value = SENTENCES[parseInt(v, 10)];
+  }
+}
+sentenceSelect.onchange = renderText;
+renderText();
+
+function badgeClass(rtf) {
+  if (rtf == null) return "";
+  return rtf <= 0.3 ? "good" : (rtf <= 1.0 ? "mid" : "bad");
+}
+
+synthBtn.onclick = doSynth;
+
+async function doSynth() {
+  const provider = providerSelect.value;
+  const text = textArea.value.trim();
+  if (!text) { statusEl.textContent = "Nhập văn bản trước đã."; return; }
+
+  synthBtn.disabled = true;
+  statusEl.textContent = "Đang tổng hợp...";
+  resultDiv.style.display = "none";
+  selectedRating = null;
+  alreadyLogged = false;
+  logStatus.textContent = "";
+  [...ratingDiv.children].forEach(b => { b.classList.remove("selected"); b.disabled = false; });
+  notesInput.value = "";
+
+  try {
+    const resp = await fetch("/api/tts_test", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ provider, text }),
+    });
+    if (!resp.ok) throw new Error(await resp.text());
+    const d = await resp.json();
+    player.src = `data:${d.mime};base64,${d.data}`;
+    player.play().catch(() => {});
+
+    const rtf = d.audio_duration_s ? d.synth_s / d.audio_duration_s : null;
+    timingDiv.innerHTML = [
+      ["Synth", d.synth_s, "s"],
+      ["Audio", d.audio_duration_s, "s"],
+      ["RTF", rtf, "x"],
+    ].map(([label, v, unit]) => {
+      const cls = label === "RTF" ? badgeClass(v) : "";
+      return `<div class="badge ${cls}">${label}<b>${v != null ? v.toFixed(3) + unit : "n/a"}</b></div>`;
+    }).join("");
+
+    lastSynth = {
+      provider, model_detail: d.model_detail, text,
+      synth_s: d.synth_s, audio_duration_s: d.audio_duration_s,
+    };
+    resultDiv.style.display = "block";
+    statusEl.textContent = `Model: ${d.model_detail}`;
+  } catch (e) {
+    statusEl.textContent = "Lỗi: " + e.message;
+  } finally {
+    synthBtn.disabled = false;
+  }
+}
+
+ratingDiv.addEventListener("click", async (e) => {
+  const btn = e.target.closest("button");
+  if (!btn || alreadyLogged) return;
+  selectedRating = btn.dataset.v;
+  [...ratingDiv.children].forEach(b => b.classList.toggle("selected", b === btn));
+  await logResult();
+});
+
+async function logResult() {
+  if (!lastSynth || alreadyLogged) return;
+  alreadyLogged = true;
+  [...ratingDiv.children].forEach(b => { b.disabled = true; });
+  logStatus.textContent = "Đang ghi log...";
+  try {
+    const resp = await fetch("/api/tts_test/log", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...lastSynth,
+        rating: selectedRating || "",
+        notes: notesInput.value.trim(),
+      }),
+    });
+    if (!resp.ok) throw new Error(await resp.text());
+    logStatus.textContent = `Đã tự động log (đánh giá ${selectedRating}) vào logs/tts_test_times.csv`;
+    addRow(lastSynth, selectedRating);
+  } catch (e) {
+    alreadyLogged = false;
+    [...ratingDiv.children].forEach(b => { b.disabled = false; });
+    logStatus.textContent = "Lỗi: " + e.message;
+  }
+}
+
+function addRow(s, rating) {
+  document.getElementById("resultsEmpty").style.display = "none";
+  document.getElementById("resultsTable").style.display = "";
+  const rtf = s.audio_duration_s ? s.synth_s / s.audio_duration_s : null;
+  const tr = document.createElement("tr");
+  tr.innerHTML = `<td>${providersMeta[s.provider] || s.provider}</td>
+    <td>${s.text.length > 40 ? s.text.slice(0, 40) + "…" : s.text}</td>
+    <td class="num">${rtf != null ? rtf.toFixed(3) + "×" : "n/a"}</td>
+    <td class="num">${rating || "—"}</td>`;
+  document.getElementById("resultsBody").appendChild(tr);
+}
+</script>
+</body>
+</html>

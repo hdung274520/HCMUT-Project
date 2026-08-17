@@ -21,12 +21,15 @@ from pathlib import Path
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
+from pydantic import BaseModel
 
 from src.config import CONFIG
 from src.llm import get_llm
 from src.stt import get_stt
 from src.tts import get_tts
 from src.vad import TurnDetector
+import tts_survey_providers
+import llm_survey_providers
 
 # Serve the Health Dashboard (04_web-app) as the main UI
 WEB_DIR = Path(__file__).resolve().parent.parent / "04_web-app"
@@ -71,6 +74,172 @@ def _log_turn(
         f"TTS={f'{tts_s:.2f}s' if tts_s is not None else 'n/a'}  TOTAL={total_s:.2f}s",
         flush=True,
     )
+
+
+# --- Test 2: TTS-only survey (no STT/LLM) — manual, listen-then-log workflow ---
+TTS_TEST_LOG = Path(__file__).resolve().parent / "logs" / "tts_test_times.csv"
+TTS_TEST_LOG_FIELDS = [
+    "timestamp", "provider", "model_detail", "text", "word_count",
+    "synth_s", "audio_duration_s", "rtf", "rating", "notes",
+]
+
+
+def _log_tts_test(
+    provider: str, model_detail: str, text: str, synth_s: float,
+    audio_duration_s: float, rating: str = "", notes: str = "",
+) -> None:
+    TTS_TEST_LOG.parent.mkdir(parents=True, exist_ok=True)
+    is_new = not TTS_TEST_LOG.exists()
+    rtf = synth_s / audio_duration_s if audio_duration_s > 0 else ""
+    with open(TTS_TEST_LOG, "a", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=TTS_TEST_LOG_FIELDS)
+        if is_new:
+            w.writeheader()
+        w.writerow({
+            "timestamp": datetime.now().isoformat(timespec="seconds"),
+            "provider": provider, "model_detail": model_detail, "text": text,
+            "word_count": len(text.split()),
+            "synth_s": round(synth_s, 3),
+            "audio_duration_s": round(audio_duration_s, 3),
+            "rtf": round(rtf, 3) if rtf != "" else "",
+            "rating": rating, "notes": notes,
+        })
+    print(f"   📝 TTS test logged: {provider} | RTF={rtf if rtf=='' else f'{rtf:.3f}'} | rating={rating!r}", flush=True)
+
+
+class TTSTestRequest(BaseModel):
+    provider: str
+    text: str
+
+
+class TTSTestLogRequest(BaseModel):
+    provider: str
+    model_detail: str
+    text: str
+    synth_s: float
+    audio_duration_s: float
+    rating: str = ""
+    notes: str = ""
+
+
+def _wav_duration_seconds(wav_bytes: bytes) -> float:
+    import io
+    import wave
+    with wave.open(io.BytesIO(wav_bytes), "rb") as wf:
+        return wf.getnframes() / wf.getframerate()
+
+
+@app.get("/test2")
+def test2_ui() -> FileResponse:
+    return FileResponse(TEST_UI_DIR / "test2.html", headers={"Cache-Control": "no-cache"})
+
+
+@app.get("/api/tts_providers")
+def tts_providers() -> dict:
+    return {"providers": tts_survey_providers.PROVIDERS}
+
+
+@app.post("/api/tts_test")
+async def tts_test(req: TTSTestRequest) -> dict:
+    t0 = time.perf_counter()
+    result = await asyncio.to_thread(tts_survey_providers.synthesize, req.provider, req.text)
+    synth_s = time.perf_counter() - t0
+    audio_duration_s = _wav_duration_seconds(result["data"]) if result["mime"] == "audio/wav" else None
+    return {
+        "data": base64.b64encode(result["data"]).decode(),
+        "mime": result["mime"],
+        "model_detail": result["model_detail"],
+        "synth_s": round(synth_s, 3),
+        "audio_duration_s": round(audio_duration_s, 3) if audio_duration_s is not None else None,
+    }
+
+
+@app.post("/api/tts_test/log")
+def tts_test_log(req: TTSTestLogRequest) -> dict:
+    _log_tts_test(
+        req.provider, req.model_detail, req.text, req.synth_s,
+        req.audio_duration_s, req.rating, req.notes,
+    )
+    return {"ok": True}
+
+
+# --- Test 3: LLM-only survey (no STT/TTS) — manual, read-then-log workflow ---
+LLM_TEST_LOG = Path(__file__).resolve().parent / "logs" / "llm_test_times.csv"
+LLM_TEST_LOG_FIELDS = [
+    "timestamp", "model", "question", "answer",
+    "gen_s", "eval_count", "eval_tps", "rating", "notes",
+]
+
+
+def _log_llm_test(
+    model: str, question: str, answer: str, gen_s: float,
+    eval_count: int | None, eval_tps: float | None,
+    rating: str = "", notes: str = "",
+) -> None:
+    LLM_TEST_LOG.parent.mkdir(parents=True, exist_ok=True)
+    is_new = not LLM_TEST_LOG.exists()
+    with open(LLM_TEST_LOG, "a", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=LLM_TEST_LOG_FIELDS)
+        if is_new:
+            w.writeheader()
+        w.writerow({
+            "timestamp": datetime.now().isoformat(timespec="seconds"),
+            "model": model, "question": question, "answer": answer,
+            "gen_s": round(gen_s, 3),
+            "eval_count": eval_count if eval_count is not None else "",
+            "eval_tps": round(eval_tps, 2) if eval_tps is not None else "",
+            "rating": rating, "notes": notes,
+        })
+    print(f"   📝 LLM test logged: {model} | gen_s={gen_s:.2f}s | rating={rating!r}", flush=True)
+
+
+class LLMTestRequest(BaseModel):
+    model: str
+    text: str
+
+
+class LLMTestLogRequest(BaseModel):
+    model: str
+    text: str
+    answer: str
+    gen_s: float
+    eval_count: int | None = None
+    eval_tps: float | None = None
+    rating: str = ""
+    notes: str = ""
+
+
+@app.get("/test3")
+def test3_ui() -> FileResponse:
+    return FileResponse(TEST_UI_DIR / "test3.html", headers={"Cache-Control": "no-cache"})
+
+
+@app.get("/api/llm_models")
+def llm_models() -> dict:
+    return {"models": llm_survey_providers.MODELS}
+
+
+@app.post("/api/llm_test")
+async def llm_test(req: LLMTestRequest) -> dict:
+    t0 = time.perf_counter()
+    result = await asyncio.to_thread(llm_survey_providers.ask, req.model, req.text)
+    gen_s = time.perf_counter() - t0
+    return {
+        "answer": result["answer"],
+        "gen_s": round(gen_s, 3),
+        "eval_count": result["eval_count"],
+        "eval_tps": round(result["eval_tps"], 2) if result["eval_tps"] is not None else None,
+        "load_s": round(result["load_s"], 3),
+    }
+
+
+@app.post("/api/llm_test/log")
+def llm_test_log(req: LLMTestLogRequest) -> dict:
+    _log_llm_test(
+        req.model, req.text, req.answer, req.gen_s,
+        req.eval_count, req.eval_tps, req.rating, req.notes,
+    )
+    return {"ok": True}
 
 
 @app.on_event("startup")
