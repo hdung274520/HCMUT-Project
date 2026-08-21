@@ -1,7 +1,7 @@
 # Kế hoạch Thiết kế & Triển khai Hệ thống Trợ lý Âm thanh Y tế (Tối ưu chạy chính trên Raspberry Pi 4)
 
 Bản kế hoạch này trình bày cấu trúc thiết kế tối ưu, lộ trình triển khai và các tính năng cao cấp cho hệ thống y tế chạy chính trực tiếp trên **Raspberry Pi 4**:
-*   **Thiết bị chạy chính (Core Host):** Raspberry Pi 4 (4GB RAM) chạy toàn bộ LiveKit Server, Python Voice Agent, và chương trình thu thập dữ liệu y tế Muse 2.
+*   **Thiết bị chạy chính (Core Host):** Raspberry Pi 4 (4GB RAM) chạy Python Voice Agent (FastAPI, kết nối WebSocket trực tiếp với client) và chương trình thu thập dữ liệu y tế Muse 2.
 *   **Máy trạm kết nối (Bridge PC):** Fedora 44 (i5-1135G7, 16GB RAM) chỉ đóng vai trò kết nối terminal SSH, biên dịch code, và phát triển/thử nghiệm.
 *   **LLM Engine:** **Google Gemini 1.5 Flash API** (Cloud API kết nối từ Raspberry Pi 4).
 *   **STT Engine:** **Vosk STT** (Chạy offline cực nhẹ, tiêu tốn ít RAM/CPU trên Raspberry Pi 4).
@@ -45,20 +45,18 @@ graph LR
 ```
 
 ### 2. Luồng Trợ lý Giọng nói & Ứng dụng Client (Voice Agent & Clients Pipeline)
-Sơ đồ mô tả luồng đàm thoại giọng nói WebRTC và tích hợp với **Google Gemini 1.5 Flash Cloud API** chạy trực tiếp trên **Raspberry Pi 4**:
+Sơ đồ mô tả luồng đàm thoại giọng nói qua WebSocket trực tiếp, tích hợp với **Google Gemini 1.5 Flash Cloud API** chạy trực tiếp trên **Raspberry Pi 4**:
 
 ```mermaid
 graph LR
     subgraph Apps ["Client Applications"]
-        Web[Next.js Web App]
+        Web[Web App]
         Android[React Native App]
     end
 
-    Web <-->|WebRTC Audio| LiveKit[LiveKit Server chạy trên Pi 4]
-    Android <-->|WebRTC Audio| LiveKit
-    
-    LiveKit <-->|Audio Stream| Agent[Python Voice Agent chạy trên Pi 4]
-    
+    Web <-->|WebSocket: PCM16 audio stream| Agent[Python Voice Agent - FastAPI chạy trên Pi 4]
+    Android <-->|WebSocket / HTTPS| Agent
+
     subgraph Voice ["Voice Agent Core (Raspberry Pi 4)"]
         Agent -->|Vosk STT offline| STT[Speech-to-Text]
         STT -->|Query Text| LLM[Gemini 1.5 Flash Cloud API]
@@ -90,7 +88,7 @@ graph LR
 
 ### 1. Trợ lý Chủ động Cảnh báo (Proactive Voice Alerting)
 *   **Chức năng:** Trợ lý ảo chạy trên Raspberry Pi 4 có khả năng **chủ động bắt đầu cuộc gọi thoại** cảnh báo người dùng.
-*   **Kịch bản:** Khi AWS Lambda phát hiện chỉ số y tế bất thường vượt ngưỡng nguy hiểm, hệ thống gửi request kích hoạt cuộc gọi tới LiveKit Server chạy trên Pi 4 để gọi cho người dùng.
+*   **Kịch bản:** Khi AWS Lambda phát hiện chỉ số y tế bất thường vượt ngưỡng nguy hiểm, hệ thống gửi request kích hoạt kết nối WebSocket tới Voice Agent chạy trên Pi 4 để gọi cho người dùng.
 
 ### 2. Phân tích Stress nâng cao (EEG + HRV Cognitive-Stress Index)
 *   **Chức năng:** Kết hợp đồng thời dữ liệu sóng não EEG và chỉ số HRV được tính toán trực tiếp trên Raspberry Pi 4 để đưa ra đánh giá mức độ căng thẳng của não bộ.
@@ -151,12 +149,12 @@ graph LR
 *   **Sản phẩm bàn giao:** Hệ thống lưu trữ AWS hoàn thiện, tự động tối ưu hóa dữ liệu nhịp tim/giấc ngủ.
 
 ### 📍 Milestone 3: Đàm thoại Giọng nói & Tích hợp Gemini 1.5 Flash trên Pi 4
-*   **Mục tiêu:** Khởi chạy LiveKit Server và Voice Agent chạy trực tiếp trên **Raspberry Pi 4**, sử dụng Vosk STT local, Gemini API và Piper TTS local.
+*   **Mục tiêu:** Khởi chạy Voice Agent (FastAPI, WebSocket) chạy trực tiếp trên **Raspberry Pi 4**, sử dụng Vosk STT local, Gemini API và Piper TTS local.
 *   **Sản phẩm bàn giao:** Trợ lý ảo phản hồi trôi chảy tiếng Việt từ loa của Raspberry Pi 4 (hoặc qua ứng dụng khách Web/Android kết nối đến Pi 4).
 
 ### 📍 Milestone 4: Giao diện Web, Android App & Kết nối Samsung Health (Clients)
 *   **Mục tiêu:** Hoàn thiện Web App Next.js vẽ biểu đồ tương quan sức khỏe; Xây dựng Android App tích hợp đọc dữ liệu Samsung Health qua Health Connect.
-*   **Sản phẩm bàn giao:** Ứng dụng Web hiển thị biểu đồ phân tích tương quan; Ứng dụng di động Android tự động đồng bộ dữ liệu Galaxy Fit 3 lên cloud và thực hiện cuộc gọi LiveKit kết nối trực tiếp đến LiveKit Server của Raspberry Pi 4.
+*   **Sản phẩm bàn giao:** Ứng dụng Web hiển thị biểu đồ phân tích tương quan; Ứng dụng di động Android tự động đồng bộ dữ liệu Galaxy Fit 3 lên cloud và thực hiện cuộc gọi thoại qua WebSocket kết nối trực tiếp đến Voice Agent của Raspberry Pi 4.
 
 ---
 
@@ -169,7 +167,7 @@ graph LR
 
 ### Manual Verification
 1. Đeo Muse 2 kết nối Pi 4, đồng thời đeo Galaxy Fit 3 đồng bộ với điện thoại Android.
-2. Khởi chạy cuộc gọi thoại LiveKit trên điện thoại/web kết nối đến máy chủ LiveKit Server trên Raspberry Pi 4. Hỏi: *"Nhịp tim của tôi hiện tại thế nào?"*
+2. Khởi chạy cuộc gọi thoại qua WebSocket trên điện thoại/web kết nối trực tiếp đến Voice Agent trên Raspberry Pi 4. Hỏi: *"Nhịp tim của tôi hiện tại thế nào?"*
 3. Xác nhận: Trợ lý (chạy Gemini 1.5 Flash thông qua Voice Agent của Raspberry Pi 4) trả lời chính xác nhịp tim tức thời đo từ Muse 2 (vùng chẩm/trán chẩm).
 4. Tháo Muse 2 ra, hoạt động bình thường, sau đó hỏi lại trợ lý. Xác nhận trợ lý trả lời nhịp tim nền đồng bộ gần nhất từ Galaxy Fit 3.
 5. Giả lập chỉ số nhịp tim tăng vọt trên AWS. Xác nhận Trợ lý tự động kích hoạt phiên gọi thoại cảnh báo chủ động đến người dùng.
