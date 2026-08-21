@@ -9,9 +9,12 @@ chọn qua biến môi trường.
 
 | Khối | Local (offline) | API (online) |
 |------|-----------------|--------------|
-| STT  | `faster_whisper` (đa ngôn ngữ, int8 CPU) | `gemini` (đa phương thức, chỉ cần GEMINI key) |
-| LLM  | `ollama` (vd `qwen2.5:3b`) | `gemini` (gemini-1.5-flash) |
-| TTS  | `piper` (ONNX, rất nhanh) | `gtts` (Google Translate, không cần key) |
+| STT  | `faster_whisper` (mặc định `distil-medium.en` trên PC, `tiny` trên Pi — int8 CPU) | `gemini` (đa phương thức, chỉ cần GEMINI key) |
+| LLM  | `ollama` (mặc định `qwen2.5:0.5b`) | `gemini` (gemini-1.5-flash) |
+| TTS  | `piper` (ONNX, rất nhanh — mặc định) | `gtts` (Google Translate, không cần key) |
+
+Các model mặc định trên là **kết quả benchmark**, không phải lựa chọn tuỳ ý — xem
+[mục Benchmark](#benchmark-chọn-model) bên dưới.
 
 Hai profile dựng sẵn qua `MODE`:
 - `MODE=api`  → STT=gemini, LLM=gemini, TTS=gtts — chỉ cần **GEMINI_API_KEY**, không tốn CPU.
@@ -76,7 +79,7 @@ Nói "tạm biệt" / "goodbye" để kết thúc lượt thoại.
 
 ```bash
 curl -fsSL https://ollama.com/install.sh | sh   # cài Ollama
-ollama pull qwen2.5:3b                            # model ~2GB, hợp RAM 16GB
+ollama pull qwen2.5:0.5b                          # model mặc định — ~400MB, nhanh nhất trong benchmark
 ollama serve                                      # chạy nền (thường tự chạy)
 ```
 Rồi đặt `MODE=local` (hoặc `LLM_PROVIDER=ollama`) trong `.env.local`.
@@ -108,3 +111,25 @@ Nếu agent ngắt lời quá sớm/muộn, chỉnh trong `.env.local`:
 
 > Gợi ý cho Raspberry Pi 4 (target edge): dùng `MODE=local` với `WHISPER_MODEL=tiny`
 > và TTS `piper` để chạy nhẹ; hoặc STT `gemini` nếu có mạng để tiết kiệm CPU.
+
+## Benchmark chọn model
+
+Ba harness độc lập trong `test_ui/` (`/test` = STT, `/test2` = TTS, `/test3` = LLM)
+dùng để so sánh các model trong từng khối trên cùng 3 câu mẫu (ngắn/vừa/dài, có số
+liệu sinh hiệu). Kết quả log tại `logs/{stt_test_time,tts_test_times,llm_test_times}.csv`.
+Model mặc định trong `src/config.py` hiện đã chốt theo kết quả này:
+
+- **TTS → `piper`**: RTF ~0.04-0.05× (rất nhanh, dưới thời gian thực), điểm chất
+  lượng trung bình 3.67/5, không có ghi chú lỗi. `silero` chậm hơn nhiều (RTF có
+  lúc lên 2×) và bị ghi chú "robot, mất số" ở câu dài; `kokoro` chất lượng tương
+  đương piper nhưng chậm hơn 20-50 lần; `mms`/`espeak` phát âm sai số hoặc quá máy móc.
+- **LLM → `qwen2.5:0.5b`**: nhanh nhất (1.3-1.4s/lượt) trong khi vẫn đồng hạng
+  điểm chất lượng cao nhất (3.67/5) với các model lớn hơn nhiều (`qwen2.5:1.5b`,
+  `llama3.1:8b`). Các model "thinking" (`qwen3:4b/8b`) mất 40-120s/lượt — không
+  dùng được cho hội thoại thời gian thực.
+- **STT → `distil-medium.en`** (PC) / **`tiny`** (Pi): độ chính xác số liệu y tế
+  (huyết áp, nhịp tim) tương đương `medium` gốc ở cả 3 câu test, nhưng nhanh hơn
+  ~26% (~3.6s so với ~4.9s/lượt) — quan trọng cho độ trễ hội thoại thời gian thực.
+
+Muốn test lại hoặc thử model khác: mở `/test`, `/test2`, `/test3` khi server đang
+chạy, rồi cập nhật lựa chọn trong `src/config.py` / `.env.local` nếu kết quả thay đổi.

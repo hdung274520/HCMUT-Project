@@ -44,9 +44,12 @@ def detect_device_profile() -> tuple[str, str, str, int, int]:
         # near real-time. Greedy decoding + leave 1 core free for audio I/O/OS.
         return "Raspberry Pi 4 (Target Edge)", "tiny", "qwen2.5:0.5b", 1, max(1, cpu_count - 1)
     else:
-        # Dev PC has headroom for 'medium' STT (more accurate than small),
-        # a wider beam search, all cores, and a 7B LLM.
-        return "Development PC (i5/16GB)", "medium", "qwen2.5:7b", 3, cpu_count
+        # Winners from the /test /test2 /test3 survey harnesses (see
+        # logs/{stt,llm,tts}_test_times.csv and README's Benchmark section):
+        # distil-medium.en matches vanilla 'medium' on accuracy but is ~26%
+        # faster, and qwen2.5:0.5b ties the best LLM rating while being by far
+        # the fastest (~1.3s vs 6-15s+ for 7B/8B models).
+        return "Development PC (i5/16GB)", "Systran/faster-distil-whisper-medium.en", "qwen2.5:0.5b", 3, cpu_count
 
 
 # Auto-detect hardware specs
