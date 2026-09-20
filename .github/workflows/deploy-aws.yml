@@ -46,6 +46,8 @@ jobs:
           sam deploy \
             --no-confirm-changeset \
             --no-fail-on-empty-changeset \
-            --stack-name hcmut-medical-backend \
+            --stack-name hdung274520-HCMUT-Project \
+            --resolve-s3 \
             --capabilities CAPABILITY_IAM \
             --parameter-overrides Environment=prod
+

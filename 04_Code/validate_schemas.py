@@ -14,8 +14,10 @@ except ImportError:
     import jsonschema
     from jsonschema import validate
 
-# Đường dẫn thư mục
-SCHEMAS_DIR = "/home/hdung274520/Project/05_Data/schemas"
+# Đường dẫn thư mục (tính động tương đối theo vị trí tệp mã nguồn)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SCHEMAS_DIR = os.path.join(BASE_DIR, "05_Data", "schemas")
+
 
 def load_schema(name):
     path = os.path.join(SCHEMAS_DIR, name)
