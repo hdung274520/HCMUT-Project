@@ -197,3 +197,9 @@ env/
 *.parquet
 *.nc
 
+# AWS SAM and Cloud Deployment Artifacts
+.aws-sam/
+.aws/
+samconfig.toml
+*.zip
+packaged.yaml

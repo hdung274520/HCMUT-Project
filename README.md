@@ -41,14 +41,15 @@ This research and development project aims to bridge the gap between physiologic
 │   ├── 01_Pipeline.md                <-- System pipeline architecture design (Markdown)
 │   ├── 02_Conda.md                   <-- Conda environment setup instructions
 │   └── 03_CLI.md                     <-- Command Line Interface documentation
+├── GIT_WORKFLOW_GUIDE.md             <-- Cẩm nang quản lý phiên bản với Git & GitHub CI/CD
 ├── 04_Code/                          <-- Source code of the actual implementation
-│   ├── 01_audio-agent/               <-- Core Voice Agent & Edge Client running on Raspberry Pi 4 (Currently empty)
-│   ├── 02_aws-services/              <-- Cloud Infrastructure, Lambda functions, and APIs on AWS (Currently empty)
-│   ├── 03_mobile-app/                <-- iOS/Android mobile dashboard (React Native / Expo) (Currently empty)
-│   └── 04_web-app/                   <-- Web Dashboard for monitoring sleep, eeg & vitals (Currently empty)
-├── 05_Data/                          <-- Dataset storage (Currently empty, planned subfolders: raw, processed, metadata)
-├── 06_Models/                        <-- Trained AI models and neural net checkpoints (Currently empty)
-└── 07_Experiments/                   <-- Performance metrics, logs, and evaluation reports (Currently empty)
+│   ├── 01_audio-agent/               <-- Core Voice Agent & Edge Client (FastAPI, Vosk/Whisper, Piper, Gemini)
+│   ├── 02_aws-services/              <-- Cloud Infrastructure: AWS SAM, Lambda Handlers & DynamoDB
+│   ├── 03_mobile-app/                <-- iOS/Android mobile dashboard (React Native / Expo) (Planned)
+│   └── 04_web-app/                   <-- Web Dashboard for monitoring sleep, eeg & vitals
+├── 05_Data/                          <-- Dataset storage & JSON Schemas (user profile, active session, vitals)
+├── 06_Models/                        <-- Trained AI models and neural net checkpoints
+└── 07_Experiments/                   <-- Performance metrics, logs, and evaluation reports
 ```
 
 ---
@@ -118,3 +119,21 @@ bluetoothctl
 [bluetooth]# trust <MUSE_MAC_ADDRESS>
 [bluetooth]# connect <MUSE_MAC_ADDRESS>
 ```
+
+### 5. AWS Cloud Backend Deployment (AWS SAM)
+
+To deploy the Serverless Cloud backend (API Gateway, Lambdas, DynamoDB, S3):
+
+```bash
+cd 04_Code/02_aws-services
+sam build
+sam deploy --guided
+```
+Detailed instructions and API testing examples can be found in [04_Code/02_aws-services/README.md](file:///home/hdung274520/Project/04_Code/02_aws-services/README.md).
+
+### 6. Version Control & CI/CD with GitHub
+
+- **Workflow Guide**: Refer to [GIT_WORKFLOW_GUIDE.md](file:///home/hdung274520/Project/GIT_WORKFLOW_GUIDE.md) for branch strategy, commit conventions, tags, and secrets management.
+- **Automated CI**: Runs on every pull request / push to validate JSON schemas and Lambda unit tests (`.github/workflows/ci.yml`).
+- **Automated CD**: Deploys backend stack to AWS via GitHub Actions upon merge into `main` (`.github/workflows/deploy-aws.yml`).
+

@@ -1,0 +1,51 @@
+name: CD - Deploy Backend to AWS
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - "04_Code/02_aws-services/**"
+      - ".github/workflows/deploy-aws.yml"
+  workflow_dispatch: # Cho phép kích hoạt thủ công từ giao diện GitHub Actions
+
+jobs:
+  deploy-serverless:
+    name: Build & Deploy AWS Serverless Stack
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 04_Code/02_aws-services
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Set up AWS SAM CLI
+        uses: aws-actions/setup-sam@v2
+        with:
+          use-installer: true
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION || 'ap-southeast-1' }}
+
+      - name: Build SAM Application
+        run: |
+          sam build --use-container=false
+
+      - name: Deploy SAM Stack to AWS
+        run: |
+          sam deploy \
+            --no-confirm-changeset \
+            --no-fail-on-empty-changeset \
+            --stack-name hcmut-medical-backend \
+            --capabilities CAPABILITY_IAM \
+            --parameter-overrides Environment=prod
