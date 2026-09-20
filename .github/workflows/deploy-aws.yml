@@ -39,7 +39,8 @@ jobs:
 
       - name: Build SAM Application
         run: |
-          sam build --use-container=false
+          sam build
+
 
       - name: Deploy SAM Stack to AWS
         run: |
