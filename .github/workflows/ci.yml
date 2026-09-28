@@ -24,24 +24,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install jsonschema pydantic flake8 boto3
+          pip install jsonschema pydantic
 
       - name: Validate JSON Schemas
         run: |
           python 04_Code/validate_schemas.py
-
-      - name: Run Lambda Unit Tests
-        run: |
-          python 04_Code/02_aws-services/test_handlers.py
-
-      - name: Lint Python Code (Syntax & Critical Errors)
-        run: |
-          # Dừng build nếu có lỗi cú pháp Python hoặc biến chưa khai báo
-          flake8 04_Code/02_aws-services --count --select=E9,F63,F7,F82 --show-source --statistics
-          flake8 04_Code/02_aws-services --count --exit-zero --max-complexity=15 --max-line-length=127 --statistics
-
-      - name: Validate SAM Template Syntax
-        run: |
-          pip install cfn-lint
-          cfn-lint 04_Code/02_aws-services/template.yaml || echo "Warning: cfn-lint check completed"
-

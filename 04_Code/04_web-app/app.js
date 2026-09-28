@@ -72,9 +72,6 @@ function setHeaderDate() {
   headerDate.textContent = now.toLocaleDateString('en-US', options);
 }
 
-// ========== AWS Cloud Configuration ==========
-const AWS_API_ENDPOINT = window.AWS_API_ENDPOINT || localStorage.getItem('AWS_API_ENDPOINT') || '';
-
 // ========== Data Loading ==========
 async function loadAllData() {
   try {
@@ -88,35 +85,14 @@ async function loadAllData() {
     vitalsData = vitals;
     sessionData = session;
     alertsData = alerts;
-
-    // Optional: Fetch live vitals if AWS API Gateway endpoint is provided
-    if (AWS_API_ENDPOINT) {
-      try {
-        const liveRes = await fetch(`${AWS_API_ENDPOINT}/vitals/latest?user_id=${profile.metadata?.user_id || 'user-hdung-001'}`);
-        if (liveRes.ok) {
-          const liveJson = await liveRes.json();
-          if (liveJson.data && liveJson.data.vitals) {
-            console.log('Synchronized live data from AWS Cloud:', liveJson.data);
-            if (liveJson.data.vitals.heart_rate) vitalsData.daily_summary.resting_heart_rate_bpm = liveJson.data.vitals.heart_rate;
-            if (liveJson.data.vitals.spo2) vitalsData.daily_summary.average_blood_oxygen_pct = liveJson.data.vitals.spo2;
-            document.getElementById('agent-status-text').textContent = 'ONLINE (AWS LIVE)';
-          }
-        }
-      } catch (awsErr) {
-        console.warn('AWS API Gateway connection notice:', awsErr.message);
-      }
-    } else {
-      document.getElementById('agent-status-text').textContent = 'ONLINE';
-    }
-
     document.getElementById('agent-status-dot').style.background = 'var(--success)';
+    document.getElementById('agent-status-text').textContent = 'ONLINE';
   } catch (e) {
     console.error('Error loading data:', e);
     document.getElementById('agent-status-text').textContent = 'DATA ERROR';
     document.getElementById('agent-status-dot').style.background = 'var(--danger)';
   }
 }
-
 
 // ========== Navigation ==========
 function setupNavigation() {

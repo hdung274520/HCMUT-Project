@@ -18,7 +18,7 @@ Dự án áp dụng mô hình phân nhánh chuẩn **Git Flow / GitHub Flow**:
 
 1. **`main`**:
    - Nhánh chính, chứa mã nguồn ổn định nhất.
-   - Khi merge code vào nhánh `main`, GitHub Actions sẽ tự động kích hoạt pipeline kiểm thử và deploy lên AWS (`deploy-aws.yml`).
+   - Khi merge code vào nhánh `main`, GitHub Actions sẽ tự động kích hoạt pipeline kiểm thử (`ci.yml`).
    - Tuyệt đối **không** commit trực tiếp vào `main` khi làm việc nhóm.
 
 2. **`develop`**:
@@ -127,26 +127,7 @@ Sau khi đẩy tag, bạn có thể vào mục **Releases** trên GitHub để b
 
 ---
 
-## 5. Thiết Lập Tự Động Triển Khai Lên AWS (GitHub Secrets)
-
-Để workflow `.github/workflows/deploy-aws.yml` có thể tự động build và deploy lên tài khoản AWS của bạn mỗi khi push code vào nhánh `main`:
-
-1. Truy cập vào kho chứa trên GitHub:
-   👉 **`https://github.com/hdung274520/HCMUT-Project/settings/secrets/actions`**
-2. Nhấn nút **New repository secret** và thêm lần lượt 3 biến sau:
-
-| Tên Secret | Ý nghĩa | Ví dụ giá trị |
-| :--- | :--- | :--- |
-| `AWS_ACCESS_KEY_ID` | Khóa truy cập IAM của bạn | `AKIAIOSFODNN7EXAMPLE` |
-| `AWS_SECRET_ACCESS_KEY` | Khóa bí mật IAM của bạn | `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY` |
-| `AWS_REGION` | Vùng máy chủ AWS triển khai | `ap-southeast-1` |
-
-> [!IMPORTANT]
-> **Bảo mật tuyệt đối**: Không bao giờ commit trực tiếp các khóa AWS Access Key vào file code hoặc tài liệu trên Git. GitHub Actions sẽ tự động lấy các giá trị này một cách an toàn từ mục Secrets.
-
----
-
-## 6. Xử Lý Xung Đột (Merge Conflicts)
+## 5. Xử Lý Xung Đột (Merge Conflicts)
 
 Nếu xảy ra xung đột khi pull code:
 1. Mở các tệp có thông báo xung đột (`<<<<<<< HEAD`, `=======`, `>>>>>>>`).
