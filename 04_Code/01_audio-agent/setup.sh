@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================
-# One-shot environment setup for the Voice Agent (Fedora / CPU-only).
+# One-shot environment setup for the Voice Agent (Ubuntu / CPU-only).
 # Creates a Conda env "voice-agent" (Python 3.11) with the system audio
 # libs, installs Python deps, and prepares .env.local.
 # =============================================================

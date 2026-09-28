@@ -1,6 +1,6 @@
 # Hướng dẫn Ứng dụng Conda trong Dự án Medical Signal Audio Assistant
 
-Tài liệu này giải thích chi tiết về Conda, lợi ích của việc sử dụng nó, cách nó giải quyết các vấn đề đặc thù trong dự án **Medical Signal Audio Assistant**, và hướng dẫn cấu hình môi trường ảo đồng nhất trên cả máy trạm phát triển (**Fedora Bridge PC**) và thiết bị nhúng (**Raspberry Pi 4 Edge**).
+Tài liệu này giải thích chi tiết về Conda, lợi ích của việc sử dụng nó, cách nó giải quyết các vấn đề đặc thù trong dự án **Medical Signal Audio Assistant**, và hướng dẫn cấu hình môi trường ảo đồng nhất trên cả máy trạm phát triển (**Ubuntu Bridge PC**) và thiết bị nhúng (**Raspberry Pi 4 Edge**).
 
 ---
 
@@ -23,7 +23,7 @@ Tài liệu này giải thích chi tiết về Conda, lợi ích của việc s�
 | :--- | :--- | :--- |
 | **Phạm vi quản lý** | Chỉ quản lý các gói Python (PyPI). | Quản lý gói đa ngôn ngữ (Python, C/C++, R, Node.js...) và các nhị phân hệ thống. |
 | **Quản lý phiên bản Python** | Phụ thuộc vào phiên bản Python cài sẵn trên hệ điều hành. Rất khó để chạy một môi trường chạy Python 3.9 trên máy chỉ cài Python 3.11 nếu không tự biên dịch Python. | Tự động tải xuống và cài đặt bất kỳ phiên bản Python nào được yêu cầu mà không phụ thuộc hệ điều hành. |
-| **Dependencies hệ thống (C/C++, Audio, CUDA...)** | Không tự cài được. Người dùng phải tự cài thủ công qua trình quản lý hệ thống (như `dnf` trên Fedora, `apt` trên Debian/Pi) bằng quyền root `sudo`. | Tự động tải các gói nhị phân đã biên dịch sẵn (như `ffmpeg`, `libsndfile`, `cuda-toolkit`) trực tiếp vào môi trường ảo, không cần quyền root. |
+| **Dependencies hệ thống (C/C++, Audio, CUDA...)** | Không tự cài được. Người dùng phải tự cài thủ công qua trình quản lý hệ thống (như `apt` trên Ubuntu/Debian/Pi) bằng quyền root `sudo`. | Tự động tải các gói nhị phân đã biên dịch sẵn (như `ffmpeg`, `libsndfile`, `cuda-toolkit`) trực tiếp vào môi trường ảo, không cần quyền root. |
 | **Độ tin cậy cài đặt** | Thường phải biên dịch từ mã nguồn đối với một số thư viện C/C++ phức tạp, dễ gây lỗi compile thất bại nếu thiếu thư viện dev trên máy. | Cung cấp sẵn các gói nhị phân (Pre-compiled binaries) đã được tối ưu hóa cho từng kiến trúc CPU (x86_64, ARM64). |
 
 ---
@@ -36,16 +36,16 @@ Dự án [Medical Signal Audio Assistant](file:///home/hdung274520/Project/READM
 Để Voice Agent hoạt động trơn tru (như cấu hình trong [requirements.txt](file:///home/hdung274520/Project/04_Code/audio-agent/requirements.txt)), hệ thống cần các thư viện nhị phân bên ngoài:
 *   `soundfile` yêu cầu thư viện hệ thống `libsndfile`.
 *   `faster-whisper` và `kokoro` yêu cầu công cụ xử lý media `ffmpeg` để convert/stream luồng âm thanh WebRTC.
-*   **Nếu dùng `venv`:** Ta buộc phải chạy `sudo dnf install ffmpeg libsndfile` trên Fedora PC. Nhưng trên Raspberry Pi 4, người dùng có thể gặp khó khăn hoặc không có quyền root.
+*   **Nếu dùng `venv`:** Ta buộc phải chạy `sudo apt install ffmpeg libsndfile1` trên Ubuntu PC. Nhưng trên Raspberry Pi 4, người dùng có thể gặp khó khăn hoặc không có quyền root.
 *   **Giải pháp với Conda:** Ta định nghĩa `ffmpeg` và `libsndfile` trong danh sách cài đặt của Conda. Conda sẽ tải bản build portable trực tiếp vào thư mục môi trường của dự án, đảm bảo chạy ăn ngay mà không can thiệp vào hệ điều hành.
 
-### 2.2. Đồng bộ hóa môi trường giữa Fedora và Raspberry Pi 4 (ARM64)
-*   **Thách thức:** Raspberry Pi 4 chạy kiến trúc ARM64, trong khi máy trạm Fedora của bạn chạy x86_64. Khi cài đặt thư viện Bluetooth hay xử lý tín hiệu như `BrainFlow` (để kết nối Muse 2), việc biên dịch trên Pi 4 rất mất thời gian và dễ lỗi.
+### 2.2. Đồng bộ hóa môi trường giữa Ubuntu và Raspberry Pi 4 (ARM64)
+*   **Thách thức:** Raspberry Pi 4 chạy kiến trúc ARM64, trong khi máy trạm Ubuntu của bạn chạy x86_64. Khi cài đặt thư viện Bluetooth hay xử lý tín hiệu như `BrainFlow` (để kết nối Muse 2), việc biên dịch trên Pi 4 rất mất thời gian và dễ lỗi.
 *   **Giải pháp với Conda:** Kênh cài đặt phổ biến `conda-forge` hỗ trợ đầy đủ các bản build nhị phân cho cả hai kiến trúc `linux-64` và `linux-aarch64` (ARM64). Bạn có thể định nghĩa chung một tệp cấu hình và chạy lệnh cài đặt giống hệt nhau ở cả 2 thiết bị.
 
 ### 2.3. Hỗ trợ huấn luyện mô hình Học máy (GRU/RNN) với GPU/CUDA
-*   Khi phát triển và đánh giá mô hình học sâu tại các thư mục [06_Models/](file:///home/hdung274520/Project/06_Models) và [07_Experiments/](file:///home/hdung274520/Project/07_Experiments), bạn cần sử dụng PyTorch có hỗ trợ GPU trên Fedora để tăng tốc.
-*   Việc cài đặt driver CUDA hệ thống và khớp nối phiên bản với PyTorch thường rất phức tạp trên Fedora. 
+*   Khi phát triển và đánh giá mô hình học sâu tại các thư mục [06_Models/](file:///home/hdung274520/Project/06_Models) và [07_Experiments/](file:///home/hdung274520/Project/07_Experiments), bạn cần sử dụng PyTorch có hỗ trợ GPU trên Ubuntu để tăng tốc.
+*   Việc cài đặt driver CUDA hệ thống và khớp nối phiên bản với PyTorch thường khá phức tạp trên Linux. 
 *   **Giải pháp với Conda:** Cài đặt thông qua lệnh `conda install pytorch torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia`. Conda sẽ tự tải gói `pytorch-cuda` chứa tất cả các thư viện runtime CUDA cần thiết một cách khép kín.
 
 ---
@@ -54,9 +54,9 @@ Dự án [Medical Signal Audio Assistant](file:///home/hdung274520/Project/READM
 
 Dưới đây là quy trình ứng dụng thực tế để chuyển đổi từ `venv` sang **Conda** cho thư mục [audio-agent/](file:///home/hdung274520/Project/04_Code/audio-agent).
 
-### Bước 1: Cài đặt Miniconda trên Fedora Linux
+### Bước 1: Cài đặt Miniconda trên Ubuntu Linux
 
-Chạy các lệnh sau trong terminal của máy Fedora:
+Chạy các lệnh sau trong terminal của máy Ubuntu:
 
 ```bash
 # Tải về bộ cài đặt Miniconda

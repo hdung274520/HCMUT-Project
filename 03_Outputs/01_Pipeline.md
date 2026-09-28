@@ -2,7 +2,7 @@
 
 Bản kế hoạch này trình bày cấu trúc thiết kế tối ưu, lộ trình triển khai và các tính năng cao cấp cho hệ thống y tế chạy chính trực tiếp trên **Raspberry Pi 4**:
 *   **Thiết bị chạy chính (Core Host):** Raspberry Pi 4 (4GB RAM) chạy Python Voice Agent (FastAPI, kết nối WebSocket trực tiếp với client) và chương trình thu thập dữ liệu y tế Muse 2.
-*   **Máy trạm kết nối (Bridge PC):** Fedora 44 (i5-1135G7, 16GB RAM) chỉ đóng vai trò kết nối terminal SSH, biên dịch code, và phát triển/thử nghiệm.
+*   **Máy trạm kết nối (Bridge PC):** Ubuntu 26.04 LTS (i5-1135G7, 16GB RAM) chỉ đóng vai trò kết nối terminal SSH, biên dịch code, và phát triển/thử nghiệm.
 *   **LLM Engine:** **Google Gemini 1.5 Flash API** (Cloud API kết nối từ Raspberry Pi 4).
 *   **STT Engine:** **Vosk STT** (Chạy offline cực nhẹ, tiêu tốn ít RAM/CPU trên Raspberry Pi 4).
 *   **TTS Engine:** **Piper TTS** (Chạy offline qua ONNX, được tối ưu hóa đặc biệt để sinh giọng nói thời gian thực trên chip ARM của Raspberry Pi 4).
