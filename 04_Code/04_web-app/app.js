@@ -39,7 +39,6 @@ const STR = {
   'gender.male':       'Male',
   'gender.female':     'Female',
   'gender.other':      'Other',
-  'act.steps':         'Steps',
   'act.activeMin':     'Active min',
   'act.cal':           'Calories',
   'hyp.awake':         'Awake',
@@ -192,8 +191,8 @@ function buildSystemInstruction() {
     prompt += `Today's vitals: resting heart rate=${s.resting_heart_rate_bpm}bpm, `
       + `average blood pressure=${s.average_blood_pressure.systolic}/${s.average_blood_pressure.diastolic}mmHg, `
       + `average SpO2=${s.average_blood_oxygen_pct}%, sleep score=${s.sleep_summary.sleep_score}/100, `
-      + `sleep duration=${s.sleep_summary.total_sleep_hours}h. `
-      + `Activity: ${vitalsData.activities.steps} steps, ${vitalsData.activities.active_minutes} min, `
+      + `sleep duration=${(s.sleep_summary.total_sleep_seconds / 3600).toFixed(1)}h. `
+      + `Activity (H303 workouts): ${vitalsData.activities.active_minutes} min, `
       + `${vitalsData.activities.calories_burned_kcal}kcal.\n`;
   }
 
@@ -670,21 +669,19 @@ function renderHRDailyChart() {
 function renderActivityChart() {
   const ctx = document.getElementById('chart-activity').getContext('2d');
   const a = vitalsData.activities;
-  const goalSteps = 10000;
   const goalMinutes = 60;
   const goalCal = 2500;
 
   new Chart(ctx, {
     type: 'doughnut',
     data: {
-      labels: [t('act.steps'), t('act.activeMin'), t('act.cal')],
+      labels: [t('act.activeMin'), t('act.cal')],
       datasets: [{
         data: [
-          Math.min((a.steps / goalSteps) * 100, 100),
           Math.min((a.active_minutes / goalMinutes) * 100, 100),
           Math.min((a.calories_burned_kcal / goalCal) * 100, 100)
         ],
-        backgroundColor: ['#6366f1', '#10b981', '#f59e0b'],
+        backgroundColor: ['#10b981', '#f59e0b'],
         borderWidth: 0,
         borderRadius: 6,
         spacing: 4
@@ -715,10 +712,6 @@ function renderActivityChart() {
   // Activity stats below chart
   const statsEl = document.getElementById('activity-stats');
   statsEl.innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <span style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#6366f1;display:inline-block"></span> ${t('act.steps')}</span>
-      <span style="font-weight:700">${a.steps.toLocaleString()} / ${goalSteps.toLocaleString()}</span>
-    </div>
     <div style="display:flex;justify-content:space-between;align-items:center">
       <span style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block"></span> ${t('act.activeMin')}</span>
       <span style="font-weight:700">${a.active_minutes} / ${goalMinutes}</span>
@@ -858,7 +851,7 @@ function renderSleep() {
   renderSleepVitals();
 }
 
-// ========== Samsung Health-Style Hypnogram ==========
+// ========== Sleep Hypnogram ==========
 function renderHypnogram() {
   const canvas = document.getElementById('canvas-hypnogram');
   const wrapper = document.getElementById('hypnogram-wrapper');
@@ -1231,7 +1224,7 @@ function renderVitals() {
   // Quick stats
   document.getElementById('vt-rhr').textContent = vitalsData.daily_summary.resting_heart_rate_bpm;
   document.getElementById('vt-hrv').textContent = sessionData.summary_insights.average_vitals.hrv_ms;
-  document.getElementById('vt-steps').textContent = vitalsData.activities.steps.toLocaleString();
+  document.getElementById('vt-active').textContent = vitalsData.activities.active_minutes;
   document.getElementById('vt-cal').textContent = vitalsData.activities.calories_burned_kcal.toLocaleString();
 
   // HR Zones

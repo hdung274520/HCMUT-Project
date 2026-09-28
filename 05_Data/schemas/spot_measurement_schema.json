@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SpotMeasurement",
+  "description": "One-off measurement taken on demand (Yuwell YX110 SpO2 fingertip reading, morning H303 resting HR, blood pressure). Stored in the AWS SpotMeasurements table.",
+  "type": "object",
+  "required": ["measurement_id", "user_id", "timestamp", "type", "source_device"],
+  "properties": {
+    "measurement_id": {
+      "type": "string",
+      "description": "Idempotency key generated on the Raspberry Pi"
+    },
+    "user_id": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["spo2", "resting_heart_rate", "blood_pressure"]
+    },
+    "source_device": {
+      "type": "string",
+      "enum": ["muse2_ppg", "magene_h303", "yuwell_yx110", "simulator"]
+    },
+    "spo2_pct": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "pulse_bpm": {
+      "type": "integer",
+      "minimum": 20,
+      "maximum": 250
+    },
+    "hrv_ms": {
+      "type": "number"
+    },
+    "systolic": {
+      "type": "integer"
+    },
+    "diastolic": {
+      "type": "integer"
+    },
+    "context": {
+      "type": "string",
+      "description": "Why the measurement was taken: morning, rest, post_workout, confirm_repeat, ..."
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "type": { "const": "spo2" } } },
+      "then": { "required": ["spo2_pct"] }
+    },
+    {
+      "if": { "properties": { "type": { "const": "resting_heart_rate" } } },
+      "then": { "required": ["pulse_bpm"] }
+    },
+    {
+      "if": { "properties": { "type": { "const": "blood_pressure" } } },
+      "then": { "required": ["systolic", "diastolic"] }
+    }
+  ]
+}

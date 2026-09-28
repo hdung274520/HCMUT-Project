@@ -237,6 +237,58 @@ def run_tests():
         print(f" -> ERROR: Lỗi xác thực Stress: {err.message}")
         return False
 
+    # Giả lập phiên tập luyện (Magene H303 đo nhịp tim & RR-interval)
+    mock_workout_session = {
+        "metadata": {
+            "session_id": "sess_workout_003",
+            "session_type": "workout",
+            "timestamp_start": "2026-06-26T18:00:00Z",
+            "timestamp_end": "2026-06-26T18:30:00Z",
+            "duration_seconds": 1800,
+            "devices": ["magene_h303"],
+            "raw_data_s3_key": "raw/usr_998877/2026-06-26/sess_workout_003_rr.parquet",
+            "user_context": {
+                "age": 28,
+                "gender": "male",
+                "activity_state": "workout"
+            }
+        },
+        "summary_insights": {
+            "overall_score": 78,
+            "average_vitals": {
+                "heart_rate_bpm": 145.0,
+                "hrv_ms": 12.4,
+                "heart_rate_source": "magene_h303"
+            },
+            "average_eeg": {
+                "alpha": 0.0,
+                "beta": 0.0,
+                "theta": 0.0,
+                "delta": 0.0
+            },
+            "alerts": []
+        },
+        "cognitive_states": {
+            "state_distribution": {},
+            "state_blocks": []
+        },
+        "vitals_series": [
+            {
+                "timestamp": "2026-06-26T18:10:00Z",
+                "heart_rate": 148,
+                "source_device": "magene_h303",
+                "rr_intervals_ms": [405.0, 410.0, 402.0]
+            }
+        ]
+    }
+
+    try:
+        validate(instance=mock_workout_session, schema=session_schema)
+        print(" -> SUCCESS: Dữ liệu phiên tập luyện (H303) hợp lệ.")
+    except jsonschema.exceptions.ValidationError as err:
+        print(f" -> ERROR: Lỗi xác thực Workout: {err.message}")
+        return False
+
     # 3. Kiểm thử Daily Vitals Schema
     print("\n3. Kiểm tra Daily Vitals Schema...")
     daily_schema = load_schema("daily_vitals_schema.json")
@@ -244,7 +296,7 @@ def run_tests():
         "metadata": {
             "user_id": "usr_998877",
             "date": "2026-06-26",
-            "synced_at": datetime.now(timezone.utc).isoformat()
+            "computed_at": datetime.now(timezone.utc).isoformat()
         },
         "daily_summary": {
             "resting_heart_rate_bpm": 61,
@@ -259,31 +311,35 @@ def run_tests():
             }
         },
         "activities": {
-            "steps": 10450,
             "active_minutes": 45,
             "calories_burned_kcal": 450
         },
         "heart_rate_log": [
-            { "timestamp": "2026-06-26T08:00:00Z", "bpm": 72 },
-            { "timestamp": "2026-06-26T12:30:00Z", "bpm": 85 }
+            { "timestamp": "2026-06-26T03:00:00Z", "bpm": 52, "source_device": "magene_h303" },
+            { "timestamp": "2026-06-26T12:30:00Z", "bpm": 85, "source_device": "yuwell_yx110" }
+        ],
+        "blood_oxygen_log": [
+            { "timestamp": "2026-06-26T12:30:00Z", "spo2_pct": 98, "pulse_bpm": 85, "source_device": "yuwell_yx110" }
         ],
         "workout_sessions": [
             {
                 "workout_id": "wk_run_01",
+                "session_id": "sess_workout_003",
                 "type": "running",
                 "timestamp_start": "2026-06-26T18:00:00Z",
                 "timestamp_end": "2026-06-26T18:30:00Z",
                 "duration_seconds": 1800,
                 "calories_burned_kcal": 320,
                 "average_heart_rate": 145,
-                "max_heart_rate": 168
+                "max_heart_rate": 168,
+                "source_device": "magene_h303"
             }
         ]
     }
     
     try:
         validate(instance=mock_daily_data, schema=daily_schema)
-        print(" -> SUCCESS: Dữ liệu sinh hiệu nền hàng ngày hợp lệ.")
+        print(" -> SUCCESS: Dữ liệu tổng hợp sinh hiệu hằng ngày hợp lệ.")
     except jsonschema.exceptions.ValidationError as err:
         print(f" -> ERROR: Lỗi xác thực Daily vitals: {err.message}")
         return False
@@ -345,6 +401,35 @@ def run_tests():
     except jsonschema.exceptions.ValidationError as err:
         print(f" -> ERROR: Lỗi xác thực Assistant: {err.message}")
         return False
+
+    # 5. Kiểm thử Spot Measurement Schema (Yuwell YX110)
+    print("\n5. Kiểm tra Spot Measurement Schema...")
+    spot_schema = load_schema("spot_measurement_schema.json")
+    mock_spot_data = {
+        "measurement_id": "spot_20260626_1230_01",
+        "user_id": "usr_998877",
+        "timestamp": "2026-06-26T12:30:00Z",
+        "type": "spo2",
+        "source_device": "yuwell_yx110",
+        "spo2_pct": 98,
+        "pulse_bpm": 85,
+        "context": "rest"
+    }
+
+    try:
+        validate(instance=mock_spot_data, schema=spot_schema)
+        print(" -> SUCCESS: Dữ liệu đo SpO2 (YX110) hợp lệ.")
+    except jsonschema.exceptions.ValidationError as err:
+        print(f" -> ERROR: Lỗi xác thực Spot measurement: {err.message}")
+        return False
+
+    # Số đo SpO2 thiếu giá trị spo2_pct phải bị từ chối
+    try:
+        validate(instance={k: v for k, v in mock_spot_data.items() if k != "spo2_pct"}, schema=spot_schema)
+        print(" -> ERROR: Schema chấp nhận số đo SpO2 không có spo2_pct.")
+        return False
+    except jsonschema.exceptions.ValidationError:
+        print(" -> SUCCESS: Số đo SpO2 thiếu giá trị bị từ chối đúng.")
         
     print("\n=== TOÀN BỘ KIỂM THỬ XÁC THỰC THÀNH CÔNG (100% OK) ===")
     return True

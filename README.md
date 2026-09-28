@@ -21,7 +21,7 @@ This research and development project aims to bridge the gap between physiologic
 
 3. **Mobile Application**
    * User-friendly mobile dashboard showing real-time graphs and historical analysis.
-   * Receives notifications from the Audio Agent and synchronization of stats with AWS cloud databases.
+   * Receives notifications from the Audio Agent and reads stats from AWS cloud databases (sensor data is uploaded by the Raspberry Pi, not the phone).
 
 ---
 
@@ -114,19 +114,25 @@ aws configure --profile default
 
 ### 4. Raspberry Pi 4 Connection & Deployment
 
-Since the Audio Agent (with local STT/TTS and Muse 2 BLE) runs directly on the Raspberry Pi 4, use SSH to sync code and control the edge gateway from Ubuntu:
+Since the Audio Agent (with local STT/TTS) and all sensor connections run directly on the Raspberry Pi 4, use SSH to sync code and control the edge gateway from Ubuntu. The Pi is the only gateway that uploads sensor data to AWS (there is no 24/7 wearable):
+
+| Sensor | Measures | Link to Pi |
+|---|---|---|
+| Muse 2 | EEG (4 channels, 256 Hz) + PPG heart rate | BLE (BrainFlow) |
+| Magene H303 | ECG heart rate + RR intervals (HRV) | BLE Heart Rate Service |
+| Yuwell YX110 | SpO₂ + pulse (spot measurement) | Bluetooth |
 
 ```bash
 # Connect to Raspberry Pi via SSH from Ubuntu terminal
 ssh pi@<raspberry-pi-ip-address>
 
-# Pair and trust the Muse 2 device via bluetoothctl on Raspberry Pi 4 / Ubuntu:
+# Pair and trust each sensor (Muse 2, Magene H303, Yuwell YX110) via bluetoothctl on Raspberry Pi 4 / Ubuntu:
 bluetoothctl
 [bluetooth]# power on
 [bluetooth]# scan on
-[bluetooth]# pair <MUSE_MAC_ADDRESS>
-[bluetooth]# trust <MUSE_MAC_ADDRESS>
-[bluetooth]# connect <MUSE_MAC_ADDRESS>
+[bluetooth]# pair <DEVICE_MAC_ADDRESS>
+[bluetooth]# trust <DEVICE_MAC_ADDRESS>
+[bluetooth]# connect <DEVICE_MAC_ADDRESS>
 ```
 
 ### 5. Version Control & CI with GitHub

@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "ActiveSessionData",
-  "description": "Session data recorded from Muse 2 (EEG & PPG). Supports sleep, meditation, focus, and stress modes.",
+  "description": "Session data recorded on the Raspberry Pi from Muse 2 (EEG & PPG) and/or Magene H303 (ECG heart rate & RR intervals). Supports sleep, meditation, focus, stress, and workout modes.",
   "type": "object",
   "required": ["metadata", "summary_insights", "cognitive_states"],
   "properties": {
@@ -14,7 +14,19 @@
         },
         "session_type": {
           "type": "string",
-          "enum": ["sleep", "meditation", "focus", "stress"]
+          "enum": ["sleep", "meditation", "focus", "stress", "workout"]
+        },
+        "devices": {
+          "type": "array",
+          "description": "Devices connected during the session",
+          "items": {
+            "type": "string",
+            "enum": ["muse2", "magene_h303"]
+          }
+        },
+        "raw_data_s3_key": {
+          "type": "string",
+          "description": "S3 object key of the raw EEG / RR-interval recording"
         },
         "timestamp_start": {
           "type": "string",
@@ -62,6 +74,11 @@
             },
             "hrv_ms": {
               "type": "number"
+            },
+            "heart_rate_source": {
+              "type": "string",
+              "enum": ["muse2_ppg", "magene_h303"],
+              "description": "H303 is preferred over Muse 2 PPG when both are connected"
             },
             "systolic_bp": {
               "type": "integer"
@@ -188,6 +205,15 @@
           },
           "hrv": {
             "type": "number"
+          },
+          "source_device": {
+            "type": "string",
+            "enum": ["muse2_ppg", "magene_h303"]
+          },
+          "rr_intervals_ms": {
+            "type": "array",
+            "items": { "type": "number" },
+            "description": "Beat-to-beat intervals from H303 in this sample window"
           },
           "systolic": {
             "type": "integer"

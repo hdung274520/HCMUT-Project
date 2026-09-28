@@ -37,7 +37,7 @@ ai_engine:
   tts_model: "piper-tts (ONNX)"
 
 # 4. Thiết bị đo tín hiệu sinh học (Medical/Biological Sensors)
-# Cấu hình thiết bị đo EEG/PPG kết hợp Hợp nhất cảm biến (Sensor Fusion)
+# Cấu hình thiết bị đo EEG/PPG (Muse 2), ECG (Magene H303), SpO2 (Yuwell YX110) cho Hợp nhất cảm biến (Sensor Fusion)
 devices:
   eeg:
     brand: "Muse 2"           # Thiết bị đo chính
@@ -45,11 +45,29 @@ devices:
     channels_count: 4         # Muse 2 có 4 kênh điện cực chính: TP9, AF7, AF8, TP10
     sample_rate_hz: 256       # Tần số lấy mẫu mặc định của Muse 2 là 256 Hz
   vitals:
-    blood_pressure: "Simulator" 
+    blood_pressure: "Simulator"
     heart_rate:
-      realtime_source: "Muse 2 PPG (Vùng chẩm/trán chẩm)" # Nguồn đo mạch thời gian thực khi đang trong phiên đo
-      background_source: "Galaxy Fit 3"         # Nguồn đo nhịp tim nền 24/7 đồng bộ qua điện thoại
-      sync_protocol: "Google Health Connect"   # Giao thức đồng bộ chỉ số từ Samsung Health vào App
+      primary_source: "Magene H303"             # Đai ngực đo ECG - nguồn nhịp tim/HRV chính xác nhất (ưu tiên 1)
+      secondary_source: "Muse 2 PPG (Vùng chẩm/trán chẩm)" # Dùng khi không đeo H303 trong phiên đo EEG (ưu tiên 2)
+      spot_source: "Yuwell YX110"               # Mạch đo kèm SpO2 theo từng lần (ưu tiên 3)
+      continuous_24_7: false                    # Không có thiết bị đeo nền 24/7 - chỉ có dữ liệu khi đeo/đo
+    spo2:
+      source: "Yuwell YX110"                    # Máy kẹp ngón đo SpO2 theo từng lần (tự tắt sau ~8 giây, không đo qua đêm)
+  heart_rate_strap:
+    brand: "Magene H303"
+    connection_type: "bluetooth"                # BLE 4.2 (chuẩn Heart Rate Service 0x180D) + ANT+
+    measurement: "ECG"                          # Lấy nhịp tim trực tiếp từ sóng ECG, ít nhiễu khi vận động
+    hr_range_bpm: [30, 240]
+    rr_intervals: "cần kiểm tra"                # Xác nhận characteristic 0x2A37 có gửi RR-interval (để tính HRV) bằng nRF Connect
+    battery_hours: 1000                         # Pin CR2032 - đeo qua đêm được
+  pulse_oximeter:
+    brand: "Yuwell YX110"
+    connection_type: "bluetooth"
+    protocol: "cần kiểm tra"                    # Chuẩn Pulse Oximeter Service (0x1822) hay giao thức riêng của hãng
+    measurement_mode: "spot"                    # Đo theo từng lần, cho kết quả sau 5-8 giây
+  edge_gateway:
+    all_devices_connect_to: "Raspberry Pi 4"    # Muse 2, H303, YX110 đều kết nối BLE về Pi (Pi là cổng dữ liệu duy nhất lên AWS)
+    note: "Nếu BLE tích hợp của Pi 4 không ổn định khi giữ Muse 2 + H303 cùng lúc, dùng thêm USB Bluetooth 5.0 dongle"
 
 # 5. Cấu hình tần số nhiễu điện lưới (Power Grid Noise Frequency)
 power_grid:
