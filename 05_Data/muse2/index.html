@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Muse 2 dashboard</title>
+<style>
+  body { font-family: system-ui, sans-serif; background: #111; color: #eee; margin: 0; padding: 24px; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  .sub { color: #888; font-size: 13px; margin-bottom: 16px; }
+  #status { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 13px; margin-bottom: 16px; }
+  #status.connected { background: #1b4332; color: #74c69d; }
+  #status.disconnected { background: #4a1b1b; color: #e07a7a; }
+  .vitals { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+  .vital { background: #1c1c1c; border-radius: 12px; padding: 12px 20px; min-width: 120px; }
+  .vital .label { color: #888; font-size: 13px; }
+  .vital .value { font-size: 28px; font-weight: 600; }
+  .vital .unit { color: #888; font-size: 14px; margin-left: 4px; }
+  .traces { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .trace { background: #1c1c1c; border-radius: 12px; padding: 8px 12px; }
+  .trace .head { display: flex; justify-content: space-between; color: #888; font-size: 13px; }
+  canvas { width: 100%; height: 90px; display: block; }
+  #log { font-family: ui-monospace, monospace; font-size: 12px; color: #9ecbff; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+  <h1>Muse 2</h1>
+  <div class="sub">Live EEG (256 Hz), PPG (64 Hz), accelerometer, gyroscope and telemetry over BLE.</div>
+  <div id="status" class="disconnected">disconnected</div>
+  <div class="vitals">
+    <div class="vital"><div class="label">Battery</div><div><span id="battery" class="value">--</span><span class="unit">%</span></div></div>
+    <div class="vital"><div class="label">Packets</div><div><span id="count" class="value">0</span></div></div>
+    <div class="vital"><div class="label">Heart rate (PPG)</div><div><span id="hr" class="value">--</span><span class="unit">bpm</span></div></div>
+  </div>
+  <div class="traces" id="traces"></div>
+  <div class="label sub">Control replies</div>
+  <div id="log"></div>
+
+<script>
+  // sensor -> [label, samples/s, window seconds, unit]; each sample is one trace point
+  const TRACES = {
+    eeg_tp9: ["EEG TP9", 256, 4, "µV"], eeg_af7: ["EEG AF7", 256, 4, "µV"],
+    eeg_af8: ["EEG AF8", 256, 4, "µV"], eeg_tp10: ["EEG TP10", 256, 4, "µV"],
+    eeg_aux: ["EEG AUX", 256, 4, "µV"],
+    ppg_ambient: ["PPG ambient", 64, 8, "ADC"], ppg_infrared: ["PPG infrared", 64, 8, "ADC"],
+    ppg_red: ["PPG red", 64, 8, "ADC"],
+    accel_x: ["Accel X", 52, 4, "g"], accel_y: ["Accel Y", 52, 4, "g"], accel_z: ["Accel Z", 52, 4, "g"],
+    gyro_x: ["Gyro X", 52, 4, "°/s"], gyro_y: ["Gyro Y", 52, 4, "°/s"], gyro_z: ["Gyro Z", 52, 4, "°/s"],
+  };
+  const buffers = {}, canvases = {}, ranges = {};
+  const tracesEl = document.getElementById("traces");
+  for (const [key, [label, , , unit]] of Object.entries(TRACES)) {
+    const div = document.createElement("div");
+    div.className = "trace";
+    div.hidden = true; // shown once data arrives (e.g. AUX / PPG may be absent)
+    div.innerHTML = `<div class="head"><span>${label}</span><span id="r_${key}"></span></div><canvas></canvas>`;
+    tracesEl.appendChild(div);
+    buffers[key] = [];
+    canvases[key] = div.querySelector("canvas");
+  }
+
+  function push(key, values) {
+    const buf = buffers[key], [, rate, seconds] = TRACES[key];
+    buf.push(...values);
+    if (buf.length > rate * seconds) buf.splice(0, buf.length - rate * seconds);
+    canvases[key].parentElement.hidden = false;
+  }
+
+  function draw() {
+    for (const [key, buf] of Object.entries(buffers)) {
+      const canvas = canvases[key];
+      if (canvas.parentElement.hidden || buf.length < 2) continue;
+      const w = canvas.width = canvas.clientWidth, h = canvas.height = canvas.clientHeight;
+      const ctx = canvas.getContext("2d");
+      const mean = buf.reduce((a, b) => a + b, 0) / buf.length; // drop DC offset
+      let lo = Math.min(...buf) - mean, hi = Math.max(...buf) - mean;
+      if (hi - lo < 1e-9) hi = lo + 1;
+      ctx.strokeStyle = "#74c69d";
+      ctx.beginPath();
+      buf.forEach((v, i) => {
+        const x = i / (TRACES[key][1] * TRACES[key][2] - 1) * w;
+        const y = h - ((v - mean - lo) / (hi - lo)) * (h - 4) - 2;
+        i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+      });
+      ctx.stroke();
+      document.getElementById("r_" + key).textContent = `${(hi - lo).toFixed(2)} ${TRACES[key][3]} p-p`;
+    }
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+
+  // heart rate from PPG infrared: peak detection over the last 8 s buffer, refreshed once a second
+  setInterval(() => {
+    const b = buffers.ppg_infrared;
+    if (b.length < 64 * 4) return;
+    const mean = b.reduce((a, c) => a + c, 0) / b.length;
+    const s = b.map((v, i) => i < 2 || i > b.length - 3 ? 0 : (b[i - 2] + b[i - 1] + v + b[i + 1] + b[i + 2]) / 5 - mean);
+    const peaks = [];
+    for (let i = 1; i < s.length - 1; i++)
+      if (s[i] > 0 && s[i] > s[i - 1] && s[i] >= s[i + 1] && (!peaks.length || i - peaks[peaks.length - 1] > 64 * 0.33)) peaks.push(i);
+    if (peaks.length < 3) return;
+    const bpm = 60 * 64 * (peaks.length - 1) / (peaks[peaks.length - 1] - peaks[0]);
+    if (bpm > 40 && bpm < 200) document.getElementById("hr").textContent = Math.round(bpm);
+  }, 1000);
+
+  const statusEl = document.getElementById("status");
+  let count = 0;
+
+  function handle(msg) {
+    const r = msg.reading;
+    if (msg.sensor.startsWith("eeg_")) push(msg.sensor, r.samples_uv);
+    else if (msg.sensor.startsWith("ppg_")) push(msg.sensor, r.samples);
+    else if (msg.sensor === "accel" || msg.sensor === "gyro")
+      ["x", "y", "z"].forEach((a, i) => push(`${msg.sensor}_${a}`, r.samples.map(s => s[i])));
+    else if (msg.sensor === "telemetry") document.getElementById("battery").textContent = r.battery_pct.toFixed(0);
+    else if (msg.sensor === "control" && Object.keys(r).length) {
+      const log = document.getElementById("log");
+      log.textContent = JSON.stringify(r) + "\n" + log.textContent.slice(0, 4000);
+    }
+  }
+
+  function connect() {
+    const ws = new WebSocket("ws://localhost:8767");
+    ws.onmessage = (event) => {
+      const msg = JSON.parse(event.data);
+      if (msg.type === "status") {
+        statusEl.textContent = msg.message;
+        statusEl.className = msg.connected ? "connected" : "disconnected";
+      } else if (msg.type === "packet") {
+        document.getElementById("count").textContent = ++count;
+        handle(msg);
+      }
+    };
+    ws.onclose = () => {
+      statusEl.textContent = "dashboard server not reachable, retrying...";
+      statusEl.className = "disconnected";
+      setTimeout(connect, 2000);
+    };
+  }
+
+  connect();
+</script>
+</body>
+</html>
