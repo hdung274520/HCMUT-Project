@@ -203,3 +203,6 @@ env/
 samconfig.toml
 *.zip
 packaged.yaml
+
+# Muse 2 raw captures are large (about 10 MB/min)
+05_Data/muse2/raw_captures/*.jsonl
