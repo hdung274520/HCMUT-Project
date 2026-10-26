@@ -40,7 +40,7 @@
   const TRACES = {
     eeg_tp9: ["EEG TP9", 256, 4, "µV"], eeg_af7: ["EEG AF7", 256, 4, "µV"],
     eeg_af8: ["EEG AF8", 256, 4, "µV"], eeg_tp10: ["EEG TP10", 256, 4, "µV"],
-    eeg_aux: ["EEG AUX", 256, 4, "µV"],
+
     ppg_ambient: ["PPG ambient", 64, 8, "ADC"], ppg_infrared: ["PPG infrared", 64, 8, "ADC"],
     ppg_red: ["PPG red", 64, 8, "ADC"],
     accel_x: ["Accel X", 52, 4, "g"], accel_y: ["Accel Y", 52, 4, "g"], accel_z: ["Accel Z", 52, 4, "g"],
@@ -51,7 +51,7 @@
   for (const [key, [label, , , unit]] of Object.entries(TRACES)) {
     const div = document.createElement("div");
     div.className = "trace";
-    div.hidden = true; // shown once data arrives (e.g. AUX / PPG may be absent)
+    div.hidden = true; // shown once data arrives (e.g. PPG may be absent)
     div.innerHTML = `<div class="head"><span>${label}</span><span id="r_${key}"></span></div><canvas></canvas>`;
     tracesEl.appendChild(div);
     buffers[key] = [];

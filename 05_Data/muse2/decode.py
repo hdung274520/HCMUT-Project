@@ -12,7 +12,6 @@ SENSORS = {
     UUID_FMT.format(0x0004): "eeg_af7",
     UUID_FMT.format(0x0005): "eeg_af8",
     UUID_FMT.format(0x0006): "eeg_tp10",
-    UUID_FMT.format(0x0007): "eeg_aux",
     UUID_FMT.format(0x0009): "gyro",
     UUID_FMT.format(0x000a): "accel",
     UUID_FMT.format(0x000b): "telemetry",

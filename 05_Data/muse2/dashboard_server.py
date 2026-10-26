@@ -1,5 +1,5 @@
 """
-Connects to a Muse 2, starts every stream it offers (4+1 EEG channels at 256 Hz,
+Connects to a Muse 2, starts every stream it offers (4 EEG channels at 256 Hz,
 3 PPG channels at 64 Hz, accelerometer, gyroscope, battery/telemetry, control
 replies), pushes decoded packets to browser clients over a local WebSocket and
 serves the dashboard page. Every notification is saved to raw_captures/.

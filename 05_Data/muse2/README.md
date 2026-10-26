@@ -12,7 +12,7 @@ sends `h` (halt), the preset, `v1` (version), `s` (status), `d` (start).
 
 | Char | Stream | Rate | Packet |
 |---|---|---|---|
-| `0003-0007` | EEG TP9, AF7, AF8, TP10, AUX | 256 Hz | index (u16) + 12 x 12-bit, 0.48828125 µV/LSB (AUX is usually empty) |
+| `0003-0006` | EEG TP9, AF7, AF8, TP10 | 256 Hz | index (u16) + 12 x 12-bit, 0.48828125 µV/LSB |
 | `000f/0010/0011` | PPG ambient / infrared / red | 64 Hz | index + 6 x u24 raw ADC |
 | `000a` | Accelerometer | 52 Hz | index + 3 x (x,y,z) i16, 0.0000610352 g/LSB |
 | `0009` | Gyroscope | 52 Hz | index + 3 x (x,y,z) i16, 0.0074768 °/s/LSB |
