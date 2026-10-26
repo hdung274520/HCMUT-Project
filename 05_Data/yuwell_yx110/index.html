@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>YX110 raw dashboard</title>
+<style>
+  body { font-family: system-ui, sans-serif; background: #111; color: #eee; margin: 0; padding: 24px; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  .sub { color: #888; font-size: 13px; margin-bottom: 16px; }
+  #status { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 13px; margin-bottom: 16px; }
+  #status.connected { background: #1b4332; color: #74c69d; }
+  #status.disconnected { background: #4a1b1b; color: #e07a7a; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #333; }
+  th { color: #888; font-weight: normal; }
+  td.hex { font-family: ui-monospace, monospace; color: #9ecbff; }
+  .vitals { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+  .vital { background: #1c1c1c; border-radius: 12px; padding: 16px 24px; min-width: 160px; }
+  .vital .label { color: #888; font-size: 13px; }
+  .vital .value { font-size: 56px; font-weight: 600; }
+  .vital .unit { color: #888; font-size: 16px; margin-left: 4px; }
+  #count { color: #888; font-size: 13px; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+  <h1>Yuwell YX110</h1>
+  <div class="sub">Live SpO₂ / pulse / PI over BLE.</div>
+  <div id="status" class="disconnected">disconnected</div>
+  <div class="vitals">
+    <div class="vital"><div class="label">SpO₂</div><div><span id="spo2" class="value">--</span><span class="unit">%</span></div></div>
+    <div class="vital"><div class="label">Pulse</div><div><span id="pulse" class="value">--</span><span class="unit">bpm</span></div></div>  </div>
+  <div id="count">0 packets</div>
+  <table>
+    <thead><tr><th>Time</th><th>Characteristic</th><th>Raw hex</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+<script>
+  const statusEl = document.getElementById("status");
+  const rowsEl = document.getElementById("rows");
+  const countEl = document.getElementById("count");
+  let count = 0;
+
+  function connect() {
+    const ws = new WebSocket("ws://localhost:8765");
+    ws.onmessage = (event) => {
+      const msg = JSON.parse(event.data);
+      if (msg.type === "status") {
+        statusEl.textContent = msg.message;
+        statusEl.className = msg.connected ? "connected" : "disconnected";
+      } else if (msg.type === "packet") {
+        if (msg.reading) {
+          document.getElementById("spo2").textContent = msg.reading.spo2_pct ?? "--";
+          document.getElementById("pulse").textContent = msg.reading.pulse_bpm ?? "--";        }
+        count += 1;
+        countEl.textContent = `${count} packets`;
+        const tr = document.createElement("tr");
+        const time = new Date(msg.timestamp).toLocaleTimeString();
+        tr.innerHTML = `<td>${time}</td><td>${msg.characteristic_uuid}</td><td class="hex">${msg.raw_hex}</td>`;
+        rowsEl.prepend(tr);
+        while (rowsEl.children.length > 200) rowsEl.removeChild(rowsEl.lastChild);
+      }
+    };
+    ws.onclose = () => {
+      statusEl.textContent = "dashboard server not reachable, retrying...";
+      statusEl.className = "disconnected";
+      setTimeout(connect, 2000);
+    };
+  }
+
+  connect();
+</script>
+</body>
+</html>

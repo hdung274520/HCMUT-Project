@@ -1,0 +1,6 @@
+{"type": "packet", "timestamp": "2026-10-02T16:42:32.897513+00:00", "characteristic_uuid": "0000ffe4-0000-1000-8000-00805f9b34fb", "raw_hex": "fe0a55000000177006ea"}
+{"type": "packet", "timestamp": "2026-10-02T16:42:33.902362+00:00", "characteristic_uuid": "0000ffe4-0000-1000-8000-00805f9b34fb", "raw_hex": "fe0a55000000177007eb"}
+{"type": "packet", "timestamp": "2026-10-02T16:42:34.892618+00:00", "characteristic_uuid": "0000ffe4-0000-1000-8000-00805f9b34fb", "raw_hex": "fe0a550000631770084f"}
+{"type": "packet", "timestamp": "2026-10-02T16:42:35.898364+00:00", "characteristic_uuid": "0000ffe4-0000-1000-8000-00805f9b34fb", "raw_hex": "fe0a5500006317700950"}
+{"type": "packet", "timestamp": "2026-10-02T16:42:36.903144+00:00", "characteristic_uuid": "0000ffe4-0000-1000-8000-00805f9b34fb", "raw_hex": "fe0a5500006317700a51"}
+{"type": "packet", "timestamp": "2026-10-02T16:42:37.893310+00:00", "characteristic_uuid": "0000ffe4-0000-1000-8000-00805f9b34fb", "raw_hex": "fe0a5500006317700b52"}

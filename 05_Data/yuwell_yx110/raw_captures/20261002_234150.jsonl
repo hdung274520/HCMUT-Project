@@ -1,0 +1,7 @@
+{"type": "packet", "timestamp": "2026-10-02T16:41:51.257708+00:00", "characteristic_uuid": "0000ffe4-0000-1000-8000-00805f9b34fb", "raw_hex": "fe0a550000641770054d"}
+{"type": "packet", "timestamp": "2026-10-02T16:41:52.262448+00:00", "characteristic_uuid": "0000ffe4-0000-1000-8000-00805f9b34fb", "raw_hex": "fe0a550000641770064e"}
+{"type": "packet", "timestamp": "2026-10-02T16:41:53.253420+00:00", "characteristic_uuid": "0000ffe4-0000-1000-8000-00805f9b34fb", "raw_hex": "fe0a550000641770074f"}
+{"type": "packet", "timestamp": "2026-10-02T16:41:54.259523+00:00", "characteristic_uuid": "0000ffe4-0000-1000-8000-00805f9b34fb", "raw_hex": "fe0a55003f641770088f"}
+{"type": "packet", "timestamp": "2026-10-02T16:41:55.262430+00:00", "characteristic_uuid": "0000ffe4-0000-1000-8000-00805f9b34fb", "raw_hex": "fe0a5500426317700992"}
+{"type": "packet", "timestamp": "2026-10-02T16:41:56.251800+00:00", "characteristic_uuid": "0000ffe4-0000-1000-8000-00805f9b34fb", "raw_hex": "fe0a5500456317700a96"}
+{"type": "packet", "timestamp": "2026-10-02T16:41:57.256011+00:00", "characteristic_uuid": "0000ffe4-0000-1000-8000-00805f9b34fb", "raw_hex": "fe0a5500476317700b99"}
