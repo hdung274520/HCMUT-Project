@@ -209,3 +209,4 @@ packaged.yaml
 
 # Gateway offline queue (runtime data)
 05_Data/gateway/queue.db
+05_Data/gateway/sessions/
