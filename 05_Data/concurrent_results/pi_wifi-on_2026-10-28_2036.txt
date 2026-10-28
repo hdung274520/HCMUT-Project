@@ -1,0 +1,9 @@
+nohup: ignoring input
+20:38:41 [yx110] connected
+20:38:43 [h303] connected
+20:38:43 [muse2] connected
+
+device  connects drops packets  rate/s  longest_silence_s
+muse2          1     0   89409   150.8        0.2
+h303           1     0    1191     2.0        1.5
+yx110          1     0     597     1.0        1.0

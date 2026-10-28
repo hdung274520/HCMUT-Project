@@ -1,0 +1,11 @@
+# PC Ubuntu (i5-1135G7, built-in adapter), 10 min, run without tee - log pasted by hand, no timestamps
+[yx110] connected
+[muse2] connected
+[h303] connected
+[muse2] DROPPED
+[muse2] connected
+
+device  connects drops packets  rate/s  longest_silence_s
+muse2          2     1   88159   148.2        9.4
+h303           1     0    1152     2.0        1.5
+yx110          1     0     596     1.0        1.0
