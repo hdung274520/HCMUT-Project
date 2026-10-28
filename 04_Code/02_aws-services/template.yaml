@@ -1,0 +1,60 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Minimal sensors backend - Sessions table + POST/GET /sessions
+
+Globals:
+  Function:
+    Runtime: python3.14
+    Timeout: 10
+    MemorySize: 256
+
+Resources:
+  SessionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - { AttributeName: user_id, AttributeType: S }
+        - { AttributeName: timestamp_start, AttributeType: S }
+      KeySchema:
+        - { AttributeName: user_id, KeyType: HASH }
+        - { AttributeName: timestamp_start, KeyType: RANGE }
+
+  SensorApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: dev
+      Auth:
+        ApiKeyRequired: true
+        AddApiKeyRequiredToCorsPreflight: false   # browser preflight has no key
+        UsagePlan:
+          CreateUsagePlan: PER_API
+      Cors:
+        AllowOrigin: "'*'"
+        AllowHeaders: "'Content-Type,x-api-key'"
+        AllowMethods: "'GET,POST,OPTIONS'"
+
+  SessionsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: sessions.handler
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref SessionsTable
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SessionsTable
+      Events:
+        Post:
+          Type: Api
+          Properties: { RestApiId: !Ref SensorApi, Path: /sessions, Method: post }
+        Get:
+          Type: Api
+          Properties: { RestApiId: !Ref SensorApi, Path: /sessions, Method: get }
+
+Outputs:
+  ApiUrl:
+    Value: !Sub "https://${SensorApi}.execute-api.${AWS::Region}.amazonaws.com/dev"
+  ApiKeyId:
+    Value: !Ref SensorApiApiKey   # key SAM creates for the usage plan

@@ -1,0 +1,228 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ActiveSessionData",
+  "description": "Session data recorded on the Raspberry Pi from Muse 2 (EEG & PPG) and/or Magene H303 (ECG heart rate & RR intervals). Supports sleep, meditation, focus, stress, and workout modes.",
+  "type": "object",
+  "required": ["metadata", "summary_insights", "cognitive_states"],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "required": ["session_id", "session_type", "timestamp_start", "timestamp_end", "duration_seconds", "user_context"],
+      "properties": {
+        "session_id": {
+          "type": "string"
+        },
+        "session_type": {
+          "type": "string",
+          "enum": ["sleep", "meditation", "focus", "stress", "workout"]
+        },
+        "devices": {
+          "type": "array",
+          "description": "Devices connected during the session",
+          "items": {
+            "type": "string",
+            "enum": ["muse2", "magene_h303"]
+          }
+        },
+        "raw_data_s3_key": {
+          "type": "string",
+          "description": "S3 object key of the raw EEG / RR-interval recording"
+        },
+        "timestamp_start": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "timestamp_end": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "duration_seconds": {
+          "type": "integer"
+        },
+        "user_context": {
+          "type": "object",
+          "properties": {
+            "age": {
+              "type": "integer"
+            },
+            "gender": {
+              "type": "string"
+            },
+            "activity_state": {
+              "type": "string",
+              "description": "Workout, Resting, or general activity context"
+            }
+          }
+        }
+      }
+    },
+    "summary_insights": {
+      "type": "object",
+      "required": ["overall_score", "average_vitals", "average_eeg"],
+      "properties": {
+        "overall_score": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "average_vitals": {
+          "type": "object",
+          "required": ["heart_rate_bpm", "hrv_ms"],
+          "properties": {
+            "heart_rate_bpm": {
+              "type": "number"
+            },
+            "hrv_ms": {
+              "type": "number"
+            },
+            "heart_rate_source": {
+              "type": "string",
+              "enum": ["muse2_ppg", "magene_h303"],
+              "description": "H303 is preferred over Muse 2 PPG when both are connected"
+            },
+            "systolic_bp": {
+              "type": "integer"
+            },
+            "diastolic_bp": {
+              "type": "integer"
+            }
+          }
+        },
+        "average_eeg": {
+          "type": "object",
+          "required": ["alpha", "beta", "theta", "delta"],
+          "properties": {
+            "alpha": { "type": "number" },
+            "beta": { "type": "number" },
+            "theta": { "type": "number" },
+            "delta": { "type": "number" }
+          }
+        },
+        "ai_summary_bullets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "alerts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["type", "severity", "message"],
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "severity": {
+                "type": "string",
+                "enum": ["info", "warning", "critical"]
+              },
+              "message": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "cognitive_states": {
+      "type": "object",
+      "required": ["state_distribution", "state_blocks"],
+      "properties": {
+        "state_distribution": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number"
+          }
+        },
+        "state_blocks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["state", "start_time", "end_time", "duration_seconds"],
+            "properties": {
+              "state": {
+                "type": "string",
+                "enum": [
+                  "Awake", "Light", "Deep", "REM", 
+                  "Active", "Neutral", "Relaxed", 
+                  "Distracted", "Focused", 
+                  "Calm", "Moderate Stress", "High Stress"
+                ]
+              },
+              "start_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "end_time": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "duration_seconds": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    },
+    "eeg_series": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["timestamp", "alpha", "beta", "theta", "delta"],
+        "properties": {
+          "timestamp": {
+            "type": "string"
+          },
+          "alpha": { "type": "number" },
+          "beta": { "type": "number" },
+          "theta": { "type": "number" },
+          "delta": { "type": "number" },
+          "channels": {
+            "type": "object",
+            "properties": {
+              "TP9": { "type": "array", "items": { "type": "number" } },
+              "AF7": { "type": "array", "items": { "type": "number" } },
+              "AF8": { "type": "array", "items": { "type": "number" } },
+              "TP10": { "type": "array", "items": { "type": "number" } }
+            }
+          }
+        }
+      }
+    },
+    "vitals_series": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["timestamp", "heart_rate"],
+        "properties": {
+          "timestamp": {
+            "type": "string"
+          },
+          "heart_rate": {
+            "type": "integer"
+          },
+          "hrv": {
+            "type": "number"
+          },
+          "source_device": {
+            "type": "string",
+            "enum": ["muse2_ppg", "magene_h303"]
+          },
+          "rr_intervals_ms": {
+            "type": "array",
+            "items": { "type": "number" },
+            "description": "Beat-to-beat intervals from H303 in this sample window"
+          },
+          "systolic": {
+            "type": "integer"
+          },
+          "diastolic": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  }
+}
