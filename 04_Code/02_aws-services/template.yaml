@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
-Description: Minimal sensors backend - Sessions table + POST/GET /sessions
+Description: Minimal sensors backend - Sessions and SpotMeasurements tables behind POST/GET /sessions and /measurements
 
 Globals:
   Function:
@@ -19,6 +19,17 @@ Resources:
       KeySchema:
         - { AttributeName: user_id, KeyType: HASH }
         - { AttributeName: timestamp_start, KeyType: RANGE }
+
+  SpotMeasurementsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - { AttributeName: user_id, AttributeType: S }
+        - { AttributeName: timestamp, AttributeType: S }
+      KeySchema:
+        - { AttributeName: user_id, KeyType: HASH }
+        - { AttributeName: timestamp, KeyType: RANGE }
 
   SensorApi:
     Type: AWS::Serverless::Api
@@ -52,6 +63,25 @@ Resources:
         Get:
           Type: Api
           Properties: { RestApiId: !Ref SensorApi, Path: /sessions, Method: get }
+
+  MeasurementsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: measurements.handler
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref SpotMeasurementsTable
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SpotMeasurementsTable
+      Events:
+        Post:
+          Type: Api
+          Properties: { RestApiId: !Ref SensorApi, Path: /measurements, Method: post }
+        Get:
+          Type: Api
+          Properties: { RestApiId: !Ref SensorApi, Path: /measurements, Method: get }
 
 Outputs:
   ApiUrl:
