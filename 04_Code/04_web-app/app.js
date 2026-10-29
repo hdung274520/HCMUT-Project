@@ -77,12 +77,18 @@ async function loadAllData() {
     const [profile, vitals, session, alerts] = await Promise.all([
       fetch('data/user_profile.json').then(r => r.json()),
       fetch('data/daily_vitals.json').then(r => r.json()),
-      fetch('data/active_session.json').then(r => r.json()),
+      fetch(`${API_URL}/sessions?limit=1`, { headers: { 'x-api-key': API_KEY } })
+        .then(r => { if (!r.ok) throw new Error(`GET /sessions ${r.status}`); return r.json(); })
+        .then(items => items[0]),
       fetch('data/assistant_alerts.json').then(r => r.json())
     ]);
     profileData = profile;
     vitalsData = vitals;
-    sessionData = session;
+    // Real sessions carry summaries only (no time series or alerts yet); renderers expect arrays.
+    sessionData = {
+      eeg_series: [], vitals_series: [], ...session,
+      summary_insights: { alerts: [], ai_summary_bullets: [], ...session.summary_insights }
+    };
     alertsData = alerts;
     document.getElementById('agent-status-dot').style.background = 'var(--success)';
     document.getElementById('agent-status-text').textContent = 'ONLINE';
@@ -877,6 +883,7 @@ function renderHypnogram() {
   const chartH = H - padTop - padBottom;
 
   const blocks = sessionData.cognitive_states.state_blocks;
+  if (!blocks.length) return; // real sessions have no sleep staging yet
   const totalDuration = blocks.reduce((s, b) => s + b.duration_seconds, 0);
 
   // Map states to Y levels: Awake=0, REM=1, Light=2, Deep=3
