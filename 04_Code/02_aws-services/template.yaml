@@ -118,6 +118,9 @@ Resources:
         Get:
           Type: Api
           Properties: { RestApiId: !Ref SensorApi, Path: /vitals/daily, Method: get }
+        Latest:
+          Type: Api
+          Properties: { RestApiId: !Ref SensorApi, Path: /vitals/latest, Method: get }
 
 Outputs:
   ApiUrl:

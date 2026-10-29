@@ -47,3 +47,14 @@ def test_nothing_measured_gives_none():
 def test_muse_only_day_has_no_resting_hr():
     r = daily.summarize(DAY, [session("2026-10-28T15:21:29+00:00", 70, "muse2_ppg")], [], NOW)
     assert r["daily_summary"] == {} and r["heart_rate_log"][0]["source_device"] == "muse2_ppg"
+
+def test_latest_skips_sessions_without_hr():
+    s0, s1 = session("2026-10-28T15:58:29+00:00", 0), session("2026-10-28T15:23:12+00:00", 73.7)
+    s1["metadata"]["timestamp_end"] = "2026-10-28T15:26:12+00:00"
+    r = daily.latest_vitals([s0, s1], [spot("2026-10-28T15:26:11+00:00", 99)])
+    assert r["heart_rate"] == {"bpm": 74, "source_device": "magene_h303", "timestamp": "2026-10-28T15:26:12+00:00"}
+    assert r["spo2"]["spo2_pct"] == 99
+
+
+def test_latest_with_no_data_is_null():
+    assert daily.latest_vitals([], []) == {"heart_rate": None, "spo2": None}

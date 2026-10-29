@@ -1,7 +1,8 @@
 """Folds one day's Sessions and SpotMeasurements into a DailyVitals item (daily_vitals_schema.json).
 A day is Vietnam time (UTC+7). Fields with no data that day are left out, never faked.
 The nightly schedule does yesterday; invoke with {"date": "YYYY-MM-DD"} to (re)compute a given day.
-GET /vitals/daily?date=YYYY-MM-DD reads one day, without date the latest one."""
+GET /vitals/daily?date=YYYY-MM-DD reads one day, without date the latest one.
+GET /vitals/latest returns the newest heart rate and SpO2, each with its source device and time."""
 
 import json
 import os
@@ -69,9 +70,25 @@ def summarize(day, day_sessions, day_spots, computed_at):
     jsonschema.validate(record, SCHEMA)
     return record
 
+def latest_vitals(recent_sessions, recent_spots):
+    """Newest heart rate (from sessions, H303 or Muse PPG) and SpO2 (YX110), each with source and time, or None."""
+    heart = next((s for s in recent_sessions if s["summary_insights"]["average_vitals"].get("heart_rate_bpm")), None)
+    spot = next(iter(recent_spots), None)
+    return {
+        "heart_rate": heart and {"bpm": int(round(heart["summary_insights"]["average_vitals"]["heart_rate_bpm"])),
+                                 "source_device": heart["summary_insights"]["average_vitals"]["heart_rate_source"],
+                                 "timestamp": heart["metadata"]["timestamp_end"]},
+        "spo2": spot and {"spo2_pct": spot["spo2_pct"], "pulse_bpm": spot["pulse_bpm"],
+                          "source_device": spot["source_device"], "timestamp": spot["timestamp"]},
+    }
+
 
 def handler(event, context):
     if "httpMethod" in event:
+        if event["resource"] == "/vitals/latest":
+            newest = {"KeyConditionExpression": Key("user_id").eq(USER_ID), "ScanIndexForward": False, "Limit": 5}
+            return respond(200, latest_vitals(sessions.query(**newest)["Items"], spots.query(**newest)["Items"]))
+
         day = (event.get("queryStringParameters") or {}).get("date")
         if day:
             item = daily.get_item(Key={"user_id": USER_ID, "date": day}).get("Item")
