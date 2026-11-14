@@ -193,10 +193,17 @@ function buildSystemInstruction() {
   let prompt = 'You are an extremely friendly, warm health assistant that answers briefly (at most 2-3 sentences). '
     + 'You answer questions about the user\'s vital signs and health. '
     + 'Always reply in English. No markdown, emoji or lists, since the reply will be read aloud. '
-    + 'Only use the numbers given below. If a value is not given, say it has not been measured. '
-    + 'Do not judge whether a value is normal and do not invent numbers. '
-    + 'For current or latest values, use the "Latest" lines.\n\n';
+    + 'Answer only from these facts. Never make up a number.\n\n';
 
+  // Small LLMs follow written facts far better than rules, so missing values are stated as "not measured".
+  const vn = ts => new Date(ts).toLocaleString('en-GB', {
+    timeZone: 'Asia/Ho_Chi_Minh', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+  });
+  const { heart_rate: hr, spo2 } = latestData || {};
+  prompt += hr ? `Current heart rate: ${hr.bpm} bpm (${hr.source_device}, ${vn(hr.timestamp)} Vietnam time).\n`
+    : 'Current heart rate: not measured.\n';
+  prompt += spo2 ? `Current SpO2: ${spo2.spo2_pct}% (${spo2.source_device}, ${vn(spo2.timestamp)} Vietnam time).\n`
+    : 'Current SpO2: not measured.\n';
 
   // Inject health data context
   if (profileData) {
@@ -216,19 +223,10 @@ function buildSystemInstruction() {
     if (s.average_blood_oxygen_pct) facts.push(`average SpO2 ${s.average_blood_oxygen_pct}%`);
     if (s.sleep_summary.sleep_score) facts.push(`sleep score ${s.sleep_summary.sleep_score}/100 over ${(s.sleep_summary.total_sleep_seconds / 3600).toFixed(1)} h`);
     if (vitalsData.activities.active_minutes) facts.push(`${vitalsData.activities.active_minutes} active minutes, ${vitalsData.activities.calories_burned_kcal} kcal`);
+    if (!s.average_blood_pressure.systolic) prompt += 'Blood pressure: not measured.\n';
+    if (!s.sleep_summary.sleep_score) prompt += 'Sleep: not measured.\n';
     // The daily summary is the last measured day, not necessarily today.
     if (facts.length) prompt += `Daily summary for ${vitalsData.metadata.date}: ${facts.join(', ')}.\n`;
-  }
-
-
-  if (latestData) {
-    // API times are UTC; say them in Vietnam time so "today" means the user's day.
-    const vn = ts => new Date(ts).toLocaleString('en-GB', {
-      timeZone: 'Asia/Ho_Chi_Minh', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
-    });
-    const { heart_rate: hr, spo2 } = latestData;
-    if (hr) prompt += `Latest heart rate: ${hr.bpm} bpm from ${hr.source_device} on ${vn(hr.timestamp)} (Vietnam time).\n`;
-    if (spo2) prompt += `Latest SpO2: ${spo2.spo2_pct}% from ${spo2.source_device} on ${vn(spo2.timestamp)} (Vietnam time).\n`;
   }
 
   if (sessionData && sessionData.summary_insights) {
