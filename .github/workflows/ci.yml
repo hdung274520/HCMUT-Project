@@ -2,9 +2,9 @@ name: CI - Test & Validate Schemas
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
 
 jobs:
   validate:
@@ -28,4 +28,4 @@ jobs:
 
       - name: Validate JSON Schemas
         run: |
-          python 04_Code/validate_schemas.py
+          python 03_Code/validate_schemas.py

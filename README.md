@@ -37,17 +37,17 @@ This research and development project aims to bridge the gap between physiologic
 │   ├── yy_Brainstorms/               <-- Brainstorming slides and notes
 │   │   └── 01_Brainstorm 11 06 2026.pdf
 │   └── zz_Mininotes.gdoc             <-- Project scratchpad and notes
-├── 03_Outputs/                       <-- Reports, pipelines, and publications outputs
+├── 02_Outputs/                       <-- Reports, pipelines, and publications outputs
 │   ├── 01_Pipeline.md                <-- System pipeline architecture design (Markdown)
 │   ├── 02_Conda.md                   <-- Conda environment setup instructions
 │   └── 03_CLI.md                     <-- Command Line Interface documentation
 ├── GIT_WORKFLOW_GUIDE.md             <-- Cẩm nang quản lý phiên bản với Git & GitHub CI/CD
-├── 04_Code/                          <-- Source code of the actual implementation
+├── 03_Code/                          <-- Source code of the actual implementation
 │   ├── 01_audio-agent/               <-- Core Voice Agent & Edge Client (FastAPI, Vosk/Whisper, Piper, Gemini)
 │   ├── 02_aws-services/              <-- Cloud Infrastructure on AWS (Being rebuilt)
 │   ├── 03_mobile-app/                <-- iOS/Android mobile dashboard (React Native / Expo) (Planned)
 │   └── 04_web-app/                   <-- Web Dashboard for monitoring sleep, eeg & vitals
-├── 05_Data/                          <-- Dataset storage & JSON Schemas (user profile, active session, vitals)
+├── 04_Data/                          <-- Dataset storage & JSON Schemas (user profile, active session, vitals)
 ├── 06_Models/                        <-- Trained AI models and neural net checkpoints
 └── 07_Experiments/                   <-- Performance metrics, logs, and evaluation reports
 ```
@@ -84,7 +84,7 @@ npm --version
 The quickest way is the one-shot setup script (installs Miniconda if needed, creates the `voice-agent` Conda env with Python 3.11):
 
 ```bash
-cd 04_Code/01_audio-agent
+cd 03_Code/01_audio-agent
 bash setup.sh
 conda activate voice-agent
 ```
@@ -92,7 +92,7 @@ conda activate voice-agent
 Alternatively, use a plain virtual environment:
 
 ```bash
-cd 04_Code/01_audio-agent
+cd 03_Code/01_audio-agent
 python3 -m venv venv
 source venv/bin/activate
 pip install --upgrade pip

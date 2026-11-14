@@ -1,0 +1,114 @@
+{
+  "$schema": "../../../04_Data/schemas/assistant_alerts_schema.json",
+  "metadata": {
+    "session_id": "dialog-20260630-001",
+    "user_id": "user-hdung-001",
+    "timestamp": "2026-06-30T08:00:00+07:00"
+  },
+  "interaction_log": [
+    {
+      "timestamp": "2026-06-30T08:00:12+07:00",
+      "speaker": "user",
+      "text": "Good morning, did I sleep well today?",
+      "vosk_confidence": 0.92
+    },
+    {
+      "timestamp": "2026-06-30T08:00:18+07:00",
+      "speaker": "assistant",
+      "text": "Good morning! You slept 7.5 hours with a sleep score of 82/100 — pretty good! Deep Sleep was 22%, a bit low, so you might want to limit caffeine after 2 PM.",
+      "action_details": {
+        "intent_detected": "query_sleep_quality",
+        "tool_called": "get_sleep_summary",
+        "context_tokens_used": 245
+      }
+    },
+    {
+      "timestamp": "2026-06-30T08:01:05+07:00",
+      "speaker": "user",
+      "text": "How is my heart rate right now?",
+      "vosk_confidence": 0.88
+    },
+    {
+      "timestamp": "2026-06-30T08:01:12+07:00",
+      "speaker": "assistant",
+      "text": "Your current heart rate is 74 bpm, within the normal range. Your average resting heart rate today is 64 bpm — very stable!",
+      "action_details": {
+        "intent_detected": "query_heart_rate",
+        "tool_called": "get_current_vitals",
+        "context_tokens_used": 180
+      }
+    },
+    {
+      "timestamp": "2026-06-30T08:02:30+07:00",
+      "speaker": "user",
+      "text": "Is my blood pressure okay?",
+      "vosk_confidence": 0.95
+    },
+    {
+      "timestamp": "2026-06-30T08:02:38+07:00",
+      "speaker": "assistant",
+      "text": "Your average blood pressure today is 120/78 mmHg — right in the ideal range. Your baseline is 118/76, perfectly stable!",
+      "action_details": {
+        "intent_detected": "query_blood_pressure",
+        "tool_called": "get_blood_pressure",
+        "context_tokens_used": 210
+      }
+    },
+    {
+      "timestamp": "2026-06-30T08:03:45+07:00",
+      "speaker": "user",
+      "text": "I went for a 45-minute run this morning, how did it go?",
+      "vosk_confidence": 0.90
+    },
+    {
+      "timestamp": "2026-06-30T08:03:55+07:00",
+      "speaker": "assistant",
+      "text": "Excellent! Your 45-minute run burned 340 kcal, with an average heart rate of 142 bpm (Aerobic zone). Max HR reached 168 — great cardiovascular effort!",
+      "action_details": {
+        "intent_detected": "query_workout",
+        "tool_called": "get_workout_summary",
+        "context_tokens_used": 320
+      }
+    }
+  ],
+  "voice_health_logs": [
+    {
+      "timestamp": "2026-06-30T07:30:00+07:00",
+      "category": "exercise",
+      "raw_statement": "I just finished a 45-minute run",
+      "extracted_entities": {
+        "activity": "running",
+        "duration": "45 minutes"
+      }
+    },
+    {
+      "timestamp": "2026-06-30T12:00:00+07:00",
+      "category": "diet",
+      "raw_statement": "I had rice with chicken and vegetables for lunch",
+      "extracted_entities": {
+        "meal_type": "lunch",
+        "food_items": "rice, chicken, vegetables"
+      }
+    }
+  ],
+  "proactive_alerts": [
+    {
+      "alert_id": "alert-20260630-001",
+      "timestamp": "2026-06-30T07:10:00+07:00",
+      "vital_type": "heart_rate",
+      "value": 168,
+      "threshold": 170,
+      "alert_text": "Heart rate is approaching the alert threshold (168/170 bpm) during your run.",
+      "call_status": "connected"
+    },
+    {
+      "alert_id": "alert-20260630-002",
+      "timestamp": "2026-06-30T03:15:00+07:00",
+      "vital_type": "spo2",
+      "value": 94,
+      "threshold": 95,
+      "alert_text": "SpO2 dipped slightly to 94% during sleep — keep monitoring.",
+      "call_status": "pending"
+    }
+  ]
+}
