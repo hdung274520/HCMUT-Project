@@ -31,7 +31,7 @@ Theo thứ tự ưu tiên trong báo cáo Week45 (mục 7).
 
 ## Nếu còn thời gian
 - [ ] ~~Đo lại pipeline giọng nói trên Raspberry Pi 4~~: bỏ, vì trợ lý chạy trên AWS (chốt 14/11, xem tuần 46 T6)
-- [ ] Đăng nhập người dùng (Cognito)
+- [ ] Đăng nhập người dùng (Cognito): đưa vào tuần 47, T6 (web trên GitHub Pages)
 - [ ] Cảnh báo bất thường
 - [ ] CI/CD tự động deploy
 - [ ] Ứng dụng di động dạng PWA (`03_Code/03_mobile-app/` đang trống)
