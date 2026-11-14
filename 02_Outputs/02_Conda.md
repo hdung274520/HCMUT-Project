@@ -33,7 +33,7 @@ Tài liệu này giải thích chi tiết về Conda, lợi ích của việc s�
 Dự án [Medical Signal Audio Assistant](file:///home/hdung274520/Project/README.md) của chúng ta có các đặc thù công nghệ rất phức tạp, kết hợp giữa **Xử lý tín hiệu não bộ/y tế**, **Học máy (AI/ML)** và **Trợ lý âm thanh (Voice Agent WebRTC)**. Dưới đây là cách Conda giải quyết triệt để các bài toán này:
 
 ### 2.1. Quản lý thư viện âm thanh phức tạp không cần quyền Root
-Để Voice Agent hoạt động trơn tru (như cấu hình trong [requirements.txt](file:///home/hdung274520/Project/04_Code/audio-agent/requirements.txt)), hệ thống cần các thư viện nhị phân bên ngoài:
+Để Voice Agent hoạt động trơn tru (như cấu hình trong [requirements.txt](file:///home/hdung274520/Project/03_Code/audio-agent/requirements.txt)), hệ thống cần các thư viện nhị phân bên ngoài:
 *   `soundfile` yêu cầu thư viện hệ thống `libsndfile`.
 *   `faster-whisper` và `kokoro` yêu cầu công cụ xử lý media `ffmpeg` để convert/stream luồng âm thanh WebRTC.
 *   **Nếu dùng `venv`:** Ta buộc phải chạy `sudo apt install ffmpeg libsndfile1` trên Ubuntu PC. Nhưng trên Raspberry Pi 4, người dùng có thể gặp khó khăn hoặc không có quyền root.
@@ -52,7 +52,7 @@ Dự án [Medical Signal Audio Assistant](file:///home/hdung274520/Project/READM
 
 ## 3. Hướng dẫn thiết lập chi tiết trong dự án
 
-Dưới đây là quy trình ứng dụng thực tế để chuyển đổi từ `venv` sang **Conda** cho thư mục [audio-agent/](file:///home/hdung274520/Project/04_Code/audio-agent).
+Dưới đây là quy trình ứng dụng thực tế để chuyển đổi từ `venv` sang **Conda** cho thư mục [audio-agent/](file:///home/hdung274520/Project/03_Code/audio-agent).
 
 ### Bước 1: Cài đặt Miniconda trên Ubuntu Linux
 
@@ -75,7 +75,7 @@ rm -rf ~/miniconda3/miniconda.sh
 
 ### Bước 2: Tạo tệp cấu hình `environment.yml` cho Audio Agent
 
-Để quản lý thống nhất các gói cài đặt từ cả Conda và Pip, chúng ta tạo một file cấu hình định nghĩa môi trường mang tên `environment.yml` nằm trong thư mục [audio-agent/](file:///home/hdung274520/Project/04_Code/audio-agent):
+Để quản lý thống nhất các gói cài đặt từ cả Conda và Pip, chúng ta tạo một file cấu hình định nghĩa môi trường mang tên `environment.yml` nằm trong thư mục [audio-agent/](file:///home/hdung274520/Project/03_Code/audio-agent):
 
 ```yaml
 name: medical-audio-agent
@@ -112,7 +112,7 @@ dependencies:
 Di chuyển vào thư mục code và tạo môi trường từ file cấu hình trên:
 
 ```bash
-cd /home/hdung274520/Project/04_Code/audio-agent
+cd /home/hdung274520/Project/03_Code/audio-agent
 
 # Tạo môi trường dựa trên tệp environment.yml
 conda env create -f environment.yml

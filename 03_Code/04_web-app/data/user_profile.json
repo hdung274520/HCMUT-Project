@@ -1,5 +1,5 @@
 {
-  "$schema": "../../../05_Data/schemas/user_profile_schema.json",
+  "$schema": "../../../04_Data/schemas/user_profile_schema.json",
   "metadata": {
     "user_id": "user-hdung-001",
     "updated_at": "2026-06-30T09:00:00+07:00"

@@ -27,7 +27,7 @@ Bạn cũng có thể trộn (vd STT local + LLM api) bằng các biến `STT_PR
 ## 1. Cài đặt (một lần)
 
 ```bash
-cd 04_Code/01_audio-agent
+cd 03_Code/01_audio-agent
 bash setup.sh
 ```
 
@@ -37,7 +37,7 @@ tải Piper voice.
 
 > Vì sao Conda? Python hệ thống của bạn là 3.14 (quá mới cho `faster-whisper`/`ctranslate2`),
 > và các thư viện âm thanh cần binary hệ thống. Conda cài Python 3.11 + các binary này
-> mà không cần `sudo`. Xem [03_Outputs/02_Conda.md](../../03_Outputs/02_Conda.md).
+> mà không cần `sudo`. Xem [02_Outputs/02_Conda.md](../../02_Outputs/02_Conda.md).
 
 ## 2. Cấu hình
 

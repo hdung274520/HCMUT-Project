@@ -4,7 +4,7 @@ the same time and reports, per device, how many notifications arrived, the
 rate, the longest silence and any disconnects. Run it on the dev PC and on the
 Raspberry Pi to see whether the adapter can hold all three.
 
-Usage (from 05_Data/, any of the sensor venvs works):
+Usage (from 04_Data/, any of the sensor venvs works):
     python3 concurrent_check.py [--minutes 10]
 
 The YX110 only talks while a finger is in it and switches itself off after a

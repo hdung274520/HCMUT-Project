@@ -1,4 +1,4 @@
-"""Builds the end-of-session summary in the shape of 05_Data/schemas/active_session_schema.json."""
+"""Builds the end-of-session summary in the shape of 04_Data/schemas/active_session_schema.json."""
 
 import statistics
 

@@ -1,5 +1,5 @@
 {
-  "$schema": "../../../05_Data/schemas/assistant_alerts_schema.json",
+  "$schema": "../../../04_Data/schemas/assistant_alerts_schema.json",
   "metadata": {
     "session_id": "dialog-20260630-001",
     "user_id": "user-hdung-001",

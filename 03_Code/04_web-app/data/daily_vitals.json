@@ -1,5 +1,5 @@
 {
-  "$schema": "../../../05_Data/schemas/daily_vitals_schema.json",
+  "$schema": "../../../04_Data/schemas/daily_vitals_schema.json",
   "metadata": {
     "user_id": "user-hdung-001",
     "date": "2026-06-30",

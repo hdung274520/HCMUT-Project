@@ -1,5 +1,5 @@
 {
-  "$schema": "../../../05_Data/schemas/active_session_schema.json",
+  "$schema": "../../../04_Data/schemas/active_session_schema.json",
   "metadata": {
     "session_id": "ses-20260630-sleep-001",
     "session_type": "sleep",

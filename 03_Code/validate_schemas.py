@@ -16,7 +16,7 @@ except ImportError:
 
 # Đường dẫn thư mục (tính động tương đối theo vị trí tệp mã nguồn)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SCHEMAS_DIR = os.path.join(BASE_DIR, "05_Data", "schemas")
+SCHEMAS_DIR = os.path.join(BASE_DIR, "04_Data", "schemas")
 
 
 def load_schema(name):

@@ -174,16 +174,16 @@ API ghi phải **idempotent** (khóa `session_id` / `measurement_id`) vì Pi g�
 │   ├── yy_Brainstorms/               <-- Các ghi chép ý tưởng, slide brainstorm của nhóm phát triển
 │   │   └── 01_Brainstorm 11 06 2026.pdf
 │   └── zz_Mininotes.gdoc             <-- Ghi chú nhanh dự án
-├── 03_Outputs/                       <-- Báo cáo kết quả dự án, tài liệu thiết kế luồng xử lý
+├── 02_Outputs/                       <-- Báo cáo kết quả dự án, tài liệu thiết kế luồng xử lý
 │   ├── 01_Pipeline.md                <-- Tài liệu thiết kế luồng hoạt động hệ thống (file này)
 │   ├── 02_Conda.md                   <-- Hướng dẫn thiết lập môi trường Conda
 │   └── 03_CLI.md                     <-- Hướng dẫn giao diện dòng lệnh (Command Line Interface)
-├── 04_Code/                          <-- Toàn bộ mã nguồn triển khai của hệ thống
+├── 03_Code/                          <-- Toàn bộ mã nguồn triển khai của hệ thống
 │   ├── 01_audio-agent/               <-- Core Voice Agent & Edge Client chạy trên Raspberry Pi 4
 │   ├── 02_aws-services/              <-- Backend AWS: API, Lambda sensor fusion, tổng hợp hằng ngày (Đang xây dựng lại)
 │   ├── 03_mobile-app/                <-- Ứng dụng di động: dashboard + gọi thoại tới Pi (Dự kiến)
 │   └── 04_web-app/                   <-- Giao diện Web Dashboard quản lý sinh hiệu & EEG
-├── 05_Data/                          <-- Tập dữ liệu & JSON Schemas (user profile, session, daily vitals, spot measurement, alerts)
+├── 04_Data/                          <-- Tập dữ liệu & JSON Schemas (user profile, session, daily vitals, spot measurement, alerts)
 ├── 06_Models/                        <-- Lưu trữ các trọng số và checkpoints của mô hình GRU RNN (Hiện tại trống)
 ├── 07_Experiments/                   <-- Nhật ký chạy thử nghiệm và đánh giá chất lượng mô hình (Hiện tại trống)
 ├── device_constraints.yaml            <-- Ràng buộc về tài nguyên thiết bị phần cứng
@@ -221,7 +221,7 @@ API ghi phải **idempotent** (khóa `session_id` / `measurement_id`) vì Pi g�
 2. **PPG Signal Filter Test:** Chạy dữ liệu PPG giả lập qua bộ lọc trên Pi 4 để kiểm tra độ chính xác của thuật toán tính toán nhịp tim/HRV.
 3. **RR-interval HRV Test:** Chạy chuỗi RR-interval giả lập (định dạng H303) qua hàm tính HRV (RMSSD) và so với giá trị tính tay.
 4. **Offline Queue & Idempotency Test:** Ngắt mạng Pi, ghi phiên đo, bật lại mạng; xác nhận dữ liệu được gửi bù đúng một lần (không trùng bản ghi trên DynamoDB).
-5. **Schema Validation:** `python 04_Code/validate_schemas.py` (chạy tự động trên CI).
+5. **Schema Validation:** `python 03_Code/validate_schemas.py` (chạy tự động trên CI).
 
 ### Manual Verification
 1. Đeo Muse 2 và Magene H303 cùng kết nối Pi 4.

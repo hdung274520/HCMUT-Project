@@ -14,6 +14,6 @@
 
 ## 📋 Danh sách kiểm tra (Checklist)
 - [ ] Mã nguồn đã được kiểm tra format và không có lỗi cú pháp.
-- [ ] Đã chạy kiểm thử `python 04_Code/validate_schemas.py` thành công.
+- [ ] Đã chạy kiểm thử `python 03_Code/validate_schemas.py` thành công.
 - [ ] Không vô tình commit các thông tin nhạy cảm (API keys, AWS secrets, file `.env`).
 - [ ] Đã cập nhật tài liệu liên quan trong `README.md` nếu có thay đổi kiến trúc hoặc hướng dẫn chạy.

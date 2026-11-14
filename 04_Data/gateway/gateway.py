@@ -12,7 +12,7 @@ active_session_schema.json goes to sessions/<id>_summary.json and the queue
 Rows have a unique key, so re-inserting the same reading is a no-op; `sent`
 stays 0 until the uploader (Milestone 2) posts them to AWS.
 
-Usage (from 05_Data/gateway/):
+Usage (from 04_Data/gateway/):
     venv/bin/python gateway.py [--minutes N] [--type meditation]   # default: run until Ctrl+C
 """
 

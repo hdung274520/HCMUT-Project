@@ -3,7 +3,7 @@
 Reads SpO2 and pulse from the Yuwell YX110 pulse oximeter over BLE
 (device `Yuwell BO-YX110-E040`, MAC `E4:15:E4:C8:E0:40`) and shows them on
 a local dashboard. Eventual target format:
-`05_Data/schemas/spot_measurement_schema.json` (`type: spo2`,
+`04_Data/schemas/spot_measurement_schema.json` (`type: spo2`,
 `source_device: yuwell_yx110`).
 
 ## Protocol
