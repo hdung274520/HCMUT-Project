@@ -115,7 +115,7 @@ function setupNavigation() {
       navBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       panels.forEach(p => p.classList.remove('active'));
-      document.getElementById(`panel- ${target} `).classList.add('active');
+      document.getElementById(`panel-${target}`).classList.add('active');
 
       // Lazy render
       if (target === 'sleep' && !document.getElementById('chart-eeg')._rendered) renderSleep();
@@ -596,7 +596,7 @@ function renderOverview() {
   document.getElementById('ov-hr').textContent = latestHR;
 
   const bp = vitalsData.daily_summary.average_blood_pressure;
-  document.getElementById('ov-bp').textContent = `${bp.systolic}/${bp.diastolic}`;
+  document.getElementById('ov-bp').textContent = bp.systolic ? `${bp.systolic}/${bp.diastolic}` : '--';
 
   document.getElementById('ov-spo2').textContent = vitalsData.daily_summary.average_blood_oxygen_pct;
   document.getElementById('ov-sleep').textContent = vitalsData.daily_summary.sleep_summary.sleep_score;
