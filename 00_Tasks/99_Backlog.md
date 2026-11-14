@@ -18,11 +18,19 @@ Theo thứ tự ưu tiên trong báo cáo Week45 (mục 7).
 ## Sửa nhỏ
 - [ ] Gateway không ghi tóm tắt khi phiên không có nhịp tim (phiên thử HR = 0 lúc 15:58:29 ngày 28/10)
 - [ ] Gộp số đo YX110 từng giây thành một lần đo (hiện khoảng 60 bản ghi mỗi phút)
-- [ ] Kiểm tra HRV 6.1 ms (xem giai đoạn 6)
+- [ ] HRV 6.1 ms: nguyên nhân là RR của H303 lặp lại, chưa phải HRV thật. Cần RR từng nhịp thật (hoặc HRV từ PPG) thì mới hiện lại (tuần 46 T9)
 - [ ] Prompt gửi trợ lý không chứa `undefined`/`NaN` khi thiếu huyết áp hoặc giấc ngủ (`app.js` dòng 206–208)
 
+## Từ audit 14/11
+- [ ] Tổng hợp hằng đêm tính lại 2 ngày gần nhất, để phiên gửi bù sau 00:05 không bị bỏ sót (`daily.py`)
+- [ ] GitHub Pages báo DATA ERROR vì không có `config.js`: dùng dữ liệu mẫu khi thiếu config, hoặc tắt Pages. Không commit API key
+- [ ] `upload.py`: phiên bị server từ chối (4xx) đánh `sent=-1`, không gửi lại mỗi phút
+- [ ] Gateway ghi tạm tóm tắt phiên mỗi 5 phút, để mất điện không làm mất cả phiên
+- [ ] CI kiểm tra 2 bản schema (`04_Data/schemas/` và `03_Code/02_aws-services/src/`) giống nhau
+- [ ] `GET /sessions`, `GET /measurements`: `limit` sai thì trả 400 thay vì làm Lambda sập
+
 ## Nếu còn thời gian
-- [ ] Đo lại pipeline giọng nói trên Raspberry Pi 4
+- [ ] ~~Đo lại pipeline giọng nói trên Raspberry Pi 4~~: bỏ, vì trợ lý chạy trên AWS (chốt 14/11, xem tuần 46 T6)
 - [ ] Đăng nhập người dùng (Cognito)
 - [ ] Cảnh báo bất thường
 - [ ] CI/CD tự động deploy
