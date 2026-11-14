@@ -42,6 +42,7 @@ class FasterWhisperSTT(BaseSTT):
         try:
             segments, info = self.model.transcribe(
                 audio.astype(np.float32),
+                initial_prompt="SpO2, heart rate, HRV, blood oxygen, sleep score, EEG.",
                 language=self.lang,
                 beam_size=CONFIG.whisper_beam_size,
                 # Whisper's own VAD trims leading/trailing silence & noise the
