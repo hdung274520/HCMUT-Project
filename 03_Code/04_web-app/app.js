@@ -94,7 +94,7 @@ async function loadAllData() {
     };
     // Real sessions carry summaries only (no time series or alerts yet); renderers expect arrays.
     sessionData = {
-      eeg_series: [], vitals_series: 21`  [], ...session,
+      eeg_series: [], vitals_series: [], ...session,
       summary_insights: { alerts: [], ai_summary_bullets: [], ...session.summary_insights }
     };
     alertsData = alerts;
@@ -115,7 +115,7 @@ function setupNavigation() {
       navBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       panels.forEach(p => p.classList.remove('active'));
-      document.getElementById(`panel- ${ target } `).classList.add('active');
+      document.getElementById(`panel- ${target} `).classList.add('active');
 
       // Lazy render
       if (target === 'sleep' && !document.getElementById('chart-eeg')._rendered) renderSleep();
@@ -194,10 +194,10 @@ function buildSystemInstruction() {
     const d = profileData.demographics;
     const bl = profileData.physiological_baselines;
     const gender = d.gender === 'male' ? 'male' : 'female';
-    prompt += `User profile: ${ d.age } years old, ${ gender }, ${ d.height_cm } cm, ${ d.weight_kg } kg, `
-      + `BMI = ${ d.calculated_metrics.bmi }, BMR = ${ d.calculated_metrics.bmr_kcal } kcal. `
-      + `Average resting heart rate = ${ bl.resting_heart_rate.avg } bpm, max heart rate = ${ bl.max_heart_rate } bpm, `
-      + `baseline blood pressure = ${ bl.blood_pressure_baseline.systolic }/${bl.blood_pressure_baseline.diastolic}mmHg.\n`;
+    prompt += `User profile: ${d.age} years old, ${gender}, ${d.height_cm} cm, ${d.weight_kg} kg, `
+      + `BMI = ${d.calculated_metrics.bmi}, BMR = ${d.calculated_metrics.bmr_kcal} kcal. `
+      + `Average resting heart rate = ${bl.resting_heart_rate.avg} bpm, max heart rate = ${bl.max_heart_rate} bpm, `
+      + `baseline blood pressure = ${bl.blood_pressure_baseline.systolic}/${bl.blood_pressure_baseline.diastolic}mmHg.\n`;
   }
 
   if (vitalsData) {
