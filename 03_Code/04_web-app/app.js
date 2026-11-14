@@ -20,7 +20,7 @@ const sidebar = document.getElementById('sidebar');
 let profileData = null;
 let vitalsData = null;
 let sessionData = null;
-let alertsData = null;
+let alertsData = null; let latestData = null;
 let chartsInitialized = false;
 
 // ========== UI strings ==========
@@ -75,14 +75,17 @@ function setHeaderDate() {
 // GET from the AWS API with the key from config.js; a non-2xx status becomes an error.
 const api = path => fetch(`${API_URL}${path}`, { headers: { 'x-api-key': API_KEY } })
   .then(r => { if (!r.ok) throw new Error(`GET ${path} ${r.status}`); return r.json(); });
+// No config.js (GitHub Pages): show sample data and no voice assistant. Real data + assistant run on EC2.
+const DEMO = typeof API_URL === 'undefined';
 
 async function loadAllData() {
   try {
-    const [profile, vitals, session, alerts] = await Promise.all([
+    const [profile, vitals, session, alerts, latest] = await Promise.all([
       fetch('data/user_profile.json').then(r => r.json()),
-      api('/vitals/daily'),
-      api('/sessions?limit=1').then(items => items[0]),
-      fetch('data/assistant_alerts.json').then(r => r.json())
+      DEMO ? fetch('data/daily_vitals.json').then(r => r.json()) : api('/vitals/daily'),
+      DEMO ? fetch('data/active_session.json').then(r => r.json()) : api('/sessions?limit=1').then(items => items[0]),
+      fetch('data/assistant_alerts.json').then(r => r.json()),
+      DEMO ? null : api('/vitals/latest')
     ]);
     profileData = profile;
     // Real days only hold what was measured (no BP, sleep or workouts yet); renderers expect these shapes.
@@ -98,8 +101,10 @@ async function loadAllData() {
       summary_insights: { alerts: [], ai_summary_bullets: [], ...session.summary_insights }
     };
     alertsData = alerts;
-    document.getElementById('agent-status-dot').style.background = 'var(--success)';
-    document.getElementById('agent-status-text').textContent = 'ONLINE';
+    latestData = latest;
+    document.getElementById('agent-status-dot').style.background = DEMO ? 'var(--warning)' : 'var(--success)';
+    document.getElementById('agent-status-text').textContent = DEMO ? 'DEMO DATA' : 'ONLINE';
+    if (DEMO) toggleChatBtn.style.display = 'none';  // Pages has no /ws voice server
   } catch (e) {
     console.error('Error loading data:', e);
     document.getElementById('agent-status-text').textContent = 'DATA ERROR';
@@ -187,7 +192,9 @@ function setupChat() {
 function buildSystemInstruction() {
   let prompt = 'You are an extremely friendly, warm health assistant that answers briefly (at most 2-3 sentences). '
     + 'You answer questions about the user\'s vital signs and health. '
-    + 'Always reply in English. No markdown, emoji or lists, since the reply will be read aloud.\n\n';
+    + 'Always reply in English. No markdown, emoji or lists, since the reply will be read aloud. '
+    + 'Only use the numbers given below. If a value is not given, say it has not been measured. '
+    + 'Do not judge whether a value is normal and do not invent numbers.\n\n';
 
   // Inject health data context
   if (profileData) {
@@ -202,12 +209,25 @@ function buildSystemInstruction() {
 
   if (vitalsData) {
     const s = vitalsData.daily_summary;
-    prompt += `Today's vitals: resting heart rate=${s.resting_heart_rate_bpm}bpm, `
-      + `average blood pressure=${s.average_blood_pressure.systolic}/${s.average_blood_pressure.diastolic}mmHg, `
-      + `average SpO2=${s.average_blood_oxygen_pct}%, sleep score=${s.sleep_summary.sleep_score}/100, `
-      + `sleep duration=${(s.sleep_summary.total_sleep_seconds / 3600).toFixed(1)}h. `
-      + `Activity (H303 workouts): ${vitalsData.activities.active_minutes} min, `
-      + `${vitalsData.activities.calories_burned_kcal}kcal.\n`;
+    const facts = [];
+    if (s.resting_heart_rate_bpm) facts.push(`resting heart rate ${s.resting_heart_rate_bpm} bpm`);
+    if (s.average_blood_pressure.systolic) facts.push(`average blood pressure ${s.average_blood_pressure.systolic}/${s.average_blood_pressure.diastolic} mmHg`);
+    if (s.average_blood_oxygen_pct) facts.push(`average SpO2 ${s.average_blood_oxygen_pct}%`);
+    if (s.sleep_summary.sleep_score) facts.push(`sleep score ${s.sleep_summary.sleep_score}/100 over ${(s.sleep_summary.total_sleep_seconds / 3600).toFixed(1)} h`);
+    if (vitalsData.activities.active_minutes) facts.push(`${vitalsData.activities.active_minutes} active minutes, ${vitalsData.activities.calories_burned_kcal} kcal`);
+    // The daily summary is the last measured day, not necessarily today.
+    if (facts.length) prompt += `Daily summary for ${vitalsData.metadata.date}: ${facts.join(', ')}.\n`;
+  }
+
+
+  if (latestData) {
+    // API times are UTC; say them in Vietnam time so "today" means the user's day.
+    const vn = ts => new Date(ts).toLocaleString('en-GB', {
+      timeZone: 'Asia/Ho_Chi_Minh', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+    });
+    const { heart_rate: hr, spo2 } = latestData;
+    if (hr) prompt += `Latest heart rate: ${hr.bpm} bpm from ${hr.source_device} on ${vn(hr.timestamp)} (Vietnam time).\n`;
+    if (spo2) prompt += `Latest SpO2: ${spo2.spo2_pct}% from ${spo2.source_device} on ${vn(spo2.timestamp)} (Vietnam time).\n`;
   }
 
   if (sessionData && sessionData.summary_insights) {
@@ -220,7 +240,7 @@ function buildSystemInstruction() {
     }
   }
 
-  if (alertsData && alertsData.proactive_alerts) {
+  if (DEMO && alertsData && alertsData.proactive_alerts) {
     const active = alertsData.proactive_alerts.filter(a => a.call_status !== 'resolved');
     if (active.length > 0) {
       prompt += 'Proactive alerts: ' + `${active.map(a => a.alert_text).join('. ')}.\n`;
@@ -1238,7 +1258,9 @@ function renderVitals() {
 
   // Quick stats
   document.getElementById('vt-rhr').textContent = vitalsData.daily_summary.resting_heart_rate_bpm;
-  document.getElementById('vt-hrv').textContent = sessionData.summary_insights.average_vitals.hrv_ms;
+  // shortcut: H303 RR repeats at a fixed 2 Hz, so session hrv_ms is not a real HRV (04_Data/gateway/session.py);
+  // show it again once beat-to-beat RR or PPG HRV exists.
+  document.getElementById('vt-hrv').textContent = '--';
   document.getElementById('vt-active').textContent = vitalsData.activities.active_minutes;
   document.getElementById('vt-cal').textContent = vitalsData.activities.calories_burned_kcal.toLocaleString();
 
