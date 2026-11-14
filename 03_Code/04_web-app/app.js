@@ -194,18 +194,19 @@ function buildSystemInstruction() {
     + 'You answer questions about the user\'s vital signs and health. '
     + 'Always reply in English. No markdown, emoji or lists, since the reply will be read aloud. '
     + 'Only use the numbers given below. If a value is not given, say it has not been measured. '
-    + 'Do not judge whether a value is normal and do not invent numbers.\n\n';
+    + 'Do not judge whether a value is normal and do not invent numbers. '
+    + 'For current or latest values, use the "Latest" lines.\n\n';
+
 
   // Inject health data context
   if (profileData) {
     const d = profileData.demographics;
-    const bl = profileData.physiological_baselines;
     const gender = d.gender === 'male' ? 'male' : 'female';
+    // Profile baselines (resting HR, BP) are sample values nothing has measured yet, so they stay out.
     prompt += `User profile: ${d.age} years old, ${gender}, ${d.height_cm} cm, ${d.weight_kg} kg, `
-      + `BMI = ${d.calculated_metrics.bmi}, BMR = ${d.calculated_metrics.bmr_kcal} kcal. `
-      + `Average resting heart rate = ${bl.resting_heart_rate.avg} bpm, max heart rate = ${bl.max_heart_rate} bpm, `
-      + `baseline blood pressure = ${bl.blood_pressure_baseline.systolic}/${bl.blood_pressure_baseline.diastolic}mmHg.\n`;
+      + `BMI = ${d.calculated_metrics.bmi}, BMR = ${d.calculated_metrics.bmr_kcal} kcal.\n`;
   }
+
 
   if (vitalsData) {
     const s = vitalsData.daily_summary;
