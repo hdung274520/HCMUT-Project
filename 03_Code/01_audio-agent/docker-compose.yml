@@ -18,9 +18,11 @@ services:
       OLLAMA_HOST: http://ollama:11434
       OLLAMA_MODEL: qwen2.5:1.5b
       WHISPER_MODEL: Systran/faster-distil-whisper-medium.en   # ghi rõ, không để tự đổi thành tiny
+      WHISPER_BEAM_SIZE: "1"   # greedy: trên EC2 2 vCPU nhanh hơn beam 3 mà không kém chính xác (T6.5)
     volumes:
       - ../04_web-app:/04_web-app:ro   # server.py tìm web ở ../04_web-app
       - hf-cache:/root/.cache/huggingface   # giữ model Whisper, không tải lại
+      - ./logs:/app/logs                    # giữ logs/response_times.csv khi tạo lại container
     depends_on:
       - ollama
 
