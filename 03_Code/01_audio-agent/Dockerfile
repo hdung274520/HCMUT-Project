@@ -19,18 +19,23 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Copy and install python dependencies
 COPY requirements.txt .
+# CPU-only torch first, so requirements.txt doesn't pull the multi-GB CUDA build
+RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
 # Copy application source code
 COPY . .
+# models/ is in .dockerignore, so fetch the Piper voice into the image
+RUN python3 download_models.py
+
 
 # Expose HTTP/WebSocket port
 EXPOSE 8000
 
 # Healthcheck
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:8000/ || exit 1
+    CMD curl -f http://localhost:8000/ || exit 1
 
 # Start FastAPI Voice Server with WebSocket support
 CMD ["python3", "server.py"]
