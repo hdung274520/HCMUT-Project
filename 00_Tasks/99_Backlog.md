@@ -23,7 +23,7 @@ Theo thứ tự ưu tiên trong báo cáo Week45 (mục 7).
 
 ## Từ audit 14/11
 - [ ] Tổng hợp hằng đêm tính lại 2 ngày gần nhất, để phiên gửi bù sau 00:05 không bị bỏ sót (`daily.py`)
-- [ ] GitHub Pages báo DATA ERROR vì không có `config.js`: chốt dùng dữ liệu mẫu khi thiếu config (tuần 46 T10). Không commit API key
+- [x] ~~GitHub Pages báo DATA ERROR~~: Pages giờ chạy bằng dữ liệu mẫu (tuần 46 T10)
 - [ ] `upload.py`: phiên bị server từ chối (4xx) đánh `sent=-1`, không gửi lại mỗi phút
 - [ ] Gateway ghi tạm tóm tắt phiên mỗi 5 phút, để mất điện không làm mất cả phiên
 - [ ] CI kiểm tra 2 bản schema (`04_Data/schemas/` và `03_Code/02_aws-services/src/`) giống nhau
