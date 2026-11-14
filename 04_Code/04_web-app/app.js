@@ -26,28 +26,28 @@ let chartsInitialized = false;
 // ========== UI strings ==========
 // Dynamically-inserted UI text (static text lives directly in index.html).
 const STR = {
-  'status.idle':       'Tap to start',
-  'status.listening':  '🟢 Listening... go ahead',
-  'status.thinking':   '🤔 Processing your answer...',
-  'status.speaking':   '🔊 Assistant is replying...',
-  'status.connectFail':'Cannot connect to Audio Agent (port 8000)',
-  'status.connError':  'Audio Agent connection error',
-  'status.micError':   'Microphone access error: ',
-  'status.audioFail':  "Couldn't play audio (browser autoplay blocked?): ",
-  'transcript.hint':   'Listening... say something',
-  'transcript.you':    'You:',
-  'gender.male':       'Male',
-  'gender.female':     'Female',
-  'gender.other':      'Other',
-  'act.activeMin':     'Active min',
-  'act.cal':           'Calories',
-  'hyp.awake':         'Awake',
-  'hyp.light':         'Light',
-  'hyp.deep':          'Deep',
-  'zone.warmUp':       'Warm-up',
-  'zone.fatBurn':      'Fat burn',
-  'unit.min':          'min',
-  'chat.cleared':      'Conversation cleared. Tap the orb to talk again.',
+  'status.idle': 'Tap to start',
+  'status.listening': '🟢 Listening... go ahead',
+  'status.thinking': '🤔 Processing your answer...',
+  'status.speaking': '🔊 Assistant is replying...',
+  'status.connectFail': 'Cannot connect to Audio Agent (port 8000)',
+  'status.connError': 'Audio Agent connection error',
+  'status.micError': 'Microphone access error: ',
+  'status.audioFail': "Couldn't play audio (browser autoplay blocked?): ",
+  'transcript.hint': 'Listening... say something',
+  'transcript.you': 'You:',
+  'gender.male': 'Male',
+  'gender.female': 'Female',
+  'gender.other': 'Other',
+  'act.activeMin': 'Active min',
+  'act.cal': 'Calories',
+  'hyp.awake': 'Awake',
+  'hyp.light': 'Light',
+  'hyp.deep': 'Deep',
+  'zone.warmUp': 'Warm-up',
+  'zone.fatBurn': 'Fat burn',
+  'unit.min': 'min',
+  'chat.cleared': 'Conversation cleared. Tap the orb to talk again.',
 };
 
 function t(key) { return STR[key] ?? key; }
@@ -72,21 +72,29 @@ function setHeaderDate() {
 }
 
 // ========== Data Loading ==========
+// GET from the AWS API with the key from config.js; a non-2xx status becomes an error.
+const api = path => fetch(`${API_URL}${path}`, { headers: { 'x-api-key': API_KEY } })
+  .then(r => { if (!r.ok) throw new Error(`GET ${path} ${r.status}`); return r.json(); });
+
 async function loadAllData() {
   try {
     const [profile, vitals, session, alerts] = await Promise.all([
       fetch('data/user_profile.json').then(r => r.json()),
-      fetch('data/daily_vitals.json').then(r => r.json()),
-      fetch(`${API_URL}/sessions?limit=1`, { headers: { 'x-api-key': API_KEY } })
-        .then(r => { if (!r.ok) throw new Error(`GET /sessions ${r.status}`); return r.json(); })
-        .then(items => items[0]),
+      api('/vitals/daily'),
+      api('/sessions?limit=1').then(items => items[0]),
       fetch('data/assistant_alerts.json').then(r => r.json())
     ]);
     profileData = profile;
-    vitalsData = vitals;
+    // Real days only hold what was measured (no BP, sleep or workouts yet); renderers expect these shapes.
+    vitalsData = {
+      heart_rate_log: [], blood_oxygen_log: [], workout_sessions: [],
+      activities: { active_minutes: 0, calories_burned_kcal: 0 },
+      ...vitals,
+      daily_summary: { average_blood_pressure: {}, sleep_summary: {}, ...vitals.daily_summary }
+    };
     // Real sessions carry summaries only (no time series or alerts yet); renderers expect arrays.
     sessionData = {
-      eeg_series: [], vitals_series: [], ...session,
+      eeg_series: [], vitals_series: 21`  [], ...session,
       summary_insights: { alerts: [], ai_summary_bullets: [], ...session.summary_insights }
     };
     alertsData = alerts;
@@ -107,7 +115,7 @@ function setupNavigation() {
       navBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       panels.forEach(p => p.classList.remove('active'));
-      document.getElementById(`panel-${target}`).classList.add('active');
+      document.getElementById(`panel- ${ target } `).classList.add('active');
 
       // Lazy render
       if (target === 'sleep' && !document.getElementById('chart-eeg')._rendered) renderSleep();
@@ -186,10 +194,10 @@ function buildSystemInstruction() {
     const d = profileData.demographics;
     const bl = profileData.physiological_baselines;
     const gender = d.gender === 'male' ? 'male' : 'female';
-    prompt += `User profile: ${d.age} years old, ${gender}, ${d.height_cm}cm, ${d.weight_kg}kg, `
-      + `BMI=${d.calculated_metrics.bmi}, BMR=${d.calculated_metrics.bmr_kcal}kcal. `
-      + `Average resting heart rate=${bl.resting_heart_rate.avg}bpm, max heart rate=${bl.max_heart_rate}bpm, `
-      + `baseline blood pressure=${bl.blood_pressure_baseline.systolic}/${bl.blood_pressure_baseline.diastolic}mmHg.\n`;
+    prompt += `User profile: ${ d.age } years old, ${ gender }, ${ d.height_cm } cm, ${ d.weight_kg } kg, `
+      + `BMI = ${ d.calculated_metrics.bmi }, BMR = ${ d.calculated_metrics.bmr_kcal } kcal. `
+      + `Average resting heart rate = ${ bl.resting_heart_rate.avg } bpm, max heart rate = ${ bl.max_heart_rate } bpm, `
+      + `baseline blood pressure = ${ bl.blood_pressure_baseline.systolic }/${bl.blood_pressure_baseline.diastolic}mmHg.\n`;
   }
 
   if (vitalsData) {
@@ -339,7 +347,7 @@ function stopAgent() {
 
 function stopAgentPlayback() {
   activeSources.forEach(src => {
-    try { src.stop(); } catch (e) {}
+    try { src.stop(); } catch (e) { }
   });
   activeSources = [];
   nextStartTime = 0;
@@ -435,7 +443,7 @@ function setOrbState(s) {
     orb.classList.add('listening');
     orb.innerHTML = '<i class="fa-solid fa-microphone"></i>';
     statusText.textContent = t('status.listening');
-    
+
     // Automatically show/reset the transcript box for the next turn
     if (transBox && agentRunning) {
       transBox.style.display = 'flex';
@@ -449,13 +457,13 @@ function setOrbState(s) {
     orb.classList.add('speaking');
     orb.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
     statusText.textContent = t('status.speaking');
-    
+
     // Hide transcript box when agent is talking
     if (transBox) transBox.style.display = 'none';
   } else {
     orb.innerHTML = '<i class="fa-solid fa-microphone"></i>';
     statusText.textContent = t('status.idle');
-    
+
     // Hide and clear transcript box on disconnect/idle
     if (transBox) {
       transBox.style.display = 'none';
@@ -890,15 +898,15 @@ function renderHypnogram() {
   const stateLevel = { 'Awake': 0, 'REM': 1, 'Light': 2, 'Deep': 3 };
   const stateColors = {
     'Awake': '#fb923c',  // orange
-    'REM':   '#a78bfa',  // purple
+    'REM': '#a78bfa',  // purple
     'Light': '#60a5fa',  // blue
-    'Deep':  '#6366f1'   // indigo
+    'Deep': '#6366f1'   // indigo
   };
   const stateFillColors = {
     'Awake': 'rgba(251, 146, 60, 0.25)',
-    'REM':   'rgba(167, 139, 250, 0.35)',
+    'REM': 'rgba(167, 139, 250, 0.35)',
     'Light': 'rgba(96, 165, 250, 0.30)',
-    'Deep':  'rgba(99, 102, 241, 0.45)'
+    'Deep': 'rgba(99, 102, 241, 0.45)'
   };
 
   const levelCount = 4;
@@ -1120,9 +1128,9 @@ function renderHypnogramSummary() {
 
   const stageConfig = [
     { key: 'Awake', label: t('hyp.awake'), cssClass: 'awake' },
-    { key: 'REM',   label: 'REM',          cssClass: 'rem' },
+    { key: 'REM', label: 'REM', cssClass: 'rem' },
     { key: 'Light', label: t('hyp.light'), cssClass: 'light' },
-    { key: 'Deep',  label: t('hyp.deep'),  cssClass: 'deep' }
+    { key: 'Deep', label: t('hyp.deep'), cssClass: 'deep' }
   ];
 
   stageConfig.forEach(s => {
