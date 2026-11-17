@@ -1,6 +1,7 @@
 services:
   ollama:
     image: ollama/ollama
+    restart: unless-stopped            # tự chạy lại khi Start EC2 (T1)
     environment:
       OLLAMA_KEEP_ALIVE: "-1"
     volumes:
@@ -8,6 +9,7 @@ services:
 
   agent:
     build: .
+    restart: unless-stopped
     ports:
       - "8000:8000"
     environment:
