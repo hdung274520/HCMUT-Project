@@ -1,6 +1,6 @@
 import os
 import sys
-from datetime import date
+from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 
@@ -58,3 +58,54 @@ def test_latest_skips_sessions_without_hr():
 
 def test_latest_with_no_data_is_null():
     assert daily.latest_vitals([], []) == {"heart_rate": None, "spo2": None}
+
+
+def test_nightly_computes_last_two_days(monkeypatch):
+    saved = []
+
+    def fake_query_day(table, sort_key, day):
+        if sort_key == "timestamp_start":
+            return [session(f"{day.isoformat()}T08:00:00+00:00", 72)]
+        return []
+
+    class FakeDaily:
+        def put_item(self, Item):
+            saved.append(Item)
+
+    monkeypatch.setattr(daily, "query_day", fake_query_day)
+    monkeypatch.setattr(daily, "daily", FakeDaily())
+
+    today = datetime.now(daily.VN).date()
+    day_before = today - timedelta(days=2)
+    yesterday = today - timedelta(days=1)
+
+    res = daily.handler({}, None)
+
+    assert res == [
+        {"date": day_before.isoformat(), "saved": True},
+        {"date": yesterday.isoformat(), "saved": True},
+    ]
+    assert len(saved) == 2
+    assert {s["date"] for s in saved} == {day_before.isoformat(), yesterday.isoformat()}
+
+
+def test_manual_invocation_computes_single_day(monkeypatch):
+    saved = []
+
+    def fake_query_day(table, sort_key, day):
+        if sort_key == "timestamp_start":
+            return [session(f"{day.isoformat()}T08:00:00+00:00", 70)]
+        return []
+
+    class FakeDaily:
+        def put_item(self, Item):
+            saved.append(Item)
+
+    monkeypatch.setattr(daily, "query_day", fake_query_day)
+    monkeypatch.setattr(daily, "daily", FakeDaily())
+
+    res = daily.handler({"date": "2026-10-25"}, None)
+    assert res == {"date": "2026-10-25", "saved": True}
+    assert len(saved) == 1
+    assert saved[0]["date"] == "2026-10-25"
+

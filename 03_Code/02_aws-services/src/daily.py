@@ -1,6 +1,6 @@
 """Folds one day's Sessions and SpotMeasurements into a DailyVitals item (daily_vitals_schema.json).
 A day is Vietnam time (UTC+7). Fields with no data that day are left out, never faked.
-The nightly schedule does yesterday; invoke with {"date": "YYYY-MM-DD"} to (re)compute a given day.
+The nightly schedule does yesterday and day before; invoke with {"date": "YYYY-MM-DD"} to (re)compute a given day.
 GET /vitals/daily?date=YYYY-MM-DD reads one day, without date the latest one.
 GET /vitals/latest returns the newest heart rate and SpO2, each with its source device and time."""
 
@@ -97,9 +97,16 @@ def handler(event, context):
                                          ScanIndexForward=False, Limit=1)["Items"]), None)
         return respond(200, item) if item else respond(404, {"error": "no daily vitals"})
 
-    day = date.fromisoformat(event["date"]) if event.get("date") else datetime.now(VN).date() - timedelta(days=1)
-    record = summarize(day, query_day(sessions, "timestamp_start", day), query_day(spots, "timestamp", day),
-                       datetime.now(timezone.utc).isoformat(timespec="seconds"))
-    if record:
-        daily.put_item(Item={"user_id": USER_ID, "date": day.isoformat(), **record})
-    return {"date": day.isoformat(), "saved": record is not None}
+    days = [date.fromisoformat(event["date"])] if event.get("date") else [
+        datetime.now(VN).date() - timedelta(days=2),
+        datetime.now(VN).date() - timedelta(days=1),
+    ]
+    results = []
+    for day in days:
+        record = summarize(day, query_day(sessions, "timestamp_start", day), query_day(spots, "timestamp", day),
+                           datetime.now(timezone.utc).isoformat(timespec="seconds"))
+        if record:
+            daily.put_item(Item={"user_id": USER_ID, "date": day.isoformat(), **record})
+        print(f"date={day.isoformat()} saved={record is not None}")
+        results.append({"date": day.isoformat(), "saved": record is not None})
+    return results[0] if event.get("date") else results
