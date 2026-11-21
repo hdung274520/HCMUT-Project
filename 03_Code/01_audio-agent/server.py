@@ -13,12 +13,14 @@ from __future__ import annotations
 import asyncio
 import base64
 import csv
+import os
 import tempfile
 import time
 from datetime import datetime
 from pathlib import Path
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
@@ -35,6 +37,17 @@ import llm_survey_providers
 WEB_DIR = Path(__file__).resolve().parent.parent / "04_web-app"
 
 app = FastAPI(title="Health Dashboard + Voice Agent")
+
+# shortcut: Origin only stops other websites in a browser (scripts can fake it), upgrade to a Cognito token if needed
+ALLOWED_ORIGINS = [o.strip() for o in os.environ.get("ALLOWED_ORIGINS", "").split(",") if o.strip()]
+
+
+# Pages calls /api/config to see if the agent is up; /ws is checked separately (CORS doesn't cover WebSocket)
+app.add_middleware(CORSMiddleware, allow_origins=ALLOWED_ORIGINS, allow_methods=["GET"])
+
+
+def origin_ok(origin: str | None) -> bool:
+    return origin in ALLOWED_ORIGINS
 
 SUPPORTED_LANGS = {"en"}
 
@@ -562,6 +575,9 @@ class Session:
 async def ws_endpoint(
     ws: WebSocket, system_instruction: str = None, lang: str = None, stt_model: str = None,
 ) -> None:
+    if not origin_ok(ws.headers.get("origin")):
+        await ws.close(code=1008)
+        return
     await ws.accept()
     session = Session(ws, system_instruction=system_instruction, language=lang, stt_model=stt_model)
     try:

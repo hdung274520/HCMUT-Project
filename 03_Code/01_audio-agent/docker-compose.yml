@@ -21,6 +21,7 @@ services:
       OLLAMA_MODEL: qwen2.5:1.5b
       WHISPER_MODEL: Systran/faster-distil-whisper-small.en   # T5 tuần 47: đổi từ medium sang small, STT giảm từ 6.2s xuống 2.5s, tổng lượt còn ~4.3s
       WHISPER_BEAM_SIZE: "1"   # greedy: trên EC2 2 vCPU nhanh hơn beam 3 mà không kém chính xác (T6.5)
+      ALLOWED_ORIGINS: https://hdung274520.github.io,http://localhost:5500
     volumes:
       - ../04_web-app:/04_web-app:ro   # server.py tìm web ở ../04_web-app
       - hf-cache:/root/.cache/huggingface   # giữ model Whisper, không tải lại
