@@ -72,55 +72,13 @@ function setHeaderDate() {
 }
 
 // ========== Data Loading ==========
-// --- Cognito login (authorization code + PKCE); the token lives in sessionStorage (gone when the tab closes)
-const REDIRECT = location.origin + location.pathname;  // must match a callback URL in template.yaml
-const b64url = buf => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-
-async function login() {
-  const verifier = b64url(crypto.getRandomValues(new Uint8Array(32)));
-  sessionStorage.setItem('pkce', verifier);
-  const challenge = b64url(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier)));
-  location = `${COGNITO_DOMAIN}/oauth2/authorize?response_type=code&client_id=${CLIENT_ID}`
-    + `&redirect_uri=${encodeURIComponent(REDIRECT)}&scope=openid+email`
-    + `&code_challenge_method=S256&code_challenge=${challenge}`;
-}
-
-function logout() {
-  sessionStorage.clear();
-  location = `${COGNITO_DOMAIN}/logout?client_id=${CLIENT_ID}&logout_uri=${encodeURIComponent(REDIRECT)}`;
-}
-
-// Back from Cognito with ?code=: swap it for tokens.
-async function handleRedirect() {
-  const code = new URLSearchParams(location.search).get('code');
-  if (!code) return;
-  history.replaceState(null, '', REDIRECT);  // drop ?code= from the URL
-  const r = await fetch(`${COGNITO_DOMAIN}/oauth2/token`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ grant_type: 'authorization_code', client_id: CLIENT_ID, code,
-      redirect_uri: REDIRECT, code_verifier: sessionStorage.getItem('pkce') || '' }),
-  });
-  if (r.ok) sessionStorage.setItem('id_token', (await r.json()).id_token);
-  else console.error('Cognito token exchange failed', r.status);
-}
-
-// GET from the AWS API with the login token; 401 (expired/invalid) drops the token and reloads into DEMO.
-const api = path => fetch(`${API_URL}${path}`, { headers: { Authorization: `Bearer ${sessionStorage.getItem('id_token')}` } })
-  .then(r => {
-    if (r.status === 401) { sessionStorage.removeItem('id_token'); location.reload(); }
-    if (!r.ok) throw new Error(`GET ${path} ${r.status}`);
-    return r.json();
-  });
-// Not logged in: show sample data, like Pages before login.
-let DEMO = true;
+// GET from the public AWS read API (POSTs still need the Pi's key); a non-2xx status becomes an error.
+const api = path => fetch(`${API_URL}${path}`)
+  .then(r => { if (!r.ok) throw new Error(`GET ${path} ${r.status}`); return r.json(); });
+// No API_URL in config.js: show sample data.
+const DEMO = typeof API_URL === 'undefined';
 
 async function loadAllData() {
-  await handleRedirect();
-  DEMO = !sessionStorage.getItem('id_token');
-  const authBtn = document.getElementById('auth-btn');
-  authBtn.textContent = DEMO ? 'Đăng nhập' : 'Đăng xuất';
-  authBtn.onclick = DEMO ? login : logout;
   try {
     const [profile, vitals, session, alerts, latest] = await Promise.all([
       fetch('data/user_profile.json').then(r => r.json()),

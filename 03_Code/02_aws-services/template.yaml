@@ -42,32 +42,6 @@ Resources:
         - { AttributeName: user_id, KeyType: HASH }
         - { AttributeName: date, KeyType: RANGE }
 
-  UserPool:
-    Type: AWS::Cognito::UserPool
-    Properties:
-      AdminCreateUserConfig: { AllowAdminCreateUserOnly: true }   # no self sign-up
-      UsernameAttributes: [email]
-
-  UserPoolDomain:
-    Type: AWS::Cognito::UserPoolDomain
-    Properties:
-      UserPoolId: !Ref UserPool
-      Domain: !Sub "hcmut-vitals-${AWS::AccountId}"   # prefix must be globally unique
-
-  WebClient:
-    Type: AWS::Cognito::UserPoolClient
-    Properties:
-      UserPoolId: !Ref UserPool
-      GenerateSecret: false   # public browser client, uses PKCE
-      AllowedOAuthFlowsUserPoolClient: true
-      AllowedOAuthFlows: [code]
-      AllowedOAuthScopes: [openid, email]
-      SupportedIdentityProviders: [COGNITO]
-      CallbackURLs: &urls
-        - https://hdung274520.github.io/HCMUT-Project/03_Code/04_web-app/
-        - http://localhost:5500/
-      LogoutURLs: *urls
-
   SensorApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -75,16 +49,13 @@ Resources:
       Auth:
         ApiKeyRequired: true
         AddApiKeyRequiredToCorsPreflight: false   # browser preflight has no key
-        Authorizers:
-          CognitoAuth:
-            UserPoolArn: !GetAtt UserPool.Arn
         UsagePlan:
           CreateUsagePlan: PER_API
       Cors:
         AllowOrigin: "'*'"
-        AllowHeaders: "'Content-Type,x-api-key,Authorization'"
+        AllowHeaders: "'Content-Type,x-api-key'"
         AllowMethods: "'GET,POST,OPTIONS'"
-      GatewayResponses:   # 401/403 from the authorizer need CORS too, or the browser hides the status
+      GatewayResponses:   # 4xx from API Gateway itself need CORS too, or the browser hides the status
         DEFAULT_4XX:
           ResponseParameters:
             Headers:
@@ -107,7 +78,7 @@ Resources:
           Properties: { RestApiId: !Ref SensorApi, Path: /sessions, Method: post }
         Get:
           Type: Api
-          Properties: { RestApiId: !Ref SensorApi, Path: /sessions, Method: get, Auth: { Authorizer: CognitoAuth, ApiKeyRequired: false } }
+          Properties: { RestApiId: !Ref SensorApi, Path: /sessions, Method: get, Auth: { ApiKeyRequired: false } }   # public read for the Pages dashboard
 
   MeasurementsFunction:
     Type: AWS::Serverless::Function
@@ -126,7 +97,7 @@ Resources:
           Properties: { RestApiId: !Ref SensorApi, Path: /measurements, Method: post }
         Get:
           Type: Api
-          Properties: { RestApiId: !Ref SensorApi, Path: /measurements, Method: get, Auth: { Authorizer: CognitoAuth, ApiKeyRequired: false } }
+          Properties: { RestApiId: !Ref SensorApi, Path: /measurements, Method: get, Auth: { ApiKeyRequired: false } }   # public read for the Pages dashboard
 
   DailyFunction:
     Type: AWS::Serverless::Function
@@ -151,17 +122,13 @@ Resources:
             ScheduleExpressionTimezone: Asia/Ho_Chi_Minh
         Get:
           Type: Api
-          Properties: { RestApiId: !Ref SensorApi, Path: /vitals/daily, Method: get, Auth: { Authorizer: CognitoAuth, ApiKeyRequired: false } }
+          Properties: { RestApiId: !Ref SensorApi, Path: /vitals/daily, Method: get, Auth: { ApiKeyRequired: false } }   # public read for the Pages dashboard
         Latest:
           Type: Api
-          Properties: { RestApiId: !Ref SensorApi, Path: /vitals/latest, Method: get, Auth: { Authorizer: CognitoAuth, ApiKeyRequired: false } }
+          Properties: { RestApiId: !Ref SensorApi, Path: /vitals/latest, Method: get, Auth: { ApiKeyRequired: false } }   # public read for the Pages dashboard
 
 Outputs:
   ApiUrl:
     Value: !Sub "https://${SensorApi}.execute-api.${AWS::Region}.amazonaws.com/dev"
   ApiKeyId:
     Value: !Ref SensorApiApiKey   # key SAM creates for the usage plan
-  UserPoolClientId:
-    Value: !Ref WebClient
-  CognitoDomain:
-    Value: !Sub "https://${UserPoolDomain}.auth.${AWS::Region}.amazoncognito.com"
