@@ -146,7 +146,13 @@ async function loadAllData() {
     latestData = latest;
     document.getElementById('agent-status-dot').style.background = DEMO ? 'var(--warning)' : 'var(--success)';
     document.getElementById('agent-status-text').textContent = DEMO ? 'DEMO DATA' : 'ONLINE';
-    if (DEMO) toggleChatBtn.style.display = 'none';  // Pages has no /ws voice server
+    // Assistant runs on EC2, often stopped: hide the mic unless it answers within 3 s.
+    fetch(`${AGENT_URL}/api/config`, { signal: AbortSignal.timeout(3000) })
+      .then(r => { if (!r.ok) throw new Error(r.status); })
+      .catch(() => {
+        toggleChatBtn.style.display = 'none';
+        document.getElementById('agent-status-text').textContent += ' · Trợ lý đang tắt';
+      });
   } catch (e) {
     console.error('Error loading data:', e);
     document.getElementById('agent-status-text').textContent = 'DATA ERROR';
@@ -191,7 +197,7 @@ function setupSidebar() {
 }
 
 // ========== Chat Panel + Audio Agent Integration ==========
-const AGENT_WS_URL = (location.protocol === 'https:' ? 'wss' : 'ws') + '://' + location.host + '/ws';
+const AGENT_WS_URL = AGENT_URL.replace(/^http/, 'ws') + '/ws';  // https -> wss
 
 // Audio Agent state
 let agentWs = null;
