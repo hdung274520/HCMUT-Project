@@ -1,0 +1,896 @@
+{
+  "03_Code/01_audio-agent/download_models.py": {
+    "mtime": 1794631178.875234,
+    "seen": 1795233584.8463783,
+    "ast_hash": "33de7ddc82dc701c9bda0c2aed04025e",
+    "semantic_hash": "33de7ddc82dc701c9bda0c2aed04025e"
+  },
+  "03_Code/01_audio-agent/export_response_report.py": {
+    "mtime": 1794631178.875234,
+    "seen": 1795233584.8463843,
+    "ast_hash": "1b71f5a674ff7f1a8974a1ff994438be",
+    "semantic_hash": "1b71f5a674ff7f1a8974a1ff994438be"
+  },
+  "03_Code/01_audio-agent/llm_survey_providers.py": {
+    "mtime": 1794631178.875234,
+    "seen": 1795233584.846387,
+    "ast_hash": "a7e3f8ab21a4e5ef38601c8dc87b5537",
+    "semantic_hash": "a7e3f8ab21a4e5ef38601c8dc87b5537"
+  },
+  "03_Code/01_audio-agent/models/piper/en_US-amy-medium.onnx.json": {
+    "mtime": 1794631178.875234,
+    "seen": 1795233584.8463883,
+    "ast_hash": "7f37dadb26340c90ebc8088e0b252310",
+    "semantic_hash": "7f37dadb26340c90ebc8088e0b252310"
+  },
+  "03_Code/01_audio-agent/models/piper/vi_VN-vais1000-medium.onnx.json": {
+    "mtime": 1794631178.875234,
+    "seen": 1795233584.846389,
+    "ast_hash": "5ec9669253541d64ba97f60e422f1ad0",
+    "semantic_hash": "5ec9669253541d64ba97f60e422f1ad0"
+  },
+  "03_Code/01_audio-agent/run.py": {
+    "mtime": 1794631178.875234,
+    "seen": 1795233584.8463895,
+    "ast_hash": "a6a6d2c214fd417c4624a77c3fbbd62d",
+    "semantic_hash": "a6a6d2c214fd417c4624a77c3fbbd62d"
+  },
+  "03_Code/01_audio-agent/server.py": {
+    "mtime": 1794631178.875234,
+    "seen": 1795233584.8463907,
+    "ast_hash": "14bb7cc0df7890e202f8bcc28cac4cb7",
+    "semantic_hash": "14bb7cc0df7890e202f8bcc28cac4cb7"
+  },
+  "03_Code/01_audio-agent/setup.sh": {
+    "mtime": 1794631178.875234,
+    "seen": 1795233584.8463914,
+    "ast_hash": "2618b113e26b18b73daa1cacedeec9de",
+    "semantic_hash": "2618b113e26b18b73daa1cacedeec9de"
+  },
+  "03_Code/01_audio-agent/src/__init__.py": {
+    "mtime": 1794631178.875234,
+    "seen": 1795233584.8463924,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "03_Code/01_audio-agent/src/agent.py": {
+    "mtime": 1794631178.875234,
+    "seen": 1795233584.8463929,
+    "ast_hash": "2c3285bc3b4a343e17bbbee99bf83584",
+    "semantic_hash": "2c3285bc3b4a343e17bbbee99bf83584"
+  },
+  "03_Code/01_audio-agent/src/audio.py": {
+    "mtime": 1794631178.875234,
+    "seen": 1795233584.8463933,
+    "ast_hash": "31cf60165e56455ce67b4c94b0151680",
+    "semantic_hash": "31cf60165e56455ce67b4c94b0151680"
+  },
+  "03_Code/01_audio-agent/src/config.py": {
+    "mtime": 1794631178.875234,
+    "seen": 1795233584.8463943,
+    "ast_hash": "a3d0aadcdcf72ac022d70230b4c5b41c",
+    "semantic_hash": "a3d0aadcdcf72ac022d70230b4c5b41c"
+  },
+  "03_Code/01_audio-agent/src/llm.py": {
+    "mtime": 1794631178.875234,
+    "seen": 1795233584.8463953,
+    "ast_hash": "1b377d371db190aaabca5986aaec162e",
+    "semantic_hash": "1b377d371db190aaabca5986aaec162e"
+  },
+  "03_Code/01_audio-agent/src/stt.py": {
+    "mtime": 1794633938.8371975,
+    "seen": 1795233584.8463957,
+    "ast_hash": "6b7a61c36650cc9f1ec628f75066def0",
+    "semantic_hash": "6b7a61c36650cc9f1ec628f75066def0"
+  },
+  "03_Code/01_audio-agent/src/tts.py": {
+    "mtime": 1794631178.875234,
+    "seen": 1795233584.8463964,
+    "ast_hash": "ce6758f5abcb2b58c73f194775ec774e",
+    "semantic_hash": "ce6758f5abcb2b58c73f194775ec774e"
+  },
+  "03_Code/01_audio-agent/src/vad.py": {
+    "mtime": 1794631178.875234,
+    "seen": 1795233584.846397,
+    "ast_hash": "cc0a70e22cd3bca8323158e3b076040f",
+    "semantic_hash": "cc0a70e22cd3bca8323158e3b076040f"
+  },
+  "03_Code/01_audio-agent/tts_survey_providers.py": {
+    "mtime": 1794631178.8760922,
+    "seen": 1795233584.8463976,
+    "ast_hash": "98e5dbb82e0189a28860bc4c568c6d2b",
+    "semantic_hash": "98e5dbb82e0189a28860bc4c568c6d2b"
+  },
+  "03_Code/02_aws-services/src/active_session_schema.json": {
+    "mtime": 1794631178.8760922,
+    "seen": 1795233584.846398,
+    "ast_hash": "eddc1f257a928eff22c2eda443f022ab",
+    "semantic_hash": "eddc1f257a928eff22c2eda443f022ab"
+  },
+  "03_Code/02_aws-services/src/api.py": {
+    "mtime": 1794631178.8760922,
+    "seen": 1795233584.846399,
+    "ast_hash": "33711957c2946cef7fece748f5e2c239",
+    "semantic_hash": "33711957c2946cef7fece748f5e2c239"
+  },
+  "03_Code/02_aws-services/src/daily.py": {
+    "mtime": 1794631178.8760922,
+    "seen": 1795233584.8463998,
+    "ast_hash": "9f3c1ef65fefc145dae42f12ed8eff90",
+    "semantic_hash": "9f3c1ef65fefc145dae42f12ed8eff90"
+  },
+  "03_Code/02_aws-services/src/daily_vitals_schema.json": {
+    "mtime": 1794631178.8760922,
+    "seen": 1795233584.8464003,
+    "ast_hash": "2f957f6d5b0148c3d9e62e9eda87b2a4",
+    "semantic_hash": "2f957f6d5b0148c3d9e62e9eda87b2a4"
+  },
+  "03_Code/02_aws-services/src/measurements.py": {
+    "mtime": 1794631178.8760922,
+    "seen": 1795233584.8464007,
+    "ast_hash": "c8b495dfcd016c8ee9fcc7d2d16b0a43",
+    "semantic_hash": "c8b495dfcd016c8ee9fcc7d2d16b0a43"
+  },
+  "03_Code/02_aws-services/src/sessions.py": {
+    "mtime": 1794631178.8760922,
+    "seen": 1795233584.8464017,
+    "ast_hash": "3bda012ce2c7eda140dd80834d2e9a84",
+    "semantic_hash": "3bda012ce2c7eda140dd80834d2e9a84"
+  },
+  "03_Code/02_aws-services/src/spot_measurement_schema.json": {
+    "mtime": 1794631178.8760922,
+    "seen": 1795233584.8464024,
+    "ast_hash": "8c0e97d631e878259bcae4f1fe791b4c",
+    "semantic_hash": "8c0e97d631e878259bcae4f1fe791b4c"
+  },
+  "03_Code/02_aws-services/test_daily.py": {
+    "mtime": 1794631178.8760922,
+    "seen": 1795233584.8464031,
+    "ast_hash": "a6295e95e6f15128f241ca75904b667e",
+    "semantic_hash": "a6295e95e6f15128f241ca75904b667e"
+  },
+  "03_Code/02_aws-services/test_measurements.py": {
+    "mtime": 1794631178.8760922,
+    "seen": 1795233584.8464036,
+    "ast_hash": "94338bcc09a9ab2890221a85e6e2b8ab",
+    "semantic_hash": "94338bcc09a9ab2890221a85e6e2b8ab"
+  },
+  "03_Code/04_web-app/app.js": {
+    "mtime": 1794638259.5147913,
+    "seen": 1795233584.8464043,
+    "ast_hash": "4bb07a22698d1a4bcc25d8831da8acaa",
+    "semantic_hash": "4bb07a22698d1a4bcc25d8831da8acaa"
+  },
+  "03_Code/04_web-app/data/active_session.json": {
+    "mtime": 1794631178.8760922,
+    "seen": 1795233584.846405,
+    "ast_hash": "09ecfdc82b24cf386d9b6d91472016d7",
+    "semantic_hash": "09ecfdc82b24cf386d9b6d91472016d7"
+  },
+  "03_Code/04_web-app/data/assistant_alerts.json": {
+    "mtime": 1794631178.87689,
+    "seen": 1795233584.846406,
+    "ast_hash": "ae97e172587a9368dcd86e8e9b94e82e",
+    "semantic_hash": "ae97e172587a9368dcd86e8e9b94e82e"
+  },
+  "03_Code/04_web-app/data/daily_vitals.json": {
+    "mtime": 1794631178.87689,
+    "seen": 1795233584.8464065,
+    "ast_hash": "d07fc3f08f5e91188eb0ef3e4eba756a",
+    "semantic_hash": "d07fc3f08f5e91188eb0ef3e4eba756a"
+  },
+  "03_Code/04_web-app/data/user_profile.json": {
+    "mtime": 1794631178.87689,
+    "seen": 1795233584.8464072,
+    "ast_hash": "08b136c69187f3c9a8105a929d382b85",
+    "semantic_hash": "08b136c69187f3c9a8105a929d382b85"
+  },
+  "03_Code/validate_schemas.py": {
+    "mtime": 1794631178.8772204,
+    "seen": 1795233584.8464077,
+    "ast_hash": "df02318c9dcac9dfded8d29746806f5e",
+    "semantic_hash": "df02318c9dcac9dfded8d29746806f5e"
+  },
+  "04_Data/analyze_session.py": {
+    "mtime": 1794631178.8772204,
+    "seen": 1795233584.8464084,
+    "ast_hash": "377120f0594f606834008e9e81e2ab39",
+    "semantic_hash": "377120f0594f606834008e9e81e2ab39"
+  },
+  "04_Data/concurrent_check.py": {
+    "mtime": 1794631178.8772204,
+    "seen": 1795233584.8464093,
+    "ast_hash": "9439c2f94f4e709fbc3338be24198baf",
+    "semantic_hash": "9439c2f94f4e709fbc3338be24198baf"
+  },
+  "04_Data/gateway/features.py": {
+    "mtime": 1794631178.8775365,
+    "seen": 1795233584.8464098,
+    "ast_hash": "3a3b86e705eb9b318608fa642704377f",
+    "semantic_hash": "3a3b86e705eb9b318608fa642704377f"
+  },
+  "04_Data/gateway/gateway.py": {
+    "mtime": 1794631178.8775365,
+    "seen": 1795233584.8464105,
+    "ast_hash": "d2c4a8597c5f638b8fe6a0db8da745e9",
+    "semantic_hash": "d2c4a8597c5f638b8fe6a0db8da745e9"
+  },
+  "04_Data/gateway/session.py": {
+    "mtime": 1794631178.8775365,
+    "seen": 1795233584.846411,
+    "ast_hash": "3613d5b09bc6d6b238826df39df27ba2",
+    "semantic_hash": "3613d5b09bc6d6b238826df39df27ba2"
+  },
+  "04_Data/gateway/test_features.py": {
+    "mtime": 1794631178.8775365,
+    "seen": 1795233584.8464117,
+    "ast_hash": "f418f4263420001b312c3b55acf2aad9",
+    "semantic_hash": "f418f4263420001b312c3b55acf2aad9"
+  },
+  "04_Data/gateway/test_session.py": {
+    "mtime": 1794631178.8775365,
+    "seen": 1795233584.8464122,
+    "ast_hash": "ba0e7afd573bc8fb8abf43f32192d5b6",
+    "semantic_hash": "ba0e7afd573bc8fb8abf43f32192d5b6"
+  },
+  "04_Data/gateway/test_upload.py": {
+    "mtime": 1794631178.8775365,
+    "seen": 1795233584.8464131,
+    "ast_hash": "176864e292e7c38c4a739af8a5d9fcb2",
+    "semantic_hash": "176864e292e7c38c4a739af8a5d9fcb2"
+  },
+  "04_Data/gateway/upload.py": {
+    "mtime": 1794631178.8775365,
+    "seen": 1795233584.8464136,
+    "ast_hash": "f72cc0c351d1ff16fbb9dc16a5fd2e3c",
+    "semantic_hash": "f72cc0c351d1ff16fbb9dc16a5fd2e3c"
+  },
+  "04_Data/magene_h303/dashboard_server.py": {
+    "mtime": 1794631178.8775365,
+    "seen": 1795233584.8464143,
+    "ast_hash": "b8efbec70212df584bb61a7b93ac66e8",
+    "semantic_hash": "b8efbec70212df584bb61a7b93ac66e8"
+  },
+  "04_Data/muse2/dashboard_server.py": {
+    "mtime": 1794631178.8781059,
+    "seen": 1795233584.8464148,
+    "ast_hash": "b57a0208cc9bbef81f41199b68c6870b",
+    "semantic_hash": "b57a0208cc9bbef81f41199b68c6870b"
+  },
+  "04_Data/muse2/decode.py": {
+    "mtime": 1794631178.8781059,
+    "seen": 1795233584.8464158,
+    "ast_hash": "27938643018491c8d4934be837d56dd3",
+    "semantic_hash": "27938643018491c8d4934be837d56dd3"
+  },
+  "04_Data/muse2/test_decode.py": {
+    "mtime": 1794631178.8816667,
+    "seen": 1795233584.8464167,
+    "ast_hash": "c2779c6d91b9c91de2ecdd15d27345d1",
+    "semantic_hash": "c2779c6d91b9c91de2ecdd15d27345d1"
+  },
+  "04_Data/plot_session.py": {
+    "mtime": 1794631178.8816667,
+    "seen": 1795233584.8464174,
+    "ast_hash": "facb075cf10edacb8b5f49f256027543",
+    "semantic_hash": "facb075cf10edacb8b5f49f256027543"
+  },
+  "04_Data/schemas/active_session_schema.json": {
+    "mtime": 1794631178.8816667,
+    "seen": 1795233584.846418,
+    "ast_hash": "eddc1f257a928eff22c2eda443f022ab",
+    "semantic_hash": "eddc1f257a928eff22c2eda443f022ab"
+  },
+  "04_Data/schemas/assistant_alerts_schema.json": {
+    "mtime": 1794631178.8830795,
+    "seen": 1795233584.8464186,
+    "ast_hash": "1cb47c134d6efc168d76f6df3eedbe2a",
+    "semantic_hash": "1cb47c134d6efc168d76f6df3eedbe2a"
+  },
+  "04_Data/schemas/daily_vitals_schema.json": {
+    "mtime": 1794631178.8831143,
+    "seen": 1795233584.846419,
+    "ast_hash": "2f957f6d5b0148c3d9e62e9eda87b2a4",
+    "semantic_hash": "2f957f6d5b0148c3d9e62e9eda87b2a4"
+  },
+  "04_Data/schemas/spot_measurement_schema.json": {
+    "mtime": 1794631178.8831143,
+    "seen": 1795233584.84642,
+    "ast_hash": "8c0e97d631e878259bcae4f1fe791b4c",
+    "semantic_hash": "8c0e97d631e878259bcae4f1fe791b4c"
+  },
+  "04_Data/schemas/user_profile_schema.json": {
+    "mtime": 1794631178.8831143,
+    "seen": 1795233584.8464205,
+    "ast_hash": "16bc1fde2e0c8a418114bac190614572",
+    "semantic_hash": "16bc1fde2e0c8a418114bac190614572"
+  },
+  "04_Data/session_marks_20261028_212024.json": {
+    "mtime": 1794631178.8831143,
+    "seen": 1795233584.8464212,
+    "ast_hash": "330b2a1ba6dd98736954e6c5b07ab88d",
+    "semantic_hash": "330b2a1ba6dd98736954e6c5b07ab88d"
+  },
+  "04_Data/session_timer.py": {
+    "mtime": 1794631178.8831143,
+    "seen": 1795233584.8464217,
+    "ast_hash": "01dca2fdddfb1bb760b6885e5182bf5b",
+    "semantic_hash": "01dca2fdddfb1bb760b6885e5182bf5b"
+  },
+  "04_Data/yuwell_yx110/dashboard_server.py": {
+    "mtime": 1794631178.8831143,
+    "seen": 1795233584.8464222,
+    "ast_hash": "d13f8b98a3c766eb9012d4da644ae436",
+    "semantic_hash": "d13f8b98a3c766eb9012d4da644ae436"
+  },
+  ".github/pull_request_template.md": {
+    "mtime": 1794631178.8696842,
+    "seen": 1795233584.8464231,
+    "ast_hash": "7109f407d0c9e798f83ed4f4589ebdff",
+    "semantic_hash": "7109f407d0c9e798f83ed4f4589ebdff"
+  },
+  ".github/workflows/ci.yml": {
+    "mtime": 1794631178.8696842,
+    "seen": 1795233584.8464236,
+    "ast_hash": "eef9839e902f8489fe3a2e0e750e8965",
+    "semantic_hash": "eef9839e902f8489fe3a2e0e750e8965"
+  },
+  "00_Tasks/01_2026-06_Khoi-tao-du-an.md": {
+    "mtime": 1794631178.8696842,
+    "seen": 1795233584.8464243,
+    "ast_hash": "c9062139edb23e698e7eb98d4a9cba8e",
+    "semantic_hash": "c9062139edb23e698e7eb98d4a9cba8e"
+  },
+  "00_Tasks/02_2026-07-08_Voice-agent-va-web.md": {
+    "mtime": 1794631178.87011,
+    "seen": 1795233584.846425,
+    "ast_hash": "2e350060e40777ade13ef13b2c6fa7e8",
+    "semantic_hash": "2e350060e40777ade13ef13b2c6fa7e8"
+  },
+  "00_Tasks/03_2026-09_Doi-kien-truc.md": {
+    "mtime": 1794631178.87011,
+    "seen": 1795233584.8464255,
+    "ast_hash": "c557092d08808bb1b9ec6d6fe4e29d76",
+    "semantic_hash": "c557092d08808bb1b9ec6d6fe4e29d76"
+  },
+  "00_Tasks/04_2026-10_Thu-nhan-du-lieu.md": {
+    "mtime": 1794631178.87011,
+    "seen": 1795233584.8464265,
+    "ast_hash": "31380c2082292c04e3b60d499f0df7e0",
+    "semantic_hash": "31380c2082292c04e3b60d499f0df7e0"
+  },
+  "00_Tasks/05_2026-10_Gateway-va-AWS.md": {
+    "mtime": 1794631178.87011,
+    "seen": 1795233584.8464272,
+    "ast_hash": "df31cc9cc7869d0647df463042bcbb6b",
+    "semantic_hash": "df31cc9cc7869d0647df463042bcbb6b"
+  },
+  "00_Tasks/06_2026-11_Web-daily-vitals.md": {
+    "mtime": 1794631178.87011,
+    "seen": 1795233584.8464277,
+    "ast_hash": "56ad5865ff07b4bb5dea947878a827a7",
+    "semantic_hash": "56ad5865ff07b4bb5dea947878a827a7"
+  },
+  "00_Tasks/07_2026-W46_09-11_to_15-11.md": {
+    "mtime": 1794639212.6498783,
+    "seen": 1795233584.8464284,
+    "ast_hash": "618d42d484cdfd9e9aceddb078638208",
+    "semantic_hash": "618d42d484cdfd9e9aceddb078638208"
+  },
+  "00_Tasks/08_2026-W47_16-11_to_22-11.md": {
+    "mtime": 1794931076.834492,
+    "seen": 1795233584.8464289,
+    "ast_hash": "4e306ae8b98786b96c8a79f080fadcbf",
+    "semantic_hash": "4e306ae8b98786b96c8a79f080fadcbf"
+  },
+  "00_Tasks/99_Backlog.md": {
+    "mtime": 1794640584.6040807,
+    "seen": 1795233584.8464296,
+    "ast_hash": "2688b8b6e31bba73455932313660b78b",
+    "semantic_hash": "2688b8b6e31bba73455932313660b78b"
+  },
+  "02_Outputs/report/01_Report_Week45_2026-09-01_to_2026-11-01.md": {
+    "mtime": 1794640368.8210113,
+    "seen": 1795233584.8464303,
+    "ast_hash": "1565cb24c5f76cf47db7291aabd87bf9",
+    "semantic_hash": "1565cb24c5f76cf47db7291aabd87bf9"
+  },
+  "02_Outputs/report/02_Report_Week46_2026-11-09_to_2026-11-15.md": {
+    "mtime": 1794640368.821216,
+    "seen": 1795233584.8464308,
+    "ast_hash": "9f71a45b31eefa3cdfb75fd6fec03d2b",
+    "semantic_hash": "9f71a45b31eefa3cdfb75fd6fec03d2b"
+  },
+  "02_Outputs/theory/01_Pipeline.md": {
+    "mtime": 1794631178.87011,
+    "seen": 1795233584.8464317,
+    "ast_hash": "f82cd9a68d827ddff4987d11072e4acf",
+    "semantic_hash": "f82cd9a68d827ddff4987d11072e4acf"
+  },
+  "02_Outputs/theory/02_Conda.md": {
+    "mtime": 1794631178.8704772,
+    "seen": 1795233584.8464324,
+    "ast_hash": "a044e6d284a2b84b04f972efba02adb9",
+    "semantic_hash": "a044e6d284a2b84b04f972efba02adb9"
+  },
+  "02_Outputs/theory/03_CLI.md": {
+    "mtime": 1794631178.8704772,
+    "seen": 1795233584.846433,
+    "ast_hash": "aa5832629836f09c595805b49fabb32d",
+    "semantic_hash": "aa5832629836f09c595805b49fabb32d"
+  },
+  "03_Code/01_audio-agent/README.md": {
+    "mtime": 1794631178.875234,
+    "seen": 1795233584.846438,
+    "ast_hash": "cfd29e56dd18fdf0b0c0df057a4a72dc",
+    "semantic_hash": "cfd29e56dd18fdf0b0c0df057a4a72dc"
+  },
+  "03_Code/01_audio-agent/docker-compose.yml": {
+    "mtime": 1794928621.611912,
+    "seen": 1795233584.8464386,
+    "ast_hash": "b62862debc5cddcf542af45022801f5e",
+    "semantic_hash": "b62862debc5cddcf542af45022801f5e"
+  },
+  "03_Code/01_audio-agent/requirements.txt": {
+    "mtime": 1794631178.875234,
+    "seen": 1795233584.8464394,
+    "ast_hash": "3ffa1e6a5b2765156e4f1db467e3dc1d",
+    "semantic_hash": "3ffa1e6a5b2765156e4f1db467e3dc1d"
+  },
+  "03_Code/01_audio-agent/test_ui/index.html": {
+    "mtime": 1794631178.875234,
+    "seen": 1795233584.84644,
+    "ast_hash": "0439feaddb4fb47089d9ec3645228413",
+    "semantic_hash": "0439feaddb4fb47089d9ec3645228413"
+  },
+  "03_Code/01_audio-agent/test_ui/test2.html": {
+    "mtime": 1794631178.8760922,
+    "seen": 1795233584.846441,
+    "ast_hash": "46ea08c673da00605ac3d50a4ab867c4",
+    "semantic_hash": "46ea08c673da00605ac3d50a4ab867c4"
+  },
+  "03_Code/01_audio-agent/test_ui/test3.html": {
+    "mtime": 1794631178.8760922,
+    "seen": 1795233584.8464415,
+    "ast_hash": "c17427c6d43d1e1623729ecc3e301c0c",
+    "semantic_hash": "c17427c6d43d1e1623729ecc3e301c0c"
+  },
+  "03_Code/02_aws-services/src/requirements.txt": {
+    "mtime": 1794631178.8760922,
+    "seen": 1795233584.8464422,
+    "ast_hash": "587f8e4b2a2e15d7028f44fb1ce6d208",
+    "semantic_hash": "587f8e4b2a2e15d7028f44fb1ce6d208"
+  },
+  "03_Code/02_aws-services/template.yaml": {
+    "mtime": 1794631178.8760922,
+    "seen": 1795233584.8464427,
+    "ast_hash": "6a8f9a3683d4c6296987f8f5060cadd9",
+    "semantic_hash": "6a8f9a3683d4c6296987f8f5060cadd9"
+  },
+  "03_Code/04_web-app/index.html": {
+    "mtime": 1794637760.8607001,
+    "seen": 1795233584.8464434,
+    "ast_hash": "23ec50ec69ead9927f86e6ded08c99a9",
+    "semantic_hash": "23ec50ec69ead9927f86e6ded08c99a9"
+  },
+  "04_Data/concurrent_results/pc_2026-10-27.txt": {
+    "mtime": 1794631178.8772204,
+    "seen": 1795233584.8464444,
+    "ast_hash": "0396665a7946e6401c895d36cc733120",
+    "semantic_hash": "0396665a7946e6401c895d36cc733120"
+  },
+  "04_Data/concurrent_results/pi_ping_2026-10-28_2038.txt": {
+    "mtime": 1794631178.8775365,
+    "seen": 1795233584.846445,
+    "ast_hash": "b8cc1c07d9d03f9e74ec8303e27e8af5",
+    "semantic_hash": "b8cc1c07d9d03f9e74ec8303e27e8af5"
+  },
+  "04_Data/concurrent_results/pi_wifi-on_2026-10-28_2036.txt": {
+    "mtime": 1794631178.8775365,
+    "seen": 1795233584.8464458,
+    "ast_hash": "9533f07887746f4676a4a82227fdec43",
+    "semantic_hash": "9533f07887746f4676a4a82227fdec43"
+  },
+  "04_Data/gateway/requirements.txt": {
+    "mtime": 1794631178.8775365,
+    "seen": 1795233584.8464465,
+    "ast_hash": "4e6e8bc7c6c196ad47f1eaa9ae649163",
+    "semantic_hash": "4e6e8bc7c6c196ad47f1eaa9ae649163"
+  },
+  "04_Data/magene_h303/README.md": {
+    "mtime": 1794631178.8775365,
+    "seen": 1795233584.846447,
+    "ast_hash": "9f6581fbf55d543fb05721628a55694b",
+    "semantic_hash": "9f6581fbf55d543fb05721628a55694b"
+  },
+  "04_Data/magene_h303/index.html": {
+    "mtime": 1794631178.8775365,
+    "seen": 1795233584.846448,
+    "ast_hash": "3542ded1551e1880aad0219f24331f4d",
+    "semantic_hash": "3542ded1551e1880aad0219f24331f4d"
+  },
+  "04_Data/magene_h303/requirements.txt": {
+    "mtime": 1794631178.8781059,
+    "seen": 1795233584.8464484,
+    "ast_hash": "969f24efdcbff275dd90fe01041b218c",
+    "semantic_hash": "969f24efdcbff275dd90fe01041b218c"
+  },
+  "04_Data/muse2/README.md": {
+    "mtime": 1794631178.8781059,
+    "seen": 1795233584.8464503,
+    "ast_hash": "f471a46b7d84089962e88732beee464c",
+    "semantic_hash": "f471a46b7d84089962e88732beee464c"
+  },
+  "04_Data/muse2/index.html": {
+    "mtime": 1794631178.8781059,
+    "seen": 1795233584.8464513,
+    "ast_hash": "5a736ccff84bb89d3844139335c5d514",
+    "semantic_hash": "5a736ccff84bb89d3844139335c5d514"
+  },
+  "04_Data/muse2/requirements.txt": {
+    "mtime": 1794631178.8816667,
+    "seen": 1795233584.846452,
+    "ast_hash": "969f24efdcbff275dd90fe01041b218c",
+    "semantic_hash": "969f24efdcbff275dd90fe01041b218c"
+  },
+  "04_Data/yuwell_yx110/README.md": {
+    "mtime": 1794631178.8831143,
+    "seen": 1795233584.8464525,
+    "ast_hash": "3217932944f70c47d823d393c3696a3d",
+    "semantic_hash": "3217932944f70c47d823d393c3696a3d"
+  },
+  "04_Data/yuwell_yx110/index.html": {
+    "mtime": 1794631178.8831143,
+    "seen": 1795233584.8464532,
+    "ast_hash": "71ce726f04862f82839f237adfd41bda",
+    "semantic_hash": "71ce726f04862f82839f237adfd41bda"
+  },
+  "04_Data/yuwell_yx110/requirements.txt": {
+    "mtime": 1794631178.8837452,
+    "seen": 1795233584.846454,
+    "ast_hash": "969f24efdcbff275dd90fe01041b218c",
+    "semantic_hash": "969f24efdcbff275dd90fe01041b218c"
+  },
+  "CLAUDE.md": {
+    "mtime": 1794928308.901449,
+    "seen": 1795233584.8464549,
+    "ast_hash": "8b6f5e38783f6290cd6560bbcb0e5eba",
+    "semantic_hash": "8b6f5e38783f6290cd6560bbcb0e5eba"
+  },
+  "GIT_WORKFLOW_GUIDE.md": {
+    "mtime": 1790606860.0,
+    "seen": 1795233584.8464556,
+    "ast_hash": "d51fbce609ccd79d1ba8bb4c6fb86c5e",
+    "semantic_hash": "d51fbce609ccd79d1ba8bb4c6fb86c5e"
+  },
+  "README.md": {
+    "mtime": 1794631178.8839884,
+    "seen": 1795233584.846456,
+    "ast_hash": "d3fabecc121420daca72868f7f366f15",
+    "semantic_hash": "d3fabecc121420daca72868f7f366f15"
+  },
+  "device_constraints.yaml": {
+    "mtime": 1793201369.6551487,
+    "seen": 1795233584.8464568,
+    "ast_hash": "91426f597842a32dfffd761545dd8ce6",
+    "semantic_hash": "91426f597842a32dfffd761545dd8ce6"
+  },
+  "index.html": {
+    "mtime": 1794631178.8839884,
+    "seen": 1795233584.8464572,
+    "ast_hash": "2a1bc79fd37e33b0794df5543bcdd5c7",
+    "semantic_hash": "2a1bc79fd37e33b0794df5543bcdd5c7"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/01.0_pp_i_ii_How_to_Read_an_EEG.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.846458,
+    "ast_hash": "1228a2d295610ac0429857a180619c78",
+    "semantic_hash": "1228a2d295610ac0429857a180619c78"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/02.0_pp_iii_iii_How_to_Read_an_EEG.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464587,
+    "ast_hash": "1228a2d295610ac0429857a180619c78",
+    "semantic_hash": "1228a2d295610ac0429857a180619c78"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/03.0_pp_iv_iv_Copyright_page.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464594,
+    "ast_hash": "1228a2d295610ac0429857a180619c78",
+    "semantic_hash": "1228a2d295610ac0429857a180619c78"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/04.0_pp_v_vi_Dedication.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464599,
+    "ast_hash": "ef2aa58a6385a99e37b695bbd565b5c8",
+    "semantic_hash": "ef2aa58a6385a99e37b695bbd565b5c8"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/05.0_pp_vii_vii_Contents.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464606,
+    "ast_hash": "1245b2d22e7c1dc5a4ddea340f4b981d",
+    "semantic_hash": "1245b2d22e7c1dc5a4ddea340f4b981d"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/06.0_pp_viii_viii_Figure_Contributions.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464613,
+    "ast_hash": "1b7a4370cb5c6238227504c40df1bf66",
+    "semantic_hash": "1b7a4370cb5c6238227504c40df1bf66"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/07.0_pp_ix_x_Foreword.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.846462,
+    "ast_hash": "7d301ab3b51c021d4cbe0850c3eb0695",
+    "semantic_hash": "7d301ab3b51c021d4cbe0850c3eb0695"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/08.0_pp_xi_xi_Preface.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464627,
+    "ast_hash": "a8fef448c724bb4bd2178f955674125e",
+    "semantic_hash": "a8fef448c724bb4bd2178f955674125e"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/09.0_pp_xii_xii_How_to_Read_This_Book.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464632,
+    "ast_hash": "638de064f90f70588832fd8c0c6b9fc9",
+    "semantic_hash": "638de064f90f70588832fd8c0c6b9fc9"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/10.0_pp_1_60_Basics.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.846464,
+    "ast_hash": "39b983bcfa1cecf0bcb3668e8d191e1d",
+    "semantic_hash": "39b983bcfa1cecf0bcb3668e8d191e1d"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/10.1_pp_1_14_Introduction.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464644,
+    "ast_hash": "3730b5b626378f00d1557ed0ddbbe0f4",
+    "semantic_hash": "3730b5b626378f00d1557ed0ddbbe0f4"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/10.2_pp_15_16_Polarity.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464653,
+    "ast_hash": "0837f92de9e70a239e6d329abb11cc78",
+    "semantic_hash": "0837f92de9e70a239e6d329abb11cc78"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/10.3_pp_17_22_Montages.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.846466,
+    "ast_hash": "422e755877823daf75b534864d88bbfe",
+    "semantic_hash": "422e755877823daf75b534864d88bbfe"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/10.4_pp_23_28_Localization.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464665,
+    "ast_hash": "37129250649d8a0d2b38e3a14b0cd50c",
+    "semantic_hash": "37129250649d8a0d2b38e3a14b0cd50c"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/10.5_pp_29_31_Active_Reference.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464673,
+    "ast_hash": "c95eca0070a4f98bafc26131cea9dce8",
+    "semantic_hash": "c95eca0070a4f98bafc26131cea9dce8"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/10.6_pp_32_39_Frequencies_and_Rhythms.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464682,
+    "ast_hash": "00f6d1cce985c4babb3112b09f87f961",
+    "semantic_hash": "00f6d1cce985c4babb3112b09f87f961"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/10.7_pp_40_52_Maturation.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464687,
+    "ast_hash": "f6b2517768679e4746d91bc6cc9c8673",
+    "semantic_hash": "f6b2517768679e4746d91bc6cc9c8673"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/10.8_pp_53_60_Normal_Adult_EEG.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464692,
+    "ast_hash": "f08a67f82e945da11cf8ccf489a617a6",
+    "semantic_hash": "f08a67f82e945da11cf8ccf489a617a6"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/11.0_pp_61_168_Interpretation.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464699,
+    "ast_hash": "8e76151619091cef6d17fb5bd09aa2e4",
+    "semantic_hash": "8e76151619091cef6d17fb5bd09aa2e4"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/11.1_pp_61_66_Approach_to_EEG_Reading.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464704,
+    "ast_hash": "f78babf99c2e045e8fa3be0d781e6340",
+    "semantic_hash": "f78babf99c2e045e8fa3be0d781e6340"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/11.2_pp_67_78_Background.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.846471,
+    "ast_hash": "efb84659b81d8746fcc5cd1639ce3e84",
+    "semantic_hash": "efb84659b81d8746fcc5cd1639ce3e84"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/11.3_pp_79_82_Foreground_How_to_Describe_an_Abnormality.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464718,
+    "ast_hash": "cdd30dc4935aa1dfa3a28e994fca26de",
+    "semantic_hash": "cdd30dc4935aa1dfa3a28e994fca26de"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/11.4_pp_83_97_Common_Artifacts.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464725,
+    "ast_hash": "6813c73f936828c1025f52464fcb3b6e",
+    "semantic_hash": "6813c73f936828c1025f52464fcb3b6e"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/11.5_pp_98_118_Normal_Variants.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464732,
+    "ast_hash": "fc82152d85f7ed3d920f740e0436e260",
+    "semantic_hash": "fc82152d85f7ed3d920f740e0436e260"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/11.6_pp_119_133_Sporadic_Abnormalities.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464737,
+    "ast_hash": "57841088b993274c4a24a66d20ab6150",
+    "semantic_hash": "57841088b993274c4a24a66d20ab6150"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/11.7_pp_134_148_Repetitive_Abnormalities.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464744,
+    "ast_hash": "f414462729d37e1748bd517f5b61d9c9",
+    "semantic_hash": "f414462729d37e1748bd517f5b61d9c9"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/11.8_pp_149_159_Ictal_Patterns_Electrographic_Seizures.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464754,
+    "ast_hash": "e5db75a75e44c6a58b8708013a614dc2",
+    "semantic_hash": "e5db75a75e44c6a58b8708013a614dc2"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/11.9_pp_160_168_Activation_Procedures.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464758,
+    "ast_hash": "274e8d55b27c1591427e57331f97aaa2",
+    "semantic_hash": "274e8d55b27c1591427e57331f97aaa2"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/12.0_pp_169_247_Specific_Conditions.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464766,
+    "ast_hash": "010f80d4343f678d94fdef5558658fc8",
+    "semantic_hash": "010f80d4343f678d94fdef5558658fc8"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/12.1_pp_169_176_Common_Seizure_Mimics.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464773,
+    "ast_hash": "6fdc0f98450f738097eb70463471c5b2",
+    "semantic_hash": "6fdc0f98450f738097eb70463471c5b2"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/12.2_pp_177_186_Seizures.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.846478,
+    "ast_hash": "522a5fa2da048eaf44e6cf0453b9978d",
+    "semantic_hash": "522a5fa2da048eaf44e6cf0453b9978d"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/12.3_pp_187_194_Epilepsies.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464787,
+    "ast_hash": "02a8e540dcb4f6bb16fcda7553c631e8",
+    "semantic_hash": "02a8e540dcb4f6bb16fcda7553c631e8"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/12.4_pp_195_213_Epilepsy_Syndromes.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464794,
+    "ast_hash": "4658a96b4cf69998472ea7a98adc8c56",
+    "semantic_hash": "4658a96b4cf69998472ea7a98adc8c56"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/12.5_pp_214_218_Focal_Dysfunction_Lesions.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.84648,
+    "ast_hash": "83afe067c6f5cf6efb87cb5a89866c5b",
+    "semantic_hash": "83afe067c6f5cf6efb87cb5a89866c5b"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/12.6_pp_219_229_Global_Dysfunction_Encephalopathy.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464806,
+    "ast_hash": "95cffeea2fba225877edda6bdbb04434",
+    "semantic_hash": "95cffeea2fba225877edda6bdbb04434"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/12.7_pp_230_238_Status_Epilepticus.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464813,
+    "ast_hash": "fc94291c56841415f23f2ba27835377e",
+    "semantic_hash": "fc94291c56841415f23f2ba27835377e"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/12.8_pp_239_245_Post_Cardiac_Arrest.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464823,
+    "ast_hash": "69240c48ca095a7ebc5f54d6cf39f71a",
+    "semantic_hash": "69240c48ca095a7ebc5f54d6cf39f71a"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/12.9_pp_246_247_Brain_Death.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464828,
+    "ast_hash": "51e744be097357d04e9f6ceb1a2146e1",
+    "semantic_hash": "51e744be097357d04e9f6ceb1a2146e1"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/13.0_pp_248_252_How_to_Write_a_Report.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464835,
+    "ast_hash": "a6d743b794dbb089420905b1bca73af4",
+    "semantic_hash": "a6d743b794dbb089420905b1bca73af4"
+  },
+  "01_Documents/02_cambridge-core_how-to-read-an-eeg_31Aug2025/14.0_pp_253_260_Index.pdf": {
+    "mtime": 1781760494.0,
+    "seen": 1795233584.8464842,
+    "ast_hash": "1acf7be663758238f512a1daa1b39200",
+    "semantic_hash": "1acf7be663758238f512a1daa1b39200"
+  },
+  "01_Documents/23_AETA2025_ID63.pdf": {
+    "mtime": 1781760495.0,
+    "seen": 1795233584.846485,
+    "ast_hash": "8db7146a2345cd4ecb90de6fee7171e0",
+    "semantic_hash": "8db7146a2345cd4ecb90de6fee7171e0"
+  },
+  "01_Documents/yy_Brainstorms/01_Brainstorm 11 06 2026.pdf": {
+    "mtime": 1781760495.0,
+    "seen": 1795233584.8464859,
+    "ast_hash": "ec9235d7415d0f169ebc7f626a876fef",
+    "semantic_hash": "ec9235d7415d0f169ebc7f626a876fef"
+  },
+  "02_Outputs/report/01_Report_Week45/figures/alpha-psd.pdf": {
+    "mtime": 1794631178.8706384,
+    "seen": 1795233584.8464863,
+    "ast_hash": "800d28ea47c4e3d548b602e24e4d4485",
+    "semantic_hash": "800d28ea47c4e3d548b602e24e4d4485"
+  },
+  "02_Outputs/report/01_Report_Week45/figures/nhip-tim.pdf": {
+    "mtime": 1794631178.8724687,
+    "seen": 1795233584.846487,
+    "ast_hash": "1080d3c7ae4766344058657c029fd55d",
+    "semantic_hash": "1080d3c7ae4766344058657c029fd55d"
+  },
+  "02_Outputs/report/01_Report_Week45/figures/alpha-psd.png": {
+    "mtime": 1794631178.8708398,
+    "seen": 1795233584.8464875,
+    "ast_hash": "d8735803396116aeecd1e8573f314a43",
+    "semantic_hash": "d8735803396116aeecd1e8573f314a43"
+  },
+  "02_Outputs/report/01_Report_Week45/figures/nhip-tim.png": {
+    "mtime": 1794631178.8726664,
+    "seen": 1795233584.8464882,
+    "ast_hash": "e27d587eb1d8f64c642560f2e720b923",
+    "semantic_hash": "e27d587eb1d8f64c642560f2e720b923"
+  },
+  "02_Outputs/report/02_Report_Week46/figures/web-vitals-demo.png": {
+    "mtime": 1794639240.479494,
+    "seen": 1795233584.8464892,
+    "ast_hash": "bc875bc6539e9dcc3923fcbfaf05f2f9",
+    "semantic_hash": "bc875bc6539e9dcc3923fcbfaf05f2f9"
+  },
+  "02_Outputs/report/02_Report_Week46/figures/web-vitals-that.png": {
+    "mtime": 1794639240.4778433,
+    "seen": 1795233584.8464897,
+    "ast_hash": "3c8e325c219e49b34a91fc49402b6b6f",
+    "semantic_hash": "3c8e325c219e49b34a91fc49402b6b6f"
+  },
+  "02_Outputs/screenshots/test-ui-llm.png": {
+    "mtime": 1794631178.8738408,
+    "seen": 1795233584.8464904,
+    "ast_hash": "91615aae960398cfeb3921b0f1788a3c",
+    "semantic_hash": "91615aae960398cfeb3921b0f1788a3c"
+  },
+  "02_Outputs/screenshots/test-ui-stt.png": {
+    "mtime": 1794631178.8742123,
+    "seen": 1795233584.8464909,
+    "ast_hash": "e6d724584f7ae1faeb2103940332984f",
+    "semantic_hash": "e6d724584f7ae1faeb2103940332984f"
+  },
+  "02_Outputs/screenshots/test-ui-tts.png": {
+    "mtime": 1794631178.87458,
+    "seen": 1795233584.8464916,
+    "ast_hash": "1418c5291a4396b3edb16f6a0d52a99c",
+    "semantic_hash": "1418c5291a4396b3edb16f6a0d52a99c"
+  },
+  "02_Outputs/screenshots/web-dashboard.png": {
+    "mtime": 1794631178.875234,
+    "seen": 1795233584.846492,
+    "ast_hash": "080ce35f89659b4c585d3f98e527cbce",
+    "semantic_hash": "080ce35f89659b4c585d3f98e527cbce"
+  }
+}

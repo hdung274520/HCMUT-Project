@@ -214,7 +214,3 @@ packaged.yaml
 # AI tooling
 .claude/
 .agents/skills/
-graphify-out/cache/
-graphify-out/cost.json
-graphify-out/manifest.json
-graphify-out/graph.html
